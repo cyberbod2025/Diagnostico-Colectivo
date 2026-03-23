@@ -1,0 +1,11 @@
+{
+  "name": "diagnostico-colectivo",
+  "version": "1.0.0",
+  "description": "Sistema de Diagnóstico Docente integrado con Supabase",
+  "main": "index.html",
+  "scripts": {
+    "start": "serve ."
+  },
+  "dependencies": {},
+  "devDependencies": {}
+}
