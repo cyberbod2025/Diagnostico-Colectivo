@@ -7,10 +7,25 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-    <style type="text/tailwindcss">
+    <style>
         body { font-family: 'Inter', sans-serif; }
-        .btn-toggle { @apply px-4 py-2 rounded-lg border-2 border-slate-200 text-slate-600 transition-all font-semibold text-sm; }
-        .btn-toggle.active { @apply border-indigo-600 bg-indigo-50 text-indigo-700; }
+        .btn-toggle {
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            border-width: 2px;
+            border-color: #e2e8f0;
+            color: #475569;
+            transition-property: all;
+            transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+            transition-duration: 150ms;
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+        .btn-toggle.active {
+            border-color: #4f46e5;
+            background-color: #eef2ff;
+            color: #4338ca;
+        }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-900 min-h-screen p-4 pb-12">
