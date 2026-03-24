@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIRDE-310 | Análisis Institucional Colectivo</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        .conclusion-card {
+            background-color: #f1f5f9;
+            padding: 1.5rem;
+            border-left: 6px solid #1e3a8a;
+            border-radius: 4px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: #1e3a8a;
+            line-height: 1.6;
+        }
+        .cte-section {
+            background-color: #fff7ed;
+            padding: 1.5rem;
+            border: 2px dashed #ea580c;
+            border-radius: 8px;
+            margin-top: 1.5rem;
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+    <div id="auth-wall" class="fixed inset-0 z-[100] bg-slate-900/90 flex items-center justify-center p-4">
+        <div class="card w-full max-w-sm text-center space-y-4">
+            <h1 class="text-xl font-black">Validación Institucional</h1>
+            <p class="text-xs text-slate-500 font-bold uppercase">Acceso Restringido Dashboard</p>
+            <input type="password" id="entry-pin" placeholder="CONTRASEÑA" class="w-full">
+            <button onclick="if(checkAccess(document.getElementById('entry-pin').value)) {} else { alert('Incorrecto'); }" class="btn-primary">INGRESAR</button>
+        </div>
+    </div>
+
+    <main class="container">
+        <!-- HEADER INSTITUCIONAL -->
+        <header class="flex items-center justify-between border-b-2 border-slate-950 pb-6 mb-8">
+            <div class="flex items-center gap-4">
+                <div class="p-2 bg-blue-900 text-white rounded-lg shadow-inner">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                    </svg>
+                </div>
+                <div class="space-y-1">
+                    <h1 class="text-2xl font-black tracking-tighter m-0 uppercase">TABLERO ANALÍTICO SIRDE-310</h1>
+                    <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Respaldo Docente • Secundaria 310</p>
+                    <div class="no-print mt-1">
+                        <a href="index.html" class="text-[9px] font-bold text-blue-800 hover:underline uppercase">← Regresar al Formulario de Captura</a>
+                    </div>
+                </div>
+            </div>
+            <div class="flex flex-col items-end gap-3 no-print">
+                <div class="flex gap-2">
+                    <select id="filter-grupo" onchange="runAnalysis()" class="p-2 border border-slate-300 rounded text-sm w-48">
+                        <option value="">Seleccionar Grupo...</option>
+                        <option value="2° A">2° A</option>
+                        <option value="2° B">2° B</option>
+                        <option value="2° C">2° C</option>
+                        <option value="2° D">2° D</option>
+                    </select>
+                    <button onclick="window.print()" class="px-4 py-2 border border-black font-bold text-[10px] rounded hover:bg-slate-50 transition-all uppercase">
+                        Imprimir Informe
+                    </button>
+                </div>
+                <button onclick="logoutSIRDE()" class="text-[10px] font-bold text-red-600 hover:text-red-800 uppercase">Cerrar Sesión Activa</button>
+            </div>
+        </header>
+
+        <!-- PRINT SECTION -->
+        <div class="hidden print:block text-center border-b-2 border-black pb-4 mb-8">
+            <h1 class="text-xl font-bold uppercase">Informe Institucional de Seguimiento Grupal</h1>
+            <p class="text-[10px] font-bold">Escuela Secundaria Diurna No. 310 "Presidentes de México"</p>
+            <p id="print-label" class="text-lg mt-1 font-bold"></p>
+        </div>
+
+        <!-- RESUMEN NUMÉRICO -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 no-print">
+            <div class="card p-4 text-center">
+                <p class="text-[9px] font-bold text-slate-500 uppercase mb-1">Diagnósticos</p>
+                <h3 id="stat-total" class="text-2xl font-black">0</h3>
+            </div>
+            <div class="card p-4 text-center">
+                <p class="text-[9px] font-bold text-slate-500 uppercase mb-1">Docentes</p>
+                <h3 id="stat-teachers" class="text-2xl font-black">0</h3>
+            </div>
+            <div class="card p-4 text-center">
+                <p class="text-[9px] font-bold text-slate-500 uppercase mb-1">Impacto</p>
+                <h3 id="stat-impact" class="text-lg font-black">-</h3>
+            </div>
+            <div class="card p-4 text-center">
+                <p class="text-[9px] font-bold text-slate-500 uppercase mb-1">Alumnos Reportados</p>
+                <h3 id="stat-students" class="text-2xl font-black">0</h3>
+            </div>
+        </div>
+
+        <!-- CONCLUSIONES AUTOMÁTICAS -->
+        <section class="card">
+            <h2 class="section-title">Análisis Colectivo Sistematizado</h2>
+            <div id="conclusions-container" class="conclusion-card">
+                Seleccione un grupo para generar conclusiones institucionales automáticas...
+            </div>
+            
+            <div id="cte-zone" class="cte-section" style="display: none;">
+                <h3 class="text-xs font-black uppercase text-orange-600 mb-3 flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                    </svg>
+                    Hallazgos Clave para el Consejo Técnico Escolar (CTE)
+                </h3>
+                <ul id="cte-list" class="text-sm space-y-2 list-disc pl-5 text-orange-900 font-medium">
+                    <!-- Se llena con JS -->
+                </ul>
+            </div>
+        </section>
+
+        <!-- PATRONES Y RECURRENCIA -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <section class="card">
+                <h2 class="section-title">Coincidencias en Conducta</h2>
+                <div id="pattern-list" class="space-y-3">
+                    <!-- Se llena con JS -->
+                </div>
+            </section>
+            <section class="card">
+                <h2 class="section-title">Alumnos con mayor recurrencia</h2>
+                <div id="recurrence-list" class="space-y-4">
+                    <!-- Se llena con JS -->
+                </div>
+            </section>
+        </div>
+
+        <section class="card print:mt-8">
+            <h2 class="section-title">Efectividad de Seguimiento con Padres</h2>
+            <div class="grid grid-cols-2 gap-8 text-center">
+                <div>
+                  <p class="text-[10px] font-bold text-slate-500 uppercase">Citatorios Enviados</p>
+                  <h4 id="stat-cited" class="text-3xl font-black">0</h4>
+                </div>
+                <div>
+                  <p class="text-[10px] font-bold text-slate-500 uppercase">Respuesta de Padres</p>
+                  <h4 id="stat-attended" class="text-3xl font-black">0</h4>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="app.js"></script>
+    <script>
+        async function runAnalysis() {
+            const grupo = document.getElementById('filter-grupo').value;
+            if (!grupo) return;
+
+            document.getElementById('print-label').textContent = `INFORME GRUPO: ${grupo} | PERIODO 2026`;
+
+            const { data, error } = await supabaseClient
+                .from('respuestas_docentes')
+                .select('*')
+                .eq('grupo', grupo);
+
+            if (data) renderAnalysis(data);
+        }
+
+        function renderAnalysis(reports) {
+            const total = reports.length;
+            const teachers = new Set(reports.map(r => r.docente)).size;
+            const impacts = reports.map(r => r.impacto);
+            const modeImpact = getMode(impacts);
+            
+            // Stats UI
+            document.getElementById('stat-total').textContent = total;
+            document.getElementById('stat-teachers').textContent = teachers;
+            document.getElementById('stat-impact').textContent = modeImpact || '-';
+
+            // Alumnos & Conductas
+            const studentCounts = {}; // { id: { count, behaviors: [], cited: 0, attended: 0 } }
+            const behaviorsFreq = {};
+            
+            reports.forEach(r => {
+                (r.conductas_grupales || []).forEach(b => {
+                    behaviorsFreq[b] = (behaviorsFreq[b] || 0) + 1;
+                });
+                (r.alumnos_reportados || []).forEach(al => {
+                    if (!studentCounts[al.alumno_id]) {
+                       studentCounts[al.alumno_id] = { name: al.nombre, count: 0, behaviors: [], cited: 0, attended: 0, teachers: new Set() };
+                    }
+                    studentCounts[al.alumno_id].count++;
+                    studentCounts[al.alumno_id].teachers.add(r.docente);
+                    al.behaviors.forEach(b => studentCounts[al.alumno_id].behaviors.push(b));
+                    if (al.citado) studentCounts[al.alumno_id].cited++;
+                    if (al.acudio === 'SÍ') studentCounts[al.alumno_id].attended++;
+                });
+            });
+
+            document.getElementById('stat-students').textContent = Object.keys(studentCounts).length;
+            
+            // Automated Conclusion
+            let topBehaviors = Object.entries(behaviorsFreq).sort((a,b) => b[1] - a[1]).slice(0, 2).map(x => x[0]);
+            let totalCited = Object.values(studentCounts).reduce((acc,s) => acc + s.cited, 0);
+            let totalAttended = Object.values(studentCounts).reduce((acc,s) => acc + s.attended, 0);
+
+            let conclusion = `Se ha generado un diagnóstico colectivo fundamentado en ${total} reportes de ${teachers} docentes distintos. 
+                              El nivel de impacto en el aprendizaje predominante se define como ${modeImpact}. 
+                              Se observa una coincidencia crítica en conductas de ${topBehaviors.join(' y ')}. 
+                              En cuanto al seguimiento con padres, se han emitido ${totalCited} citatorios, con una respuesta efectiva del ${totalCited > 0 ? Math.round((totalAttended/totalCited)*100) : 0}% de los casos registrados.`;
+            
+            document.getElementById('conclusions-container').innerHTML = conclusion;
+
+            // CTE Section
+            document.getElementById('cte-zone').style.display = 'block';
+            const cteList = document.getElementById('cte-list');
+            cteList.innerHTML = '';
+            
+            const highRecurrence = Object.values(studentCounts).filter(s => s.teachers.size > 1);
+            if(highRecurrence.length > 0) cteList.innerHTML += `<li>Se detectaron ${highRecurrence.length} alumnos con recurrencia crítica reportados por múltiples docentes.</li>`;
+            if(modeImpact === 'Crítico' || modeImpact === 'Alto') cteList.innerHTML += `<li>El clima de aprendizaje del grupo requiere intervención urgente ante el nivel de impacto reportado como '${modeImpact}'.</li>`;
+            if(totalCited > 0 && (totalAttended/totalCited < 0.5)) cteList.innerHTML += `<li>La respuesta de los padres de familia se encuentra por debajo del 50%, sugiriendo una falta de apoyo institucional en el hogar.</li>`;
+            
+            // Lists
+            renderPatternList(behaviorsFreq, teachers);
+            renderRecurrentStudents(studentCounts);
+            
+            document.getElementById('stat-cited').textContent = totalCited;
+            document.getElementById('stat-attended').textContent = totalAttended;
+        }
+
+        function renderPatternList(freq, totalT) {
+            const list = document.getElementById('pattern-list');
+            list.innerHTML = '';
+            if (totalT === 0) return;
+            Object.entries(freq).sort((a,b) => b[1]-a[1]).forEach(([name, count]) => {
+                const pct = Math.round((count / totalT) * 100);
+                list.innerHTML += `<div style="display: flex; justify-content: space-between; border-bottom: 1px dotted #ccc; padding: 4px 0;">
+                    <span class="text-xs font-bold uppercase">${name}</span>
+                    <span class="text-xs font-black text-blue-900">${pct}% de docentes</span>
+                </div>`;
+            });
+        }
+
+        function renderRecurrentStudents(counts) {
+            const list = document.getElementById('recurrence-list');
+            list.innerHTML = '';
+            Object.values(counts).sort((a,b) => b.count - a.count).slice(0, 10).forEach(s => {
+                const isCrit = s.teachers.size > 1;
+                list.innerHTML += `<div class="p-4 border border-slate-200 rounded-lg">
+                    <div class="flex justify-between items-start">
+                        <span class="text-xs font-black uppercase">${s.name}</span>
+                        <span class="text-[9px] font-bold ${isCrit ? 'text-red-700 bg-red-50' : 'text-slate-400'} px-2 py-1 rounded">
+                            Reportado por ${s.teachers.size} docentes
+                        </span>
+                    </div>
+                    <p class="text-[9px] text-slate-500 italic mt-1">${[...new Set(s.behaviors)].join(', ')}</p>
+                </div>`;
+            });
+        }
+
+        function getMode(arr) {
+            if (arr.length === 0) return null;
+            const modeMap = {};
+            let maxEl = arr[0], maxCount = 1;
+            arr.forEach(el => {
+                modeMap[el] = (modeMap[el] || 0) + 1;
+                if(modeMap[el] > maxCount) { maxEl = el; maxCount = modeMap[el]; }
+            });
+            return maxEl;
+        }
+
+        if (sessionStorage.getItem('auth_sirde') === 'true') {
+            document.getElementById('auth-wall').style.display = 'none';
+            initData(); // just to preload alumnos if needed
+        }
+    </script>
+</body>
+</html>

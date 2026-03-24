@@ -1,0 +1,170 @@
+/* SIRDE-310 Institutional CSS */
+:root {
+    --primary-blue: #1e3a8a;
+    --bg-light: #f8fafc;
+    --border-gray: #e2e8f0;
+    --text-main: #0f172a;
+    --text-muted: #64748b;
+    --white: #ffffff;
+}
+
+body {
+    background-color: var(--bg-light);
+    color: var(--text-main);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.5;
+    margin: 0;
+}
+
+.container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+}
+
+.card {
+    background: var(--white);
+    border: 1px solid var(--border-gray);
+    border-radius: 12px;
+    padding: 2rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    margin-bottom: 2rem;
+    transition: transform 0.2s ease;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+}
+
+h1, h2, h3 {
+    color: var(--primary-blue);
+    margin-top: 0;
+}
+
+.section-title {
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 700;
+    border-bottom: 2px solid var(--primary-blue);
+    padding-bottom: 0.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.input-group {
+    margin-bottom: 1.5rem;
+}
+
+label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+input[type="text"],
+input[type="number"],
+input[type="password"],
+select,
+textarea {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--border-gray);
+    border-radius: 6px;
+    font-size: 1rem;
+    box-sizing: border-box;
+}
+
+input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: var(--primary-blue);
+    box-shadow: 0 0 0 2px rgba(30, 58, 138, 0.1);
+}
+
+.btn-primary {
+    background-color: var(--primary-blue);
+    color: white;
+    border: none;
+    padding: 1rem 2rem;
+    border-radius: 6px;
+    font-weight: 700;
+    cursor: pointer;
+    width: 100%;
+    font-size: 1rem;
+}
+
+.btn-primary:hover {
+    background-color: #1e40af;
+}
+
+.btn-primary:disabled {
+    background-color: #94a3b8;
+    cursor: not-allowed;
+}
+
+/* Toggles & Options */
+.option-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 0.75rem;
+}
+
+.option-item {
+    border: 1px solid var(--border-gray);
+    padding: 0.75rem;
+    border-radius: 6px;
+    text-align: center;
+    cursor: pointer;
+    font-size: 0.8125rem;
+    font-weight: 600;
+}
+
+.option-item.active {
+    background-color: var(--primary-blue);
+    color: white;
+    border-color: var(--primary-blue);
+}
+
+/* Student List */
+.student-list {
+    border: 1px solid var(--border-gray);
+    border-radius: 6px;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.student-entry {
+    padding: 1rem;
+    border-bottom: 1px solid var(--border-gray);
+}
+
+.student-subform {
+    background: #f1f5f9;
+    padding: 1rem;
+    border-radius: 6px;
+    margin-top: 1rem;
+    display: none;
+}
+
+.student-subform.visible {
+    display: block;
+}
+
+/* Print Optimization */
+@media print {
+    body { background-color: white; padding: 0; }
+    .no-print { display: none !important; }
+    .card { border: 1px solid #eee; box-shadow: none; padding: 1rem; margin-bottom: 1rem; page-break-inside: avoid; }
+    .container { max-width: 100%; width: 100%; padding: 0; }
+    h1, h2, h3 { color: black !important; }
+    .section-title { border-bottom-color: black !important; color: black !important; }
+    .student-entry { border: 1px solid #eee; margin-bottom: 0.5rem; page-break-inside: avoid; }
+    .student-subform { background: white !important; border-top: 1px solid #eee; }
+    input, select, textarea { border: 1px solid #ddd !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .btn-primary { display: none !important; }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg-light); }
+::-webkit-scrollbar-thumb { background: var(--border-gray); border-radius: 10px; }
