@@ -387,6 +387,15 @@ function checkAccess(val) {
     return false;
 }
 
+function togglePinVisibility(inputId) {
+    const pinInput = document.getElementById(inputId);
+    if (pinInput.type === 'password') {
+        pinInput.type = 'text';
+    } else {
+        pinInput.type = 'password';
+    }
+}
+
 function logoutSIRDE() {
     sessionStorage.removeItem('sirde_session_pin');
     sessionStorage.removeItem('auth_sirde'); // Ensure the key set by checkAccess is also removed

@@ -14,8 +14,13 @@
         <div class="card w-full max-w-sm text-center space-y-4">
             <h1 class="text-xl font-black italic">CONTROL INSTITUCIONAL</h1>
             <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Validación de Credenciales SIRDE</p>
-            <input type="password" id="entry-pin" placeholder="CLAVE DE ACCESO" class="w-full text-center tracking-widest font-black">
-            <button onclick="checkAccess(document.getElementById('entry-pin').value)" class="btn-primary">ACCEDER AL SISTEMA</button>
+            <div class="relative">
+                <input type="password" id="entry-pin" placeholder="CLAVE DE ACCESO" class="w-full text-center tracking-widest font-black pr-12">
+                <button type="button" onclick="togglePinVisibility('entry-pin')" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white transition-colors p-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+                </button>
+            </div>
+            <button onclick="checkAccess(document.getElementById('entry-pin').value)" class="btn-primary w-full">ACCEDER AL SISTEMA</button>
         </div>
     </div>
 
