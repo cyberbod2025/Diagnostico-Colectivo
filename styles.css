@@ -211,7 +211,14 @@ button:hover, .btn-primary:hover {
         flex-direction: column;
         align-items: center;
         text-align: center;
-        gap: 1rem;
+        gap: 1.5rem;
+    }
+
+    header img {
+        height: auto;
+        width: 100%;
+        max-width: 150px;
+        mix-blend-mode: color-burn; /* Another strong mode for white backgrounds */
     }
     
     .flex.items-center.gap-6 {

@@ -55,8 +55,8 @@ async function checkAccess(pin) {
         }
     }
 
-    // Asegurar que los datos base estén cargados antes de auto-llenar
-    if (typeof initData === 'function' && globalPersonal.length === 0) {
+    // Sólo cargar datos si estamos en la página del formulario (donde existe el select de docentes)
+    if (typeof initData === 'function' && globalPersonal.length === 0 && document.getElementById('docente')) {
         await initData();
     }
 
