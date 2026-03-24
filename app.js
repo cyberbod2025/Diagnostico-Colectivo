@@ -74,6 +74,7 @@ function validateNext(from, to) {
     
     document.getElementById(`step-${from}`).classList.add('hidden');
     document.getElementById(`step-${to}`).classList.remove('hidden');
+    if (to === 3) renderStudents(); // Asegurar render al llegar al Paso 3
     updateProgress(to);
     window.scrollTo(0, 0);
 }
@@ -109,73 +110,64 @@ function updateCampo() {
 function renderStudents() {
     const grupo = document.getElementById('grupo').value;
     const list = document.getElementById('student-list');
-    const badge = document.getElementById('group-name-badge');
-    if (badge) badge.textContent = `GRUPO: ${grupo || '---'}`;
-    
-    list.innerHTML = '';
+    if (!list) return;
+
+    if (!grupo) {
+        list.innerHTML = '<p class="text-center text-slate-500 text-[10px] uppercase font-black py-10">Seleccione un grupo en el Paso 1</p>';
+        return;
+    }
+
+    if (globalAlumnos.length === 0) {
+        list.innerHTML = '<p class="text-center text-primary-green text-[10px] uppercase font-black py-10 animate-pulse">Cargando base de datos escolar...</p>';
+        setTimeout(renderStudents, 1000); // Retry if data isn't ready
+        return;
+    }
+
     const filtered = globalAlumnos.filter(a => a.grupo === grupo);
+    list.innerHTML = '';
+    console.log(`Renderizando ${filtered.length} alumnos para el grupo ${grupo}`);
     
     if (filtered.length === 0) {
-        list.innerHTML = '<div class="p-8 text-center opacity-40 italic">No hay alumnos en este grupo.</div>';
+        list.innerHTML = `
+            <div class="p-10 text-center border-2 border-dashed border-red-500/20 rounded-3xl">
+                <p class="text-white font-bold text-sm mb-2">⚠️ NO SE ENCONTRARON ALUMNOS</p>
+                <p class="text-[10px] text-slate-500 uppercase">Verifique que el grupo "${grupo}" sea correcto en el Paso 1.</p>
+            </div>`;
     } else {
         filtered.forEach(al => {
             const div = document.createElement('div');
-            div.className = 'student-entry-refined p-4 bg-white/5 border border-white/5 rounded-2xl mb-3';
+            div.className = 'p-4 bg-white/5 border border-white/10 rounded-2xl flex flex-col gap-3 transition-all hover:border-primary-green/30 mb-3';
             div.innerHTML = `
                 <div class="flex items-center justify-between">
-                    <label class="flex items-center gap-4 cursor-pointer">
+                    <label class="flex items-center gap-3 cursor-pointer w-full">
                         <input type="checkbox" onchange="toggleStudentSub('${al.id}', this.checked)" data-id="${al.id}" class="chk-student w-6 h-6 rounded-lg accent-primary-green">
-                        <span class="font-bold text-sm">${al.nombre_completo}</span>
+                        <span class="font-bold text-[13px] text-white tracking-tight leading-tight">${al.nombre_completo}</span>
                     </label>
                 </div>
-                <div id="sub-${al.id}" class="hidden mt-4 pt-4 border-t border-white/5">
-                    <div class="grid grid-cols-2 gap-2">
-                        ${['Indisciplina', 'Desatención', 'Agresión', 'Falta Tareas'].map(b => `
-                            <select class="behav-sel text-[10px] p-2 bg-slate-900 rounded-lg border-white/10" data-name="${b}">
-                                <option value="Nula">${b}: Nula</option>
-                                <option value="Baja">Baja</option><option value="Media">Media</option><option value="Alta">Alta</option>
+                <div id="sub-${al.id}" class="hidden p-5 bg-black/60 rounded-2xl grid grid-cols-2 gap-4 border border-white/10 animate-fade-in">
+                    ${['Desatención', 'Disrupción', 'Agresión', 'Tareas'].map(b => `
+                        <div class="flex flex-col gap-2">
+                            <span class="text-[10px] font-black text-slate-400 uppercase tracking-tighter">${b}</span>
+                            <select class="behav-sel w-full text-xs p-3 bg-slate-900 rounded-xl text-white border-white/10" data-name="${b}">
+                                <option value="Nula">NIVEL: NULO</option>
+                                <option value="Baja">BAJO</option>
+                                <option value="Media">MEDIO</option>
+                                <option value="Alta">ALTO</option>
                             </select>
-                        `).join('')}
-                    </div>
+                        </div>
+                    `).join('')}
                 </div>
             `;
             list.appendChild(div);
         });
     }
-    document.getElementById('manual-student-zone').classList.remove('hidden');
-    // Cargar selector manual
-    const sel = document.getElementById('manual-student-select');
-    sel.innerHTML = '<option value="">Agregar otro alumno de la escuela...</option>';
-    globalAlumnos.forEach(a => sel.add(new Option(`${a.nombre_completo} (${a.grupo})`, a.id)));
 }
 
-function toggleStudentSub(id, v) { document.getElementById(`sub-${id}`).classList.toggle('hidden', !v); }
-
-async function addManualStudent() {
-    const id = document.getElementById('manual-student-select').value;
-    if (!id || document.getElementById(`sub-${id}`)) return;
-    const al = globalAlumnos.find(x => x.id == id);
-    const div = document.createElement('div');
-    div.className = 'student-entry-refined p-4 bg-yellow-500/5 border border-yellow-500/20 rounded-2xl mb-3';
-    div.innerHTML = `
-        <div class="flex items-center justify-between">
-            <label class="flex items-center gap-4 cursor-pointer">
-                <input type="checkbox" checked onchange="toggleStudentSub('${al.id}', this.checked)" data-id="${al.id}" class="chk-student w-6 h-6 rounded-lg accent-yellow-500">
-                <span class="font-bold text-sm text-yellow-500">${al.nombre_completo} (FOCALIZADO)</span>
-            </label>
-        </div>
-        <div id="sub-${al.id}" class="mt-4 pt-4 border-t border-white/5">
-             <div class="grid grid-cols-2 gap-2">
-                        ${['Indisciplina', 'Desatención', 'Agresión', 'Falta Tareas'].map(b => `
-                            <select class="behav-sel text-[10px] p-2 bg-slate-900 rounded-lg border-white/10" data-name="${b}">
-                                <option value="Nula">${b}: Nula</option>
-                                <option value="Baja">Baja</option><option value="Media">Media</option><option value="Alta">Alta</option>
-                            </select>
-                        `).join('')}
-                    </div>
-        </div>`;
-    document.getElementById('student-list').appendChild(div);
+function toggleStudentSub(id, v) { 
+    const sub = document.getElementById(`sub-${id}`);
+    if (sub) sub.classList.toggle('hidden', !v); 
 }
+
 
 function calculateImpact() {
     const sum = Array.from(document.querySelectorAll('.impact-factor')).reduce((a, b) => a + parseInt(b.value), 0);

@@ -173,18 +173,11 @@
                     <span id="group-name-badge" class="text-[10px] font-black py-1 px-3 bg-white/10 rounded-full text-slate-400">GRUPO: ---</span>
                 </div>
                 
-                <div id="student-list" class="space-y-4 min-h-[100px]">
-                    <!-- Se llena con JS -->
+                <div id="student-list" class="space-y-4 min-h-[100px] border-2 border-dashed border-white/5 rounded-2xl p-4">
+                    <p class="text-center text-slate-500 text-[10px] uppercase font-black py-10">Seleccione un grupo en el Paso 1 para ver el listado</p>
                 </div>
-
-                <div id="manual-student-zone" class="mt-10 pt-10 border-t border-white/5 hidden">
-                    <p class="text-[10px] font-black text-slate-500 uppercase mb-4 tracking-widest">¿Falta algún alumno en la lista?</p>
-                    <div class="flex gap-3">
-                        <select id="manual-student-select" class="flex-1 text-xs py-4 px-6 rounded-2xl bg-white/5 border-white/10 text-white focus:border-primary-green/50 transition-all">
-                            <option value="">Buscar en toda la escuela...</option>
-                        </select>
-                        <button type="button" onclick="addManualStudent()" class="px-6 py-4 bg-primary-green text-[#02140f] rounded-2xl flex items-center gap-2 text-lg font-black hover:scale-105 transition-all shadow-lg shadow-primary-green/30">+</button>
-                    </div>
+                <div class="mt-4 text-center">
+                    <button type="button" onclick="renderStudents()" class="text-[9px] font-black text-primary-green/50 hover:text-primary-green transition-all uppercase tracking-widest">🔄 ¿No aparece la lista? Recargar Alumnos</button>
                 </div>
 
                 <div class="mt-12 flex justify-between items-center">
