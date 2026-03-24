@@ -11,20 +11,31 @@ async function checkAccess(pin) {
     if (!pin) return;
     try {
         console.log("LOG: Verificando PIN institucional...");
-        const { data: teacher, error } = await supabaseClient.from('personal').select('*').ilike('acceso_pin', pin.trim()).single();
-        if (error || !teacher) { 
-            alert("PIN NO VÁLIDO. Verifique sus credenciales institucionales."); 
+        const { data: user, error } = await supabaseClient.from('personal').select('*').ilike('acceso_pin', pin.trim()).single();
+        if (error || !user) { 
+            alert("PIN NO VÁLIDO. Verifique sus credenciales institucionales o contacte a la Dirección."); 
             console.warn("LOG: Intento de acceso fallido.");
             return; 
         }
+
+        if (user.rol === 'secretaria') {
+            alert("Usted no participa en el diagnóstico colectivo. El acceso es solo para docentes y servicios educativos.");
+            return;
+        }
+
+        if (user.rol === 'directivo' || user.rol === 'subdireccion') {
+            console.log("LOG: Acceso como Observador (Directivo). Redirigiendo a Dashboard...");
+            window.location.href = 'dashboard.html';
+            return;
+        }
         
-        console.log("LOG: Acceso concedido a:", teacher.nombre);
+        console.log("LOG: Acceso concedido a:", user.nombre);
         sessionStorage.setItem('sirde_session_pin', pin);
         await initData();
 
         const docInput = document.getElementById('docente');
         if(docInput) {
-            docInput.value = teacher.nombre;
+            docInput.value = user.nombre;
             docInput.disabled = true;
             onTeacherChange();
         }
@@ -47,8 +58,10 @@ async function initData() {
     
     const d = document.getElementById('docente');
     if (d) {
-        d.innerHTML = '<option value="">Seleccionar Docente...</option>';
-        globalPersonal.forEach(x => d.add(new Option(x.nombre, x.nombre)));
+        d.innerHTML = '<option value="">Seleccionar Personal...</option>';
+        // Filtramos para que solo el personal participante (docentes/servicios) aparezca en la lista
+        globalPersonal.filter(x => x.rol !== 'secretaria' && x.rol !== 'directivo' && x.rol !== 'subdireccion')
+                      .forEach(x => d.add(new Option(x.nombre, x.nombre)));
     }
 }
 
