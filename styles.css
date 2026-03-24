@@ -250,6 +250,15 @@ button:hover, .btn-primary:hover {
         font-size: 16px !important;
     }
 }
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+    animation: fadeIn 0.3s ease-out forwards;
+}
+
 @media print {
     body { background: white; color: black; }
     .no-print { display: none !important; }

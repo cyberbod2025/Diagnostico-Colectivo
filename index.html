@@ -233,8 +233,10 @@
                 <div id="student-list" class="space-y-4 min-h-[100px] border-2 border-dashed border-white/5 rounded-2xl p-4">
                     <p class="text-center text-slate-500 text-[10px] uppercase font-black py-10">Seleccione un grupo en el Paso 1 para ver el listado</p>
                 </div>
-                <div class="mt-4 text-center">
+                <div class="mt-4 flex flex-col md:flex-row justify-center items-center gap-4">
                     <button type="button" onclick="renderStudents()" class="text-[9px] font-black text-primary-green/50 hover:text-primary-green transition-all uppercase tracking-widest">🔄 ¿No aparece la lista? Recargar Alumnos</button>
+                    <span class="hidden md:inline text-slate-700">|</span>
+                    <button type="button" onclick="addManualStudent()" class="text-[9px] font-black text-blue-400 hover:text-blue-300 transition-all uppercase tracking-widest border border-blue-400/20 px-4 py-2 rounded-xl">➕ REgistrar Alumno no listado</button>
                 </div>
 
                 <div class="mt-12 flex justify-between items-center">
@@ -281,10 +283,12 @@
                             </label>
                             <div class="flex flex-col gap-2 p-3 bg-white/5 border border-white/10 rounded-xl">
                                 <span class="flex items-center gap-3 text-xs">
-                                    <input type="checkbox" id="chk-otra-est" class="w-4 h-4 rounded accent-primary-green">
+                                    <input type="checkbox" id="chk-otra-est" class="w-4 h-4 rounded accent-primary-green" onchange="toggleOtraEstrategia(this.checked)">
                                     <label for="chk-otra-est">Otra estrategia específica:</label>
                                 </span>
-                                <input type="text" id="otra-est-text" name="otra-est-text" aria-label="Detalle de la otra estrategia" placeholder="Describa brevemente..." class="text-[10px] p-2 bg-slate-900 border-none rounded">
+                                <div id="otra-est-container" class="hidden animate-fade-in mt-1">
+                                    <input type="text" id="otra-est-text" name="otra-est-text" aria-label="Detalle de la otra estrategia" placeholder="Describa brevemente..." class="w-full text-[10px] p-4 bg-slate-900 border-none rounded-xl text-primary-green">
+                                </div>
                             </div>
                         </div>
                     </div>

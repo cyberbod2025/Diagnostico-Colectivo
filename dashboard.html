@@ -367,7 +367,7 @@
                 const inter = r.intervenciones;
                 if (!inter || !inter.estrategias) return;
 
-                const allStrats = [...inter.estrategias];
+                const allStrats = Array.isArray(inter.estrategias) ? [...inter.estrategias] : [];
                 if (inter.otra_estrategia) allStrats.push("Estrategia personalizada (Otras)");
 
                 allStrats.forEach(s => {

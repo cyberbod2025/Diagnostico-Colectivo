@@ -6,6 +6,8 @@ const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 let globalAlumnos = [];
 let globalPersonal = [];
 let currentStep = 1;
+let lastGroupSelected = "";
+let studentSelections = {}; // Almacena selecciones por ID: { checked, behaviors: { tipo: nivel } }
 
 async function checkAccess(pin) {
     if (!pin) return;
@@ -46,7 +48,7 @@ async function checkAccess(pin) {
 
 async function initData() {
     console.log("Iniciando carga de datos escolar...");
-    const { data: p, error: ep } = await supabaseClient.from('personal').select('nombre, departamento').order('nombre');
+    const { data: p, error: ep } = await supabaseClient.from('personal').select('nombre, departamento, rol').order('nombre');
     globalPersonal = p || [];
     if (ep) console.error("Error cargando personal:", ep);
     
@@ -108,8 +110,20 @@ function validateNext(from, to) {
     
     document.getElementById(`step-${from}`).classList.add('hidden');
     document.getElementById(`step-${to}`).classList.remove('hidden');
-    if (to === 2) calculateImpact(); // Asegurar impacto al llegar al Paso 2
-    if (to === 3) renderStudents(); // Asegurar render al llegar al Paso 3
+    
+    if (to === 2) {
+        calculateImpact();
+    }
+    
+    if (to === 3) {
+        const valGrupo = document.getElementById('grupo').value;
+        // Solo re-renderizar si el grupo cambió o es la primera vez
+        if (valGrupo !== lastGroupSelected) {
+            lastGroupSelected = valGrupo;
+            studentSelections = {}; // Limpiar si cambia de grupo
+            renderStudents();
+        }
+    }
     updateProgress(to);
     window.scrollTo(0, 0);
 }
@@ -123,6 +137,10 @@ function prevSection(to) {
 
 function toggleOtroFactor(checked) {
     document.getElementById('otro-factor-container').classList.toggle('hidden', !checked);
+}
+
+function toggleOtraEstrategia(checked) {
+    document.getElementById('otra-est-container').classList.toggle('hidden', !checked);
 }
 
 function onTeacherChange() {
@@ -191,48 +209,142 @@ function renderStudents() {
     list.innerHTML = '';
     console.log(`Renderizando ${filtered.length} alumnos para el grupo ${grupo}`);
     
-    if (filtered.length === 0) {
-        list.innerHTML = `
-            <div class="p-10 text-center border-2 border-dashed border-red-500/20 rounded-3xl">
-                <p class="text-white font-bold text-sm mb-2">⚠️ NO SE ENCONTRARON ALUMNOS</p>
-                <p class="text-[10px] text-slate-500 uppercase">Verifique que el grupo "${grupo}" sea correcto en el Paso 1.</p>
-            </div>`;
-    } else {
-        filtered.forEach(al => {
+    filtered.forEach(al => {
+            const data = studentSelections[al.id] || { 
+                checked: false, 
+                behaviors: { 'Atención': 'Nula', 'Trabajo en Clase': 'Nula', 'Lenguaje Inapropiado': 'Nula', 'Sigue Indicaciones': 'Nula' },
+                citatorio: 'No',
+                acudio: 'No',
+                cumplio: 'No'
+            };
+            
+            // Si no estaba en la tienda, agrégalo para que no se pierda al re-renderizar
+            if (!studentSelections[al.id]) studentSelections[al.id] = data;
+
             const div = document.createElement('div');
             div.className = 'p-4 bg-white/5 border border-white/10 rounded-2xl flex flex-col gap-3 transition-all hover:border-primary-green/30 mb-3';
             div.innerHTML = `
                 <div class="flex items-center justify-between">
                     <label class="flex items-center gap-3 cursor-pointer w-full">
-                        <input type="checkbox" onchange="toggleStudentSub('${al.id}', this.checked)" data-id="${al.id}" class="chk-student w-6 h-6 rounded-lg accent-primary-green">
+                        <input type="checkbox" onchange="toggleStudentSub('${al.id}', this.checked)" data-id="${al.id}" class="chk-student w-6 h-6 rounded-lg accent-primary-green" ${data.checked ? 'checked' : ''}>
                         <span class="font-bold text-[13px] text-white tracking-tight leading-tight">${al.nombre_completo}</span>
                     </label>
                 </div>
-                <div id="sub-${al.id}" class="hidden space-y-4 pt-2 border-t border-white/5 mt-1">
-                    ${['Desatención', 'Disrupción', 'Agresión', 'Tareas'].map(b => {
+                <div id="sub-${al.id}" class="${data.checked ? '' : 'hidden'} space-y-4 pt-2 border-t border-white/5 mt-1">
+                    ${['Atención', 'Trabajo en Clase', 'Lenguaje Inapropiado', 'Sigue Indicaciones'].map(b => {
                         const uniqueId = `behav-${al.id}-${b.replace(/\s+/g, '')}`;
+                        const currentLevel = data.behaviors[b] || 'Nula';
                         return `
                             <div class="flex flex-col gap-2">
                                 <label for="${uniqueId}" class="text-[10px] font-black text-slate-400 uppercase tracking-tighter">${b}</label>
-                                <select id="${uniqueId}" name="${uniqueId}" class="behav-sel w-full text-xs p-3 bg-slate-900 rounded-xl text-white border-white/10" data-name="${b}">
-                                    <option value="Nula">NIVEL: NULO</option>
-                                    <option value="Baja">BAJO</option>
-                                    <option value="Media">MEDIO</option>
-                                    <option value="Alta">ALTO</option>
+                                <select id="${uniqueId}" name="${uniqueId}" onchange="saveBehavior('${al.id}', '${b}', this.value)" class="behav-sel w-full text-xs p-3 bg-slate-900 rounded-xl text-white border-white/10" data-name="${b}">
+                                    <option value="Nula" ${currentLevel === 'Nula' ? 'selected' : ''}>NIVEL: NULO</option>
+                                    <option value="Baja" ${currentLevel === 'Baja' ? 'selected' : ''}>BAJO</option>
+                                    <option value="Media" ${currentLevel === 'Media' ? 'selected' : ''}>MEDIO</option>
+                                    <option value="Alta" ${currentLevel === 'Alta' ? 'selected' : ''}>ALTO</option>
                                 </select>
                             </div>
                         `;
                     }).join('')}
+
+                    <!-- Seguimiento de Citatorios y Padres -->
+                    <div class="space-y-4 pt-4 border-t border-white/10 mt-2">
+                        <div class="flex flex-col gap-2">
+                            <label class="text-[10px] font-black text-blue-400 uppercase italic tracking-tighter">¿Se han enviado citatorios?</label>
+                            <select onchange="saveExtraField('${al.id}', 'citatorio', this.value); syncConditionalFields('${al.id}')" id="cit-${al.id}" class="w-full text-xs p-3 bg-slate-900 rounded-xl text-white border-white/10">
+                                <option value="No" ${data.citatorio === 'No' ? 'selected' : ''}>No, ninguno</option>
+                                <option value="Sí" ${data.citatorio === 'Sí' ? 'selected' : ''}>Sí, formalmente</option>
+                            </select>
+                        </div>
+                        
+                        <div id="cond-acudierom-${al.id}" class="${data.citatorio === 'Sí' ? '' : 'hidden'} animate-fade-in flex flex-col gap-2">
+                            <label class="text-[10px] font-black text-blue-400 uppercase italic tracking-tighter">¿Han acudido sus papás?</label>
+                            <select onchange="saveExtraField('${al.id}', 'acudio', this.value); syncConditionalFields('${al.id}')" id="acu-${al.id}" class="w-full text-xs p-3 bg-slate-900 rounded-xl text-white border-white/10">
+                                <option value="No" ${data.acudio === 'No' ? 'selected' : ''}>No han asistido</option>
+                                <option value="Sí" ${data.acudio === 'Sí' ? 'selected' : ''}>Sí, asistieron</option>
+                            </select>
+                        </div>
+
+                        <div id="cond-cumplio-${al.id}" class="${data.acudio === 'Sí' ? '' : 'hidden'} animate-fade-in flex flex-col gap-2">
+                            <label class="text-[10px] font-black text-blue-400 uppercase italic tracking-tighter">¿Han cumplido acuerdos?</label>
+                            <select onchange="saveExtraField('${al.id}', 'cumplio', this.value)" id="cum-${al.id}" class="w-full text-xs p-3 bg-slate-900 rounded-xl text-white border-white/10">
+                                <option value="No" ${data.cumplio === 'No' ? 'selected' : ''}>Incumplimiento</option>
+                                <option value="Sí" ${data.cumplio === 'Sí' ? 'selected' : ''}>Cumplimiento parcial/total</option>
+                            </select>
+                        </div>
+                    </div>
                 </div>
             `;
             list.appendChild(div);
-        });
-    }
+    });
 }
 
 function toggleStudentSub(id, v) { 
     const sub = document.getElementById(`sub-${id}`);
     if (sub) sub.classList.toggle('hidden', !v); 
+
+    if (!studentSelections[id]) {
+        studentSelections[id] = { 
+            checked: v, 
+            behaviors: { 'Atención': 'Nula', 'Trabajo en Clase': 'Nula', 'Lenguaje Inapropiado': 'Nula', 'Sigue Indicaciones': 'Nula' },
+            citatorio: 'No',
+            acudio: 'No',
+            cumplio: 'No'
+        };
+    } else {
+        studentSelections[id].checked = v;
+    }
+}
+
+function saveBehavior(id, behavior, level) {
+    if (!studentSelections[id]) {
+        studentSelections[id] = { 
+            checked: true, 
+            behaviors: { 'Atención': 'Nula', 'Trabajo en Clase': 'Nula', 'Lenguaje Inapropiado': 'Nula', 'Sigue Indicaciones': 'Nula' },
+            citatorio: 'No', acudio: 'No', cumplio: 'No'
+        };
+    }
+    studentSelections[id].behaviors[behavior] = level;
+}
+
+function saveExtraField(id, field, value) {
+    if (!studentSelections[id]) {
+        studentSelections[id] = { 
+            checked: true, 
+            behaviors: { 'Atención': 'Nula', 'Trabajo en Clase': 'Nula', 'Lenguaje Inapropiado': 'Nula', 'Sigue Indicaciones': 'Nula' },
+            citatorio: 'No', acudio: 'No', cumplio: 'No'
+        };
+    }
+    studentSelections[id][field] = value;
+}
+
+function syncConditionalFields(studentId) {
+    const data = studentSelections[studentId];
+    if (!data) return;
+
+    const acuContainer = document.getElementById(`cond-acudierom-${studentId}`);
+    const cumContainer = document.getElementById(`cond-cumplio-${studentId}`);
+
+    if (acuContainer) acuContainer.classList.toggle('hidden', data.citatorio !== 'Sí');
+    if (cumContainer) cumContainer.classList.toggle('hidden', data.acudio !== 'Sí' || data.citatorio !== 'Sí');
+}
+
+async function addManualStudent() {
+    const grupo = document.getElementById('grupo').value;
+    if (!grupo) { alert("Primero seleccione un grupo en el Paso 1."); return; }
+    
+    const nombre = prompt("Ingrese el NOMBRE COMPLETO del alumno:");
+    if (!nombre || nombre.trim().length < 5) return;
+
+    const newAl = {
+        id: 'manual-' + Date.now(),
+        nombre_completo: nombre.trim().toUpperCase(),
+        grupo: grupo
+    };
+    
+    globalAlumnos.push(newAl);
+    renderStudents();
+    alert("Alumno agregado temporalmente a la lista.");
 }
 
 
@@ -248,16 +360,23 @@ async function handleFormSubmit(e) {
     btn.textContent = "REGISTRANDO...";
 
     const reported = [];
-    document.querySelectorAll('.chk-student:checked').forEach(chk => {
-        const id = chk.getAttribute('data-id');
-        const s = document.getElementById(`sub-${id}`);
-        if (!s) return;
-        reported.push({
-            alumno_id: id,
-            nombre: globalAlumnos.find(a => a.id == id)?.nombre_completo,
-            behaviors: Array.from(s.querySelectorAll('.behav-sel')).map(sel => ({ type: sel.getAttribute('data-name'), level: sel.value }))
-        });
+    Object.keys(studentSelections).forEach(id => {
+        const s = studentSelections[id];
+        if (s.checked) {
+            reported.push({
+                alumno_id: id,
+                nombre: globalAlumnos.find(a => String(a.id) === id)?.nombre_completo,
+                behaviors: s.behaviors,
+                seguimiento_padres: {
+                    citatorio_enviado: s.citatorio,
+                    padres_asistieron: s.acudio,
+                    acuerdos_cumplidos: s.cumplio
+                }
+            });
+        }
     });
+
+    if (reported.length === 0 && !confirm("No ha seleccionado ningún alumno focalizado. ¿Desea enviar el reporte general de grupo solamente?")) return;
 
     const estrategias = Array.from(document.querySelectorAll('.estrategia-chk:checked')).map(c => c.value);
     if (document.getElementById('chk-otra-est')?.checked) {
@@ -273,15 +392,23 @@ async function handleFormSubmit(e) {
         periodo: document.getElementById('current-periodo')?.value || 'T2-2026',
         impacto: document.getElementById('impacto').value,
         tiempo_conducta: document.getElementById('tiempo_conducta').value,
-        ambiente_aula: {
+        ambiente: {
             atencion: document.getElementById('amb-atencion').value,
             respeto: document.getElementById('amb-respeto').value,
             participacion: document.getElementById('amb-participacion').value
         },
-        factores_externos: Array.from(document.querySelectorAll('.fact-ext-chk:checked')).map(c => c.value).concat(document.getElementById('fact-ext-otro-chk').checked ? [document.getElementById('fact-ext-text').value] : []),
+        factores_externos: {
+            lista: Array.from(document.querySelectorAll('.fact-ext-chk:checked')).map(c => c.value),
+            otro: document.getElementById('fact-ext-otro-chk').checked ? document.getElementById('fact-ext-text').value : null,
+            incluye: (document.querySelectorAll('.fact-ext-chk:checked').length > 0 || document.getElementById('fact-ext-otro-chk').checked) ? 'Sí' : 'No'
+        },
         alumnos_reportados: reported,
-        estrategias: estrategias,
-        eficacia_estrategias: document.getElementById('est-eficacia').value,
+        intervenciones: {
+            estrategias: estrategias,
+            eficacia: document.getElementById('est-eficacia').value === 'Alto' ? 'Sí' : 
+                     (document.getElementById('est-eficacia').value === 'Medio' ? 'Parcialmente' : 'No'),
+            otra_estrategia: document.getElementById('chk-otra-est')?.checked ? document.getElementById('otra-est-text')?.value : null
+        },
         comentarios: document.getElementById('comentarios').value,
         fecha: new Date().toISOString()
     };
