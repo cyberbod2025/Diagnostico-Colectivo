@@ -1,401 +1,256 @@
-<!-- SIRDE-310 v1.0.1 - Deploy Trigger -->
+<!-- SIRDE-310 | Institutional Form with Wizard Blindaje -->
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>SIRDE-310 | Respaldo Docente Institucional</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
-<body class="p-4 md:p-8">
-    <div id="auth-wall" class="fixed inset-0 z-[100] bg-slate-900/90 flex items-center justify-center p-4">
-        <div class="card w-full max-w-sm text-center space-y-8">
-            <h1 class="text-xl font-black italic">CONTROL INSTITUCIONAL</h1>
+<body class="p-2 md:p-8">
+    <div id="auth-wall" class="fixed inset-0 z-[100] bg-slate-900/95 flex items-center justify-center p-4">
+        <div class="card w-full max-w-sm text-center space-y-8 border-2 border-primary-green/30">
+            <div class="flex flex-col items-center gap-4">
+                <img src="logo_secundaria_310.svg" alt="Logo" class="h-20 w-auto opacity-80" style="mix-blend-mode: plus-lighter;">
+                <h1 class="text-xl font-black italic text-primary-green">CONTROL INSTITUCIONAL</h1>
+            </div>
             <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Validación de Credenciales SIRDE</p>
             <div class="relative">
-                <input type="password" id="entry-pin" placeholder="CLAVE DE ACCESO" class="w-full text-center tracking-widest font-black pr-12">
-                <button type="button" onclick="togglePinVisibility('entry-pin')" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white transition-colors p-1">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+                <input type="password" id="entry-pin" placeholder="CLAVE DE ACCESO" class="w-full text-center tracking-widest font-black pr-12 py-4 rounded-2xl bg-white/5 border-white/10 text-white">
+                <button type="button" onclick="togglePinVisibility('entry-pin')" class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white p-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
                 </button>
             </div>
-            <button onclick="checkAccess(document.getElementById('entry-pin').value)" class="btn-primary w-full">ACCEDER AL SISTEMA</button>
+            <button onclick="checkAccess(document.getElementById('entry-pin').value)" class="btn-primary w-full py-4 rounded-2xl shadow-lg shadow-primary-green/20">ACCEDER AL SISTEMA</button>
         </div>
     </div>
 
-    <main class="container">
-        <!-- HEADER INSTITUCIONAL -->
-        <header class="flex items-center justify-between border-b-2 border-slate-950 pb-6 mb-8">
+    <main class="container max-w-4xl mx-auto">
+        <header class="flex flex-col md:flex-row items-center justify-between border-b border-white/10 pb-6 mb-8 gap-6">
             <div class="flex items-center gap-6">
-                <img src="logo_secundaria_310.svg" alt="Logo" class="h-16 w-auto">
+                <img src="logo_secundaria_310.svg" alt="Logo" class="h-16 w-auto" style="mix-blend-mode: plus-lighter;">
                 <div class="space-y-1">
-                    <h1 class="text-2xl font-black tracking-tighter m-0">SIRDE-310</h1>
-                    <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Sistema Interno de Respaldo Docente Escolar</p>
-                    <p class="text-[9px] font-bold text-slate-400">Escuela Secundaria Diurna No. 310 "Presidentes de México" • Turno Vespertino</p>
+                    <h1 class="text-2xl font-black text-primary-green tracking-tighter m-0">SIRDE-310</h1>
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Respaldo Docente Institucional</p>
                 </div>
             </div>
-                <div class="flex flex-col items-end gap-2 text-right no-print">
-                    <div class="flex items-center gap-2">
-                        <span id="current-period-text" class="text-xs font-bold bg-primary-green/20 text-primary-green px-3 py-1 rounded-full border border-primary-green/30">TRIMESTRE 2 (2026)</span>
-                        <input type="hidden" id="current-periodo" value="T2-2026">
-                    </div>
-                    <div class="flex gap-3">
-                        <a href="dashboard.html" class="text-[10px] font-bold text-blue-800 underline uppercase">Dashboard</a>
-                        <button onclick="logoutSIRDE()" class="text-[10px] font-bold text-red-600 hover:text-red-800 uppercase">Cerrar Sesión</button>
-                    </div>
+            <div class="flex flex-col items-center md:items-end gap-2 text-center md:text-right no-print">
+                <span class="text-[10px] font-black bg-primary-green text-[#02140f] px-4 py-1.5 rounded-full uppercase italic">Trimestre 2 (2026)</span>
+                <input type="hidden" id="current-periodo" value="T2-2026">
+                <div class="flex gap-4">
+                    <a href="dashboard.html" class="text-[10px] font-bold text-primary-green underline uppercase hover:text-white transition-colors">Dashboard General</a>
+                    <button onclick="logoutSIRDE()" class="text-[10px] font-bold text-red-500 hover:text-red-300 uppercase">Cerrar Sesión</button>
                 </div>
+            </div>
         </header>
 
-        <form id="sirde-form" onsubmit="handleFormSubmit(event)" class="space-y-6">
-            <!-- IDENTIFICACIÓN -->
-            <section class="card">
-                <h2 class="section-title">Datos del Docente y Asignatura</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- PROGRESS TRACKER -->
+        <div class="max-w-xl mx-auto mb-10 px-4 no-print">
+            <div class="flex justify-between items-center relative">
+                <div class="absolute h-0.5 bg-white/10 w-full top-1/2 -translate-y-1/2 z-0"></div>
+                <div id="prog-bar" class="absolute h-0.5 bg-primary-green w-0 top-1/2 -translate-y-1/2 z-0 transition-all duration-500"></div>
+                
+                ${[1, 2, 3, 4].map(s => `
+                    <div class="relative z-10 flex flex-col items-center gap-2">
+                        <div id="step-dot-${s}" class="w-8 h-8 rounded-full bg-slate-800 border-2 border-white/10 flex items-center justify-center text-[10px] font-black transition-all">
+                            ${s}
+                        </div>
+                        <span id="step-lbl-${s}" class="text-[8px] font-bold text-slate-500 uppercase tracking-tighter">Paso ${s}</span>
+                    </div>
+                `).join('')}
+            </div>
+        </div>
+
+        <form id="sirde-form" onsubmit="handleFormSubmit(event)" class="space-y-8">
+            
+            <!-- PASO 1: IDENTIFICACIÓN -->
+            <section id="step-1" class="card shadow-2xl border-white/5 animate-fade-in">
+                <h2 class="section-title">1. Identificación y Grupo</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="input-group">
                         <label>Nombre del Docente</label>
-                        <select id="docente" required onchange="onTeacherChange()"></select>
+                        <select id="docente" required onchange="onTeacherChange()" class="w-full"></select>
                     </div>
                     <div class="input-group">
-                        <label>Grupo</label>
-                        <select id="grupo" required onchange="renderStudents()">
+                        <label>Grupo a Diagnosticar</label>
+                        <select id="grupo" required onchange="renderStudents()" class="w-full">
                             <option value="">Seleccionar...</option>
-                            <option value="1º A">1º A</option>
-                            <option value="1º B">1º B</option>
-                            <option value="1º C">1º C</option>
-                            <option value="1º D">1º D</option>
-                            <option value="2º A">2º A</option>
-                            <option value="2º B">2º B</option>
-                            <option value="2º C">2º C</option>
-                            <option value="2º D">2º D</option>
-                            <option value="3º A">3º A</option>
-                            <option value="3º B">3º B</option>
-                            <option value="3º C">3º C</option>
-                            <option value="3º D">3º D</option>
+                            <optgroup label="1er Grado">
+                                <option value="1º A">1º A</option><option value="1º B">1º B</option><option value="1º C">1º C</option><option value="1º D">1º D</option>
+                            </optgroup>
+                            <optgroup label="2do Grado">
+                                <option value="2º A">2º A</option><option value="2º B">2º B</option><option value="2º C">2º C</option><option value="2º D">2º D</option>
+                            </optgroup>
+                            <optgroup label="3er Grado">
+                                <option value="3º A">3º A</option><option value="3º B">3º B</option><option value="3º C">3º C</option><option value="3º D">3º D</option>
+                            </optgroup>
                         </select>
                     </div>
                     <div class="input-group">
                         <label>Asignatura</label>
-                        <input type="text" id="asignatura" required oninput="updateCampo()" placeholder="Ej. Biología">
+                        <input type="text" id="asignatura" required oninput="updateCampo()" placeholder="Ej. Matemáticas" class="w-full">
                     </div>
                     <div class="input-group">
                         <label>Campo Formativo</label>
-                        <input type="text" id="campo_formativo" readonly style="background: #f1f5f9; cursor: not-allowed;">
+                        <input type="text" id="campo_formativo" readonly class="w-full opacity-60 bg-white/5 cursor-not-allowed">
                     </div>
+                </div>
+                <div class="mt-8 flex justify-end">
+                    <button type="button" onclick="validateNext(1, 2)" class="px-10 py-4 bg-primary-green text-[#02140f] font-black rounded-2xl text-xs uppercase tracking-widest hover:scale-105 transition-all shadow-lg shadow-primary-green/20">Continuar al Diagnóstico →</button>
                 </div>
             </section>
 
-            <!-- CONDICIONES -->
-            <section class="card">
-                <h2 class="section-title">Análisis Colectivo del Grupo</h2>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div class="input-group col-span-1 md:col-span-3">
-                        <label class="mb-4">Factores de Impacto en el Aprendizaje (Auto-calculado)</label>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div class="flex items-center justify-between p-2 border border-slate-100 rounded">
-                                <span class="text-xs">Nivel de Concentración</span>
-                                <select class="impact-factor" onchange="calculateImpact()"><option value="3">Óptimo</option><option value="2">Regular</option><option value="1">Deficiente</option></select>
-                            </div>
-                            <div class="flex items-center justify-between p-2 border border-slate-100 rounded">
-                                <span class="text-xs">Cumplimiento de Tareas</span>
-                                <select class="impact-factor" onchange="calculateImpact()"><option value="3">Alto</option><option value="2">Medio</option><option value="1">Bajo</option></select>
-                            </div>
-                            <div class="flex items-center justify-between p-2 border border-slate-100 rounded">
-                                <span class="text-xs">Clima de Convivencia</span>
-                                <select class="impact-factor" onchange="calculateImpact()"><option value="3">Sano</option><option value="2">Tenso</option><option value="1">Hostil</option></select>
-                            </div>
-                            <div class="flex items-center justify-between p-2 border border-slate-100 rounded">
-                                <span class="text-xs">Participación Activa</span>
-                                <select class="impact-factor" onchange="calculateImpact()"><option value="3">Alta</option><option value="2">Moderada</option><option value="1">Pasiva</option></select>
-                            </div>
-                        </div>
-                        <div class="mt-4 p-3 bg-slate-50 border-l-4 border-slate-900 flex justify-between items-center">
-                            <span class="text-[10px] font-bold uppercase">Impacto Global Resultante:</span>
-                            <input type="text" id="impacto" readonly value="Bajo" class="text-center font-black border-none bg-transparent w-24">
-                        </div>
-                    </div>
-                    <div class="input-group">
-                        <label>Tiempo Perdido p/ Conducta</label>
-                        <select id="tiempo_conducta" required>
-                            <option value="<10%">&lt; 10%</option>
-                            <option value="10-25%">10% - 25%</option>
-                            <option value="25-50%">25% - 50%</option>
-                            <option value="+50%">&gt; 50%</option>
-                        </select>
-                    </div>
-                    <div class="input-group">
-                        <label>Nivel de Desempeño</label>
-                        <select id="nivel_grupo" required>
-                            <option value="Bajo">Bajo</option>
-                            <option value="Medio" selected>Medio</option>
-                            <option value="Alto">Alto</option>
-                            <option value="Crítico">Crítico</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="pt-4">
-                    <p class="text-[10px] font-bold text-slate-500 uppercase mb-3">Conductas Grupales Predominantes (Intensidad)</p>
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                        <div class="flex items-center justify-between p-2 border border-slate-200 rounded">
-                            <span class="text-xs font-bold">Interrupciones</span>
-                            <select class="chk-grupo" data-behav="Interrupciones">
-                                <option value="Nula">Nula</option>
-                                <option value="Baja">Baja</option>
-                                <option value="Media" selected>Media</option>
-                                <option value="Alta">Alta</option>
-                            </select>
-                            <select class="chk-grupo-freq text-[10px] border-none bg-slate-50 ml-2" data-behav="Interrupciones">
-                                <option value="Ocasional">Ocasional</option>
-                                <option value="Frecuente">Frecuente</option>
-                                <option value="Muy Frecuente">Muy Frecuente</option>
-                            </select>
-                        </div>
-                        <div class="flex items-center justify-between p-2 border border-slate-200 rounded">
-                            <span class="text-xs font-bold">Agresiones</span>
-                            <select class="chk-grupo" data-behav="Agresión">
-                                <option value="Nula">Nula</option>
-                                <option value="Baja">Baja</option>
-                                <option value="Media">Media</option>
-                                <option value="Alta">Alta</option>
-                            </select>
-                            <select class="chk-grupo-freq text-[10px] border-none bg-slate-50 ml-2" data-behav="Agresión">
-                                <option value="Ocasional">Ocasional</option>
-                                <option value="Frecuente">Frecuente</option>
-                                <option value="Muy Frecuente">Muy Frecuente</option>
-                            </select>
-                        </div>
-                        <div class="flex items-center justify-between p-2 border border-slate-200 rounded">
-                            <span class="text-xs font-bold">Desafío Autoridad</span>
-                            <select class="chk-grupo" data-behav="Desafío">
-                                <option value="Nula">Nula</option>
-                                <option value="Baja">Baja</option>
-                                <option value="Media">Media</option>
-                                <option value="Alta">Alta</option>
-                            </select>
-                            <select class="chk-grupo-freq text-[10px] border-none bg-slate-50 ml-2" data-behav="Desafío">
-                                <option value="Ocasional">Ocasional</option>
-                                <option value="Frecuente">Frecuente</option>
-                                <option value="Muy Frecuente">Muy Frecuente</option>
-                            </select>
-                        </div>
-                        <div class="flex items-center justify-between p-2 border border-slate-200 rounded">
-                            <span class="text-xs font-bold">Apatía/No trabaja</span>
-                            <select class="chk-grupo" data-behav="Apatía">
-                                <option value="Nula">Nula</option>
-                                <option value="Baja">Baja</option>
-                                <option value="Media">Media</option>
-                                <option value="Alta">Alta</option>
-                            </select>
-                            <select class="chk-grupo-freq text-[10px] border-none bg-slate-50 ml-2" data-behav="Apatía">
-                                <option value="Ocasional">Ocasional</option>
-                                <option value="Frecuente">Frecuente</option>
-                                <option value="Muy Frecuente">Muy Frecuente</option>
-                            </select>
-                        </div>
-                        <div class="flex items-center justify-between p-2 border border-slate-200 rounded">
-                            <span class="text-xs font-bold">Uso de Groserías</span>
-                            <select class="chk-grupo" data-behav="Groserías">
-                                <option value="Nula">Nula</option>
-                                <option value="Baja">Baja</option>
-                                <option value="Media">Media</option>
-                                <option value="Alta">Alta</option>
-                            </select>
-                            <select class="chk-grupo-freq text-[10px] border-none bg-slate-50 ml-2" data-behav="Groserías">
-                                <option value="Ocasional">Ocasional</option>
-                                <option value="Frecuente">Frecuente</option>
-                                <option value="Muy Frecuente">Muy Frecuente</option>
-                            </select>
-                        </div>
-                        <div class="flex items-center justify-between p-2 border border-slate-200 rounded">
-                            <span class="text-xs font-bold">Uso de Celular</span>
-                            <select class="chk-grupo" data-behav="Celular">
-                                <option value="Nula">Nula</option>
-                                <option value="Baja">Baja</option>
-                                <option value="Media">Media</option>
-                                <option value="Alta">Alta</option>
-                            </select>
-                            <select class="chk-grupo-freq text-[10px] border-none bg-slate-50 ml-2" data-behav="Celular">
-                                <option value="Ocasional">Ocasional</option>
-                                <option value="Frecuente">Frecuente</option>
-                                <option value="Muy Frecuente">Muy Frecuente</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="pt-6 border-t border-slate-100 mt-6">
-                    <p class="text-[10px] font-bold text-slate-500 uppercase mb-3">Ambiente del Grupo e Indicadores de Integridad</p>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div class="input-group-sub">
-                            <label class="text-[10px] uppercase text-slate-400">Nivel de Atención</label>
-                            <select id="amb-atencion" class="text-xs p-2 bg-slate-50 border-none rounded w-full">
-                                <option value="Bajo">Bajo</option>
-                                <option value="Medio" selected>Medio</option>
-                                <option value="Alto">Alto</option>
-                            </select>
-                        </div>
-                        <div class="input-group-sub">
-                            <label class="text-[10px] uppercase text-slate-400">Nivel de Respeto</label>
-                            <select id="amb-respeto" class="text-xs p-2 bg-slate-50 border-none rounded w-full">
-                                <option value="Bajo">Bajo</option>
-                                <option value="Medio" selected>Medio</option>
-                                <option value="Alto">Alto</option>
-                            </select>
-                        </div>
-                        <div class="input-group-sub">
-                            <label class="text-[10px] uppercase text-slate-400">Participación</label>
-                            <select id="amb-participacion" class="text-xs p-2 bg-slate-50 border-none rounded w-full">
-                                <option value="Bajo">Bajo</option>
-                                <option value="Medio" selected>Medio</option>
-                                <option value="Alto">Alto</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="pt-6 mt-6 bg-blue-50/30 p-4 rounded-lg">
+            <!-- PASO 2: ANÁLISIS COLECTIVO -->
+            <section id="step-2" class="card hidden border-white/5 animate-fade-in">
+                <h2 class="section-title">2. Diagnóstico Colectivo del Grupo</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div class="space-y-4">
-                        <div class="flex flex-col gap-2">
-                            <span class="text-xs font-bold uppercase text-primary-green/60">¿Algún factor externo influye?</span>
-                            <select id="fact-ext-select" class="w-full text-xs p-3 rounded" onchange="toggleOtroFactor(this.value)">
-                                <option value="Ninguno">Ninguno detectado</option>
-                                <option value="Falta de apoyo familiar">Falta de apoyo familiar / Desinterés</option>
-                                <option value="Problemas económicos">Problemas económicos evidentes</option>
-                                <option value="Situación emocional/duelo">Situación emocional o duelo</option>
-                                <option value="Barreras de aprendizaje">Barreras de Aprendizaje (BAP)</option>
-                                <option value="Inasistencias constantes">Inasistencias constantes / Salud</option>
-                                <option value="Otro">Otro (Especificar...)</option>
-                            </select>
-                        </div>
-                        <div id="otro-factor-container" class="hidden animate-fade-in">
-                            <input type="text" id="fact-ext-text" placeholder="Especifique el factor externo..." class="w-full text-xs p-3 border-dashed">
+                        <label class="text-[10px] font-black uppercase text-slate-500">Factores de Impacto Curricular</label>
+                        <div class="grid grid-cols-1 gap-3">
+                            <div class="flex items-center justify-between p-3 bg-white/5 rounded-xl border border-white/10">
+                                <span class="text-xs">Nivel de Concentración</span>
+                                <select class="impact-factor text-xs bg-slate-900 border-none p-1" onchange="calculateImpact()"><option value="3">Óptimo</option><option value="2">Regular</option><option value="1">Deficiente</option></select>
+                            </div>
+                            <div class="flex items-center justify-between p-3 bg-white/5 rounded-xl border border-white/10">
+                                <span class="text-xs">Cumplimiento de Tareas</span>
+                                <select class="impact-factor text-xs bg-slate-900 border-none p-1" onchange="calculateImpact()"><option value="3">Alto</option><option value="2" selected>Medio</option><option value="1">Bajo</option></select>
+                            </div>
+                            <div class="flex items-center justify-between p-3 bg-white/5 rounded-xl border border-white/10">
+                                <span class="text-xs">Clima de Convivencia</span>
+                                <select class="impact-factor text-xs bg-slate-900 border-none p-1" onchange="calculateImpact()"><option value="3">Sano</option><option value="2" selected>Tenso</option><option value="1">Hostil</option></select>
+                            </div>
                         </div>
                     </div>
+
+                    <div class="space-y-4">
+                        <label class="text-[10px] font-black uppercase text-slate-500">Variables de Gestión</label>
+                        <div class="input-group">
+                            <span class="text-[11px] text-slate-400">Tiempo de Clase p/ Conducta:</span>
+                            <select id="tiempo_conducta" class="w-full text-xs mt-1">
+                                <option value="<10%">&lt; 10%</option><option value="10-25%" selected>10% - 25%</option><option value="25-50%">25% - 50%</option><option value="+50%">&gt; 50%</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <span class="text-[11px] text-slate-400">Ambiente de Aula (Promedio):</span>
+                            <div class="grid grid-cols-3 gap-2 mt-1">
+                                <select id="amb-atencion" class="text-[10px] p-2 bg-slate-900"><option value="Alto">Atención</option><option value="Alto">Alto</option><option value="Medio" selected>Medio</option><option value="Bajo">Bajo</option></select>
+                                <select id="amb-respeto" class="text-[10px] p-2 bg-slate-900"><option value="Alto">Respeto</option><option value="Alto">Alto</option><option value="Medio" selected>Medio</option><option value="Bajo">Bajo</option></select>
+                                <select id="amb-participacion" class="text-[10px] p-2 bg-slate-900"><option value="Alto">Particip.</option><option value="Alto">Alto</option><option value="Medio" selected>Medio</option><option value="Bajo">Bajo</option></select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-10 pt-10 border-t border-white/5">
+                    <label class="text-[10px] font-black uppercase text-slate-500 mb-6 block">Factores Externos Detectados (Seleccione los necesarios)</label>
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                        ${['Disfunción Familiar', 'Nivel Económico', 'Violencia Entorno', 'Adicciones', 'Salud Mental', 'Inasistencias', 'Duelo/Pérdida', 'Traslados largos'].map(f => `
+                            <label class="flex items-center gap-3 p-3 bg-white/5 border border-white/10 rounded-xl cursor-pointer hover:bg-primary-green/5 hover:border-primary-green/30 transition-all text-[11px]">
+                                <input type="checkbox" class="fact-ext-chk w-4 h-4 rounded-md accent-primary-green" value="${f}">
+                                <span>${f}</span>
+                            </label>
+                        `).join('')}
+                        <label class="flex items-center gap-3 p-3 bg-white/5 border border-white/10 rounded-xl cursor-pointer hover:bg-primary-green/5 hover:border-primary-green/30 transition-all text-[11px]">
+                            <input type="checkbox" id="fact-ext-otro-chk" class="w-4 h-4 rounded-md accent-primary-green" onchange="toggleOtroFactor(this.checked)">
+                            <span class="font-bold">Otro...</span>
+                        </label>
+                    </div>
+                    <div id="otro-factor-container" class="mt-4 hidden animate-fade-in">
+                        <input type="text" id="fact-ext-text" placeholder="Especifique el factor externo..." class="w-full text-xs p-4 rounded-2xl bg-white/5 border-dashed border-primary-green/30 text-primary-green">
+                    </div>
+                </div>
+
+                <div class="mt-12 flex justify-between items-center">
+                    <button type="button" onclick="prevSection(1)" class="text-[10px] font-bold text-slate-500 uppercase hover:text-white transition-colors">← Volver al Paso 1</button>
+                    <button type="button" onclick="validateNext(2, 3)" class="px-10 py-4 bg-primary-green text-[#02140f] font-black rounded-2xl text-xs uppercase tracking-widest hover:scale-105 transition-all shadow-lg shadow-primary-green/20">Seguimiento Individual →</button>
                 </div>
             </section>
 
-            <!-- ALUMNOS -->
-            <section class="card">
-                <div id="student-list" class="student-list">
-                    <div class="p-8 text-center text-slate-500 border-2 border-dashed border-slate-200 rounded-xl">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto mb-3 opacity-20" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
-                        <p class="font-bold">SELECCIONE UN GRUPO PARA ACTIVAR EL LISTADO</p>
-                    </div>
+            <!-- PASO 3: SEGUIMIENTO INDIVIDUAL -->
+            <section id="step-3" class="card hidden border-white/5 animate-fade-in">
+                <div class="flex items-center justify-between mb-8">
+                    <h2 class="section-title">3. Seguimiento de Alumnos Focalizados</h2>
+                    <span id="group-name-badge" class="text-[10px] font-black py-1 px-3 bg-white/10 rounded-full text-slate-400">GRUPO: ---</span>
+                </div>
+                
+                <div id="student-list" class="space-y-4 min-h-[100px]">
+                    <!-- Se llena con JS -->
                 </div>
 
-                <!-- ADD MANUAL STUDENT -->
-                <div id="manual-student-zone" class="mt-6 pt-6 border-t border-slate-100 hidden">
-                    <p class="text-[10px] font-bold text-slate-400 uppercase mb-4">Si requiere agregar a otros alumnos con situaciones recurrentes:</p>
-                    <div class="flex gap-2">
-                        <select id="manual-student-select" class="flex-1 text-xs p-2">
+                <div id="manual-student-zone" class="mt-10 pt-10 border-t border-white/5 hidden">
+                    <p class="text-[10px] font-black text-slate-500 uppercase mb-4 tracking-widest">¿Falta algún alumno en la lista?</p>
+                    <div class="flex gap-3">
+                        <select id="manual-student-select" class="flex-1 text-xs py-4 px-6 rounded-2xl bg-white/5 border-white/10 text-white focus:border-primary-green/50 transition-all">
                             <option value="">Buscar en toda la escuela...</option>
                         </select>
-                        <button type="button" onclick="addManualStudent()" class="px-4 py-3 bg-primary-green text-[#02140f] rounded-lg flex items-center gap-2 text-xs font-black hover:scale-105 transition-all">
-                            <span>+</span>
-                        </button>
+                        <button type="button" onclick="addManualStudent()" class="px-6 py-4 bg-primary-green text-[#02140f] rounded-2xl flex items-center gap-2 text-lg font-black hover:scale-105 transition-all shadow-lg shadow-primary-green/30">+</button>
                     </div>
                 </div>
-                <div class="mt-8 flex justify-between items-center bg-white/5 p-4 rounded-xl border border-white/10">
-                    <p class="text-[10px] italic text-slate-400">Si ya terminó con los alumnos focalizados:</p>
-                    <button type="button" onclick="handleFormSubmit(event)" class="text-xs font-black text-primary-green hover:underline">FINALIZAR REPORTE →</button>
+
+                <div class="mt-12 flex justify-between items-center">
+                    <button type="button" onclick="prevSection(2)" class="text-[10px] font-bold text-slate-500 uppercase hover:text-white transition-colors">← Volver al Paso 2</button>
+                    <button type="button" onclick="validateNext(3, 4)" class="px-10 py-4 bg-primary-green text-[#02140f] font-black rounded-2xl text-xs uppercase tracking-widest hover:scale-105 transition-all shadow-lg shadow-primary-green/20">Acciones y Estrategias →</button>
                 </div>
             </section>
 
-            <!-- ESTRATEGIAS DE INTERVENCIÓN -->
-            <section class="card bg-slate-50 border-slate-200">
-                <h2 class="section-title">Estrategias de Intervención Docente</h2>
-                <p class="text-[10px] font-bold text-slate-400 uppercase mb-4">Seleccione las acciones aplicadas con el grupo</p>
+            <!-- PASO 4: ESTRATEGIAS Y FINALIZAR -->
+            <section id="step-4" class="card hidden border-primary-green/20 animate-fade-in bg-primary-green/[0.02]">
+                <h2 class="section-title text-primary-green">4. Estrategias y Cierre del Reporte</h2>
                 
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 mb-6">
-                    <label class="flex items-center gap-2 p-2 bg-white rounded border border-slate-100 hover:border-blue-200 cursor-pointer transition-all">
-                        <input type="checkbox" class="estrategia-chk" value="Llamada de atención verbal">
-                        <span class="text-xs">Llamada de atención verbal</span>
-                    </label>
-                    <label class="flex items-center gap-2 p-2 bg-white rounded border border-slate-100 hover:border-blue-200 cursor-pointer transition-all">
-                        <input type="checkbox" class="estrategia-chk" value="Cambio de lugar">
-                        <span class="text-xs">Cambio de lugar</span>
-                    </label>
-                    <label class="flex items-center gap-2 p-2 bg-white rounded border border-slate-100 hover:border-blue-200 cursor-pointer transition-all">
-                        <input type="checkbox" class="estrategia-chk" value="Trabajo individual supervisado">
-                        <span class="text-xs">Trabajo individual supervisado</span>
-                    </label>
-                    <label class="flex items-center gap-2 p-2 bg-white rounded border border-slate-100 hover:border-blue-200 cursor-pointer transition-all">
-                        <input type="checkbox" class="estrategia-chk" value="Trabajo colaborativo guiado">
-                        <span class="text-xs">Trabajo colaborativo guiado</span>
-                    </label>
-                    <label class="flex items-center gap-2 p-2 bg-white rounded border border-slate-100 hover:border-blue-200 cursor-pointer transition-all">
-                        <input type="checkbox" class="estrategia-chk" value="Acuerdo de conducta con el alumno">
-                        <span class="text-xs">Acuerdo de conducta con el alumno</span>
-                    </label>
-                    <label class="flex items-center gap-2 p-2 bg-white rounded border border-slate-100 hover:border-blue-200 cursor-pointer transition-all">
-                        <input type="checkbox" class="estrategia-chk" value="Registro en bitácora">
-                        <span class="text-xs">Registro en bitácora</span>
-                    </label>
-                    <label class="flex items-center gap-2 p-2 bg-white rounded border border-slate-100 hover:border-blue-200 cursor-pointer transition-all">
-                        <input type="checkbox" class="estrategia-chk" value="Citatorio a padres">
-                        <span class="text-xs">Citatorio a padres</span>
-                    </label>
-                    <label class="flex items-center gap-2 p-2 bg-white rounded border border-slate-100 hover:border-blue-200 cursor-pointer transition-all">
-                        <input type="checkbox" class="estrategia-chk" value="Canalización a tutoría">
-                        <span class="text-xs">Canalización a tutoría</span>
-                    </label>
-                    <label class="flex items-center gap-2 p-2 bg-white rounded border border-slate-100 hover:border-blue-200 cursor-pointer transition-all">
-                        <input type="checkbox" class="estrategia-chk" value="Actividad diferenciada">
-                        <span class="text-xs">Actividad diferenciada</span>
-                    </label>
-                    <label class="flex items-center gap-2 p-2 bg-white rounded border border-slate-100 hover:border-blue-200 cursor-pointer transition-all">
-                        <input type="checkbox" class="estrategia-chk" value="Refuerzo positivo">
-                        <span class="text-xs">Refuerzo positivo</span>
-                    </label>
-                    <label class="flex items-center gap-2 p-2 bg-white rounded border border-slate-100 hover:border-blue-200 cursor-pointer transition-all">
-                        <input type="checkbox" class="estrategia-chk" value="Tiempo fuera (pausa breve)">
-                        <span class="text-xs">Tiempo fuera (pausa breve)</span>
-                    </label>
-                    <label class="flex items-center gap-2 p-2 bg-white rounded border border-slate-100 hover:border-blue-200 cursor-pointer transition-all">
-                        <input type="checkbox" class="estrategia-chk" value="Seguimiento individual">
-                        <span class="text-xs">Seguimiento individual</span>
-                    </label>
-                    <label class="flex items-center gap-2 p-2 bg-white rounded border border-slate-100 hover:border-blue-200 cursor-pointer transition-all col-span-full">
-                        <input type="checkbox" id="chk-otra-est" onchange="document.getElementById('otra-est-text').classList.toggle('hidden')">
-                        <span class="text-xs font-bold text-blue-800">Otra estrategia...</span>
-                    </label>
-                </div>
-
-                <textarea id="otra-est-text" rows="2" placeholder="Describe brevemente la estrategia aplicada..." class="w-full hidden mb-6 text-xs"></textarea>
-
-                <div class="pt-6 border-t border-slate-200 flex flex-col md:flex-row items-center justify-between gap-4">
-                    <div class="flex items-center gap-4">
-                        <span class="text-sm font-black text-slate-800 italic uppercase">¿Funcionó la estrategia?</span>
-                        <select id="est-eficacia" class="text-xs p-2 bg-white border-slate-300 rounded font-bold">
-                            <option value="Pendiente">--- Selecciones ---</option>
-                            <option value="Sí" class="text-green-600">Sí, resultados visibles</option>
-                            <option value="Parcialmente" class="text-orange-600">Parcialmente</option>
-                            <option value="No" class="text-red-600">No funcionó / Empeoró</option>
-                        </select>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="space-y-4">
+                        <label class="text-[10px] font-black uppercase text-slate-500">Acciones Institucionales Aplicadas</label>
+                        <div class="grid grid-cols-1 gap-2">
+                            ${['Entrevista Inicial', 'Citatorio a Padres', 'Reporte Escrito', 'Firma de Compromiso', 'Canalización USAER/Orientación', 'Trabajo Especial', 'Suspensión'].map(e => `
+                                <label class="flex items-center gap-3 p-3 bg-white/5 border border-white/10 rounded-xl cursor-pointer hover:bg-white/10 text-xs">
+                                    <input type="checkbox" class="estrategia-chk w-4 h-4 rounded accent-primary-green" value="${e}">
+                                    <span>${e}</span>
+                                </label>
+                            `).join('')}
+                            <label class="flex flex-col gap-2 p-3 bg-white/5 border border-white/10 rounded-xl">
+                                <span class="flex items-center gap-3 text-xs">
+                                    <input type="checkbox" id="chk-otra-est" class="w-4 h-4 rounded accent-primary-green">
+                                    <span>Otra estrategia específica:</span>
+                                </span>
+                                <input type="text" id="otra-est-text" placeholder="Describa brevemente..." class="text-[10px] p-2 bg-slate-900 border-none rounded">
+                            </label>
+                        </div>
                     </div>
-                    <button type="submit" id="btn-submit" class="btn-primary md:w-auto px-12">REGISTRAR DIAGNÓSTICO INSTITUCIONAL</button>
+
+                    <div class="space-y-6">
+                        <div class="input-group">
+                            <label>Impacto de las Estrategias</label>
+                            <select id="est-eficacia" class="w-full text-xs">
+                                <option value="Alto">Alto Impacto (Mejoró conducta)</option>
+                                <option value="Medio" selected>Medio Impacto (Sigue igual)</option>
+                                <option value="Bajo">Bajo Impacto (Empeoró)</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label>Comentarios / Acuerdos del CTE</label>
+                            <textarea id="comentarios" rows="5" placeholder="Escriba compromisos o acuerdos institucionales para este grupo..." class="w-full text-xs p-4 rounded-2xl bg-white/5 border-white/10"></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-12 flex flex-col md:flex-row justify-between items-center gap-6">
+                    <button type="button" onclick="prevSection(3)" class="text-[10px] font-bold text-slate-500 uppercase hover:text-white transition-colors">← Revisar Alumnos</button>
+                    <button type="submit" id="btn-submit" class="w-full md:w-auto px-16 py-5 bg-primary-green text-[#02140f] font-black rounded-2xl text-sm uppercase tracking-widest hover:scale-105 transition-all shadow-2xl shadow-primary-green/40">
+                        REGISTRAR DIAGNÓSTICO FINAL
+                    </button>
                 </div>
             </section>
 
-            <!-- COMENTARIOS ADICIONALES -->
-            <section class="card">
-                <h2 class="section-title">Comentarios Adicionales</h2>
-                <textarea id="comentarios" rows="2" placeholder="Cualquier dato extra que el CTE deba conocer..." class="w-full text-xs"></textarea>
-            </section>
         </form>
-
-        <footer class="text-center py-12 border-t mt-12 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-            SIRDE-310 • Documento de Uso Estrictamente Interno • Secundaria 310
-        </footer>
     </main>
 
+    <footer class="container mt-12 mb-8 text-center no-print">
+        <p class="text-[9px] font-bold text-slate-500 uppercase tracking-widest">© 2026 Respaldo Institucional SIRDE-310 • v1.0.1</p>
+    </footer>
+
     <script src="app.js"></script>
-    <script>
-        // Check Session Access on page load
-        if (sessionStorage.getItem('auth_sirde') === 'true') {
-            document.getElementById('auth-wall').style.display = 'none';
-            initData();
-        }
-    </script>
 </body>
 </html>
