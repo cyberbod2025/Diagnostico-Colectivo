@@ -26,9 +26,13 @@ body {
     padding: 2rem 1rem;
 }
 
-.card {
-    background: var(--card-bg);
-    border: 1px solid var(--border-gray);
+.card, 
+.bg-slate-50, 
+.bg-white, 
+.bg-blue-50\/30 {
+    background: var(--card-bg) !important;
+    border: 1px solid var(--border-gray) !important;
+    color: var(--text-main) !important;
     border-radius: 12px;
     padding: 2rem;
     box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
@@ -36,9 +40,28 @@ body {
     transition: all 0.2s ease;
 }
 
-input, select, textarea {
-    font-size: 1rem !important; /* Avoid zoom on iOS and better readability */
-    padding: 0.85rem !important;
+label, span, p, h1, h2, h3, h4 {
+    color: var(--text-main) !important;
+}
+
+.text-slate-500, .text-slate-400, .text-slate-900 {
+    color: var(--text-muted) !important;
+}
+
+.estrategia-chk + span,
+.chk-student + span {
+    color: var(--text-main) !important;
+}
+
+.bg-white.rounded.border {
+    background: #0f172a !important;
+    border-color: #334155 !important;
+}
+
+select {
+    background-color: #0f172a !important;
+    color: white !important;
+    border: 1px solid #334155 !important;
 }
 
 @media (max-width: 640px) {
