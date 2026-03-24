@@ -24,10 +24,12 @@ const CAMPO_FORMATIVO_MAP = {
 };
 
 let globalAlumnos = [];
+let globalPersonal = [];
 
 async function initData() {
     try {
-        const { data: personal } = await supabaseClient.from('personal').select('nombre').order('nombre');
+        const { data: personal } = await supabaseClient.from('personal').select('nombre, departamento').order('nombre');
+        globalPersonal = personal || [];
         const d = document.getElementById('docente');
         if (d && personal) {
             d.innerHTML = '<option value="">Seleccionar...</option>';
@@ -39,12 +41,40 @@ async function initData() {
         }
         const { data: alumnos } = await supabaseClient.from('alumnos').select('*').order('nombre_completo');
         globalAlumnos = alumnos || [];
-    } catch (e) { console.error("Error initData:", e); }
+    } catch (e) { 
+        console.error("Error initData:", e); 
+        alert("Error de conexión con el servidor institucional. Por favor, recargue la página.");
+    }
+}
+
+function calculateImpact() {
+    const factors = document.querySelectorAll('.impact-factor');
+    let sum = 0;
+    factors.forEach(f => sum += parseInt(f.value));
+    
+    // Max sum = 12, Min = 4
+    let result = "Bajo";
+    if (sum <= 6) result = "Crítico";
+    else if (sum <= 8) result = "Alto";
+    else if (sum <= 10) result = "Medio";
+    
+    document.getElementById('impacto').value = result;
+}
+
+function onTeacherChange() {
+    const docenteName = document.getElementById('docente').value;
+    const p = globalPersonal.find(x => x.nombre === docenteName);
+    if (p) {
+        document.getElementById('asignatura').value = p.departamento || '';
+        updateCampo();
+    }
 }
 
 function updateCampo() {
     const asig = document.getElementById('asignatura').value;
-    document.getElementById('campo_formativo').value = CAMPO_FORMATIVO_MAP[asig] || 'Asignar campo...';
+    // Normalizar para el mapa
+    let normalized = asig.charAt(0) + asig.slice(1).toLowerCase();
+    document.getElementById('campo_formativo').value = CAMPO_FORMATIVO_MAP[normalized] || CAMPO_FORMATIVO_MAP[asig] || 'Asignar campo...';
 }
 
 function renderStudents() {
@@ -69,14 +99,26 @@ function renderStudents() {
                 </label>
             </div>
             <div id="subform-${alumno.id}" class="student-subform" data-id="${alumno.id}">
-                <p style="font-size: 0.75rem; font-weight: 700; margin-bottom: 0.5rem;">Causa del reporte (Obligatorio):</p>
+                <p style="font-size: 0.75rem; font-weight: 700; margin-bottom: 0.5rem;">Causa del reporte (Intensidad):</p>
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; font-size: 0.75rem;">
-                    <label><input type="checkbox" name="behav-${alumno.id}" value="Interrupciones"> Interrupciones</label>
-                    <label><input type="checkbox" name="behav-${alumno.id}" value="Agresión"> Agresión</label>
-                    <label><input type="checkbox" name="behav-${alumno.id}" value="No trabaja"> No trabaja</label>
-                    <label><input type="checkbox" name="behav-${alumno.id}" value="Distracción"> Distracción</label>
-                    <label><input type="checkbox" name="behav-${alumno.id}" value="Desafío"> Desafío autoridad</label>
-                    <label><input type="checkbox" name="behav-${alumno.id}" value="Material"> Falta de material</label>
+                    <div class="flex items-center justify-between"><span class="mr-2">Interrupciones</span>
+                        <select class="behav-sel" data-name="Interrupciones"><option value="Nula">Nula</option><option value="Baja">Baja</option><option value="Media">Media</option><option value="Alta">Alta</option></select>
+                    </div>
+                    <div class="flex items-center justify-between"><span class="mr-2">Agresión</span>
+                        <select class="behav-sel" data-name="Agresión"><option value="Nula">Nula</option><option value="Baja">Baja</option><option value="Media">Media</option><option value="Alta">Alta</option></select>
+                    </div>
+                    <div class="flex items-center justify-between"><span class="mr-2">No trabaja</span>
+                        <select class="behav-sel" data-name="No trabaja"><option value="Nula">Nula</option><option value="Baja">Baja</option><option value="Media">Media</option><option value="Alta">Alta</option></select>
+                    </div>
+                    <div class="flex items-center justify-between"><span class="mr-2">Distracción</span>
+                        <select class="behav-sel" data-name="Distracción"><option value="Nula">Nula</option><option value="Baja">Baja</option><option value="Media">Media</option><option value="Alta">Alta</option></select>
+                    </div>
+                    <div class="flex items-center justify-between"><span class="mr-2">Groserías</span>
+                        <select class="behav-sel" data-name="Groserías"><option value="Nula">Nula</option><option value="Baja">Baja</option><option value="Media">Media</option><option value="Alta">Alta</option></select>
+                    </div>
+                    <div class="flex items-center justify-between"><span class="mr-2">Falta de material</span>
+                        <select class="behav-sel" data-name="Material"><option value="Nula">Nula</option><option value="Baja">Baja</option><option value="Media">Media</option><option value="Alta">Alta</option></select>
+                    </div>
                 </div>
                 <div style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid #cbd5e1; display: flex; gap: 1rem;">
                     <label style="margin: 0;">¿Citado a padres? <input type="checkbox" onchange="toggleAttendance('${alumno.id}', this.checked)" class="citado-chk"></label>
@@ -136,11 +178,12 @@ async function handleFormSubmit(e) {
     
     for (let chk of checked) {
         const id = chk.getAttribute('data-id');
-        const name = chk.parentElement.nextElementSibling ? chk.parentElement.nextElementSibling.textContent : ''; // fall back
-        const behaviors = Array.from(document.querySelectorAll(`input[name="behav-${id}"]:checked`)).map(b => b.value);
+        const behaviors = Array.from(document.querySelectorAll(`#subform-${id} .behav-sel`))
+            .filter(sel => sel.value !== 'Nula')
+            .map(sel => ({ type: sel.getAttribute('data-name'), level: sel.value }));
         
         if (behaviors.length === 0) {
-            alert('VALIDACIÓN: Cada alumno seleccionado debe tener al menos una conducta marcada.');
+            alert('VALIDACIÓN: Cada alumno seleccionado debe tener al menos una conducta con intensidad (Baja, Media o Alta).');
             return;
         }
 
@@ -180,7 +223,10 @@ async function handleFormSubmit(e) {
         impacto: document.getElementById('impacto').value,
         tiempo_conducta: document.getElementById('tiempo_conducta').value,
         nivel_grupo: document.getElementById('nivel_grupo').value,
-        conductas_grupales: Array.from(document.querySelectorAll('.chk-grupo:checked')).map(c => c.value),
+        conductas_grupales: Array.from(document.querySelectorAll('.chk-grupo')).map(sel => ({
+            type: sel.getAttribute('data-behav'),
+            level: sel.value
+        })),
         alumnos_reportados: reportedStudents,
         comentarios: document.getElementById('comentarios').value,
         fecha: new Date().toISOString()

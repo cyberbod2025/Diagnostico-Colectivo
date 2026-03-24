@@ -47,7 +47,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div class="input-group">
                         <label>Nombre del Docente</label>
-                        <select id="docente" required></select>
+                        <select id="docente" required onchange="onTeacherChange()"></select>
                     </div>
                     <div class="input-group">
                         <label>Grupo</label>
@@ -74,14 +74,30 @@
             <section class="card">
                 <h2 class="section-title">Análisis Colectivo del Grupo</h2>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div class="input-group">
-                        <label>Impacto en el Aprendizaje</label>
-                        <select id="impacto" required>
-                            <option value="Bajo">Bajo</option>
-                            <option value="Medio" selected>Medio</option>
-                            <option value="Alto">Alto</option>
-                            <option value="Crítico">Crítico</option>
-                        </select>
+                    <div class="input-group col-span-1 md:col-span-3">
+                        <label class="mb-4">Factores de Impacto en el Aprendizaje (Auto-calculado)</label>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="flex items-center justify-between p-2 border border-slate-100 rounded">
+                                <span class="text-xs">Nivel de Concentración</span>
+                                <select class="impact-factor" onchange="calculateImpact()"><option value="3">Óptimo</option><option value="2">Regular</option><option value="1">Deficiente</option></select>
+                            </div>
+                            <div class="flex items-center justify-between p-2 border border-slate-100 rounded">
+                                <span class="text-xs">Cumplimiento de Tareas</span>
+                                <select class="impact-factor" onchange="calculateImpact()"><option value="3">Alto</option><option value="2">Medio</option><option value="1">Bajo</option></select>
+                            </div>
+                            <div class="flex items-center justify-between p-2 border border-slate-100 rounded">
+                                <span class="text-xs">Clima de Convivencia</span>
+                                <select class="impact-factor" onchange="calculateImpact()"><option value="3">Sano</option><option value="2">Tenso</option><option value="1">Hostil</option></select>
+                            </div>
+                            <div class="flex items-center justify-between p-2 border border-slate-100 rounded">
+                                <span class="text-xs">Participación Activa</span>
+                                <select class="impact-factor" onchange="calculateImpact()"><option value="3">Alta</option><option value="2">Moderada</option><option value="1">Pasiva</option></select>
+                            </div>
+                        </div>
+                        <div class="mt-4 p-3 bg-slate-50 border-l-4 border-slate-900 flex justify-between items-center">
+                            <span class="text-[10px] font-bold uppercase">Impacto Global Resultante:</span>
+                            <input type="text" id="impacto" readonly value="Bajo" class="text-center font-black border-none bg-transparent w-24">
+                        </div>
                     </div>
                     <div class="input-group">
                         <label>Tiempo Perdido p/ Conducta</label>
@@ -103,12 +119,62 @@
                     </div>
                 </div>
                 <div class="pt-4">
-                    <p class="text-[10px] font-bold text-slate-500 uppercase mb-3">Conductas Grupales Predominantes</p>
-                    <div class="grid grid-cols-2 lg:grid-cols-4 gap-2">
-                        <label class="flex items-center gap-2 text-xs p-3 border border-slate-200 rounded cursor-pointer"><input type="checkbox" class="chk-grupo" value="Interrupciones"> Interrupciones frecuentes</label>
-                        <label class="flex items-center gap-2 text-xs p-3 border border-slate-200 rounded cursor-pointer"><input type="checkbox" class="chk-grupo" value="Agresión"> Incidentes agresivos</label>
-                        <label class="flex items-center gap-2 text-xs p-3 border border-slate-200 rounded cursor-pointer"><input type="checkbox" class="chk-grupo" value="Desafío"> Desafío a autoridad</label>
-                        <label class="flex items-center gap-2 text-xs p-3 border border-slate-200 rounded cursor-pointer"><input type="checkbox" class="chk-grupo" value="Apatía"> Apatía / No trabajo</label>
+                    <p class="text-[10px] font-bold text-slate-500 uppercase mb-3">Conductas Grupales Predominantes (Intensidad)</p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <div class="flex items-center justify-between p-2 border border-slate-200 rounded">
+                            <span class="text-xs font-bold">Interrupciones</span>
+                            <select class="chk-grupo" data-behav="Interrupciones">
+                                <option value="Nula">Nula</option>
+                                <option value="Baja">Baja</option>
+                                <option value="Media" selected>Media</option>
+                                <option value="Alta">Alta</option>
+                            </select>
+                        </div>
+                        <div class="flex items-center justify-between p-2 border border-slate-200 rounded">
+                            <span class="text-xs font-bold">Agresiones</span>
+                            <select class="chk-grupo" data-behav="Agresión">
+                                <option value="Nula">Nula</option>
+                                <option value="Baja">Baja</option>
+                                <option value="Media">Media</option>
+                                <option value="Alta">Alta</option>
+                            </select>
+                        </div>
+                        <div class="flex items-center justify-between p-2 border border-slate-200 rounded">
+                            <span class="text-xs font-bold">Desafío Autoridad</span>
+                            <select class="chk-grupo" data-behav="Desafío">
+                                <option value="Nula">Nula</option>
+                                <option value="Baja">Baja</option>
+                                <option value="Media">Media</option>
+                                <option value="Alta">Alta</option>
+                            </select>
+                        </div>
+                        <div class="flex items-center justify-between p-2 border border-slate-200 rounded">
+                            <span class="text-xs font-bold">Apatía/No trabaja</span>
+                            <select class="chk-grupo" data-behav="Apatía">
+                                <option value="Nula">Nula</option>
+                                <option value="Baja">Baja</option>
+                                <option value="Media">Media</option>
+                                <option value="Alta">Alta</option>
+                            </select>
+                        </div>
+                        <div class="flex items-center justify-between p-2 border border-slate-200 rounded">
+                            <span class="text-xs font-bold">Uso de Groserías</span>
+                            <select class="chk-grupo" data-behav="Groserías">
+                                <option value="Nula">Nula</option>
+                                <option value="Baja">Baja</option>
+                                <option value="Media">Media</option>
+                                <option value="Alta">Alta</option>
+                            </select>
+                        </div>
+                        <div class="flex items-center justify-between p-2 border border-slate-200 rounded">
+                            <span class="text-xs font-bold">Uso de Celular</span>
+                            <select class="chk-grupo" data-behav="Celular">
+                                <option value="Nula">Nula</option>
+                                <option value="Baja">Baja</option>
+                                <option value="Media">Media</option>
+                                <option value="Alta">Alta</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
             </section>
