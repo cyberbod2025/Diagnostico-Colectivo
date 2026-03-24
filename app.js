@@ -28,10 +28,16 @@ async function checkAccess(pin) {
 }
 
 async function initData() {
-    const { data: p } = await supabaseClient.from('personal').select('nombre, departamento').order('nombre');
+    console.log("Iniciando carga de datos escolar...");
+    const { data: p, error: ep } = await supabaseClient.from('personal').select('nombre, departamento').order('nombre');
     globalPersonal = p || [];
-    const { data: a } = await supabaseClient.from('alumnos').select('*').order('nombre_completo');
+    if (ep) console.error("Error cargando personal:", ep);
+    
+    const { data: a, error: ea } = await supabaseClient.from('alumnos').select('*').order('nombre_completo');
     globalAlumnos = a || [];
+    if (ea) console.error("Error cargando alumnos:", ea);
+    
+    console.log(`Cargados ${globalPersonal.length} docentes y ${globalAlumnos.length} alumnos.`);
     
     const d = document.getElementById('docente');
     if (d) {
