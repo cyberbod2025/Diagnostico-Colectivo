@@ -6,9 +6,15 @@
     <title>Tablero de Análisis | SIRDE-310</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
-    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style type="text/tailwindcss">
+        @theme {
+            --color-primary-green: #00ffa6;
+            --font-outfit: "Outfit", sans-serif;
+        }
+    </style>
     <style>
         .conclusion-card {
             border-left: 6px solid var(--primary-blue);
