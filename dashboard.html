@@ -56,13 +56,24 @@
             </div>
             <div class="flex flex-col items-end gap-3 no-print">
                 <div class="flex gap-2">
-                    <select id="filter-grupo" onchange="runAnalysis()" class="p-2 border border-slate-300 rounded text-sm w-48">
-                        <option value="">Seleccionar Grupo...</option>
-                        <option value="2° A">2° A</option>
-                        <option value="2° B">2° B</option>
-                        <option value="2° C">2° C</option>
-                        <option value="2° D">2° D</option>
-                    </select>
+                    <div style="flex: 1; min-width: 200px;">
+                        <label style="display: block; font-size: 0.65rem; font-weight: 700; color: #64748b; margin-bottom: 0.5rem; text-transform: uppercase;">Filtrar por Grupo</label>
+                        <select id="filter-grupo" onchange="renderDashboard()" style="width: 100%; padding: 0.6rem; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 0.85rem;">
+                            <option value="Todos">Todos los Grupos (12)</option>
+                            <option value="1º A">1º A</option>
+                            <option value="1º B">1º B</option>
+                            <option value="1º C">1º C</option>
+                            <option value="1º D">1º D</option>
+                            <option value="2º A">2º A</option>
+                            <option value="2º B">2º B</option>
+                            <option value="2º C">2º C</option>
+                            <option value="2º D">2º D</option>
+                            <option value="3º A">3º A</option>
+                            <option value="3º B">3º B</option>
+                            <option value="3º C">3º C</option>
+                            <option value="3º D">3º D</option>
+                        </select>
+                    </div>
                     <button onclick="window.print()" class="px-4 py-2 border border-black font-bold text-[10px] rounded hover:bg-slate-50 transition-all uppercase">
                         Imprimir Informe
                     </button>
