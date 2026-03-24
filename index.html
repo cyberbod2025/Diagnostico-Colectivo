@@ -92,12 +92,12 @@
                 <h2 class="section-title">1. Identificación y Grupo</h2>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="input-group">
-                        <label>Nombre del Docente</label>
-                        <select id="docente" required onchange="onTeacherChange()" class="w-full"></select>
+                        <label for="docente">Nombre del Docente</label>
+                        <select id="docente" name="docente" required onchange="onTeacherChange()" class="w-full"></select>
                     </div>
                     <div class="input-group">
-                        <label>Grupo a Diagnosticar</label>
-                        <select id="grupo" required onchange="renderStudents()" class="w-full">
+                        <label for="grupo">Grupo a Diagnosticar</label>
+                        <select id="grupo" name="grupo" required onchange="renderStudents()" class="w-full">
                             <option value="">Seleccionar...</option>
                             <optgroup label="1er Grado">
                                 <option value="1º A">1º A</option><option value="1º B">1º B</option><option value="1º C">1º C</option><option value="1º D">1º D</option>
@@ -111,12 +111,12 @@
                         </select>
                     </div>
                     <div class="input-group">
-                        <label>Asignatura</label>
-                        <input type="text" id="asignatura" required oninput="updateCampo()" placeholder="Ej. Matemáticas" class="w-full">
+                        <label for="asignatura">Asignatura</label>
+                        <input type="text" id="asignatura" name="asignatura" required oninput="updateCampo()" placeholder="Ej. Matemáticas" class="w-full">
                     </div>
                     <div class="input-group">
-                        <label>Campo Formativo</label>
-                        <input type="text" id="campo_formativo" readonly class="w-full opacity-60 bg-white/5 cursor-not-allowed">
+                        <label for="campo_formativo">Campo Formativo</label>
+                        <input type="text" id="campo_formativo" name="campo_formativo" readonly class="w-full opacity-60 bg-white/5 cursor-not-allowed">
                     </div>
                 </div>
                 <div class="mt-8 flex justify-end">
@@ -132,16 +132,16 @@
                         <label class="text-[10px] font-black uppercase text-slate-500">Factores de Impacto Curricular</label>
                         <div class="grid grid-cols-1 gap-3">
                             <div class="flex items-center justify-between p-3 bg-white/5 rounded-xl border border-white/10">
-                                <span class="text-xs">Nivel de Concentración</span>
-                                <select name="impactO-concentracion" class="impact-factor text-xs bg-slate-900 border-none p-1" onchange="calculateImpact()"><option value="3">Óptimo</option><option value="2">Regular</option><option value="1">Deficiente</option></select>
+                                <label for="impacto-concentracion" class="text-xs">Nivel de Concentración</label>
+                                <select id="impacto-concentracion" name="impacto-concentracion" class="impact-factor text-xs bg-slate-900 border-none p-1" onchange="calculateImpact()"><option value="3">Óptimo</option><option value="2">Regular</option><option value="1">Deficiente</option></select>
                             </div>
                             <div class="flex items-center justify-between p-3 bg-white/5 rounded-xl border border-white/10">
-                                <span class="text-xs">Cumplimiento de Tareas</span>
-                                <select name="impacto-tareas" class="impact-factor text-xs bg-slate-900 border-none p-1" onchange="calculateImpact()"><option value="3">Alto</option><option value="2" selected>Medio</option><option value="1">Bajo</option></select>
+                                <label for="impacto-tareas" class="text-xs">Cumplimiento de Tareas</label>
+                                <select id="impacto-tareas" name="impacto-tareas" class="impact-factor text-xs bg-slate-900 border-none p-1" onchange="calculateImpact()"><option value="3">Alto</option><option value="2" selected>Medio</option><option value="1">Bajo</option></select>
                             </div>
                             <div class="flex items-center justify-between p-3 bg-white/5 rounded-xl border border-white/10">
-                                <span class="text-xs">Clima de Convivencia</span>
-                                <select name="impacto-convivencia" class="impact-factor text-xs bg-slate-900 border-none p-1" onchange="calculateImpact()"><option value="3">Sano</option><option value="2" selected>Tenso</option><option value="1">Hostil</option></select>
+                                <label for="impacto-convivencia" class="text-xs">Clima de Convivencia</label>
+                                <select id="impacto-convivencia" name="impacto-convivencia" class="impact-factor text-xs bg-slate-900 border-none p-1" onchange="calculateImpact()"><option value="3">Sano</option><option value="2" selected>Tenso</option><option value="1">Hostil</option></select>
                             </div>
                         </div>
                     </div>
@@ -155,7 +155,7 @@
                             </select>
                         </div>
                         <div class="input-group">
-                            <span class="text-[11px] text-slate-400">Ambiente de Aula (Promedio):</span>
+                            <label class="text-[11px] text-slate-400">Ambiente de Aula (Promedio):</label>
                             <div class="grid grid-cols-3 gap-2 mt-1">
                                 <select id="amb-atencion" name="amb-atencion" class="text-[10px] p-2 bg-slate-900"><option value="Alto">Atención</option><option value="Alto">Alto</option><option value="Medio" selected>Medio</option><option value="Bajo">Bajo</option></select>
                                 <select id="amb-respeto" name="amb-respeto" class="text-[10px] p-2 bg-slate-900"><option value="Alto">Respeto</option><option value="Alto">Alto</option><option value="Medio" selected>Medio</option><option value="Bajo">Bajo</option></select>
