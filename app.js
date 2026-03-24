@@ -16,7 +16,7 @@ async function checkAccess(pin) {
     const { data: teacher, error } = await supabaseClient
         .from('personal')
         .select('*')
-        .eq('acceso_pin', pin.trim())
+        .ilike('acceso_pin', pin.trim())
         .single();
 
     if (error || !teacher) {
