@@ -62,6 +62,7 @@ async function checkAccess(pin) {
     onTeacherChange(); 
     
     if(docInput) docInput.disabled = true;
+    const asigInput = document.getElementById('asignatura');
     if(asigInput) asigInput.readOnly = true;
     
     document.getElementById('auth-wall').classList.add('hidden');
