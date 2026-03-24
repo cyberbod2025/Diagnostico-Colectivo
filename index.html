@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="description" content="Sistema Interno de Respaldo Docente Escolar (SIRDE-310) - Herramienta tecnológica para el análisis colectivo y seguimiento de condiciones grupales.">
     <title>SIRDE-310 | Respaldo Docente Institucional</title>
+    <link rel="icon" type="image/svg+xml" href="logo_secundaria_310.svg">
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
@@ -129,7 +131,7 @@
                 <h2 class="section-title">2. Diagnóstico Colectivo del Grupo</h2>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div class="space-y-4">
-                        <p role="heading" aria-level="3" class="text-[10px] font-black uppercase text-slate-500">Factores de Impacto Curricular</p>
+                        <p class="text-[10px] font-black uppercase text-slate-500">Factores de Impacto Curricular</p>
                         <div class="grid grid-cols-1 gap-3">
                             <div class="flex items-center justify-between p-3 bg-white/5 rounded-xl border border-white/10">
                                 <label for="impacto-concentracion" class="text-xs">Nivel de Concentración</label>
@@ -143,11 +145,15 @@
                                 <label for="impacto-convivencia" class="text-xs">Clima de Convivencia</label>
                                 <select id="impacto-convivencia" name="impacto-convivencia" class="impact-factor text-xs bg-slate-900 border-none p-1" onchange="calculateImpact()"><option value="3">Sano</option><option value="2" selected>Tenso</option><option value="1">Hostil</option></select>
                             </div>
+                            <div class="flex items-center justify-between mt-2 p-3 bg-primary-green/5 rounded-xl border border-primary-green/10">
+                                <label for="impacto" class="text-[10px] font-black uppercase text-primary-green">Impacto Global Est.</label>
+                                <input type="text" id="impacto" name="impacto" readonly class="bg-transparent border-none text-right font-black text-primary-green pr-0" value="Medio">
+                            </div>
                         </div>
                     </div>
 
                     <div class="space-y-4">
-                        <p role="heading" aria-level="3" class="text-[10px] font-black uppercase text-slate-500">Variables de Gestión</p>
+                        <p class="text-[10px] font-black uppercase text-slate-500">Variables de Gestión</p>
                         <div class="input-group">
                             <label for="tiempo_conducta" class="text-[11px] text-slate-400">Tiempo de Clase p/ Conducta:</label>
                             <select id="tiempo_conducta" name="tiempo_conducta" class="w-full text-xs mt-1">
@@ -155,18 +161,18 @@
                             </select>
                         </div>
                         <div class="input-group">
-                            <p role="heading" aria-level="3" class="text-[11px] text-slate-400">Ambiente de Aula (Promedio):</p>
+                            <p class="text-[11px] text-slate-400">Ambiente de Aula (Promedio):</p>
                             <div class="grid grid-cols-3 gap-2 mt-1">
-                                <select id="amb-atencion" name="amb-atencion" class="text-[10px] p-2 bg-slate-900"><option value="Alto">Atención</option><option value="Alto">Alto</option><option value="Medio" selected>Medio</option><option value="Bajo">Bajo</option></select>
-                                <select id="amb-respeto" name="amb-respeto" class="text-[10px] p-2 bg-slate-900"><option value="Alto">Respeto</option><option value="Alto">Alto</option><option value="Medio" selected>Medio</option><option value="Bajo">Bajo</option></select>
-                                <select id="amb-participacion" name="amb-participacion" class="text-[10px] p-2 bg-slate-900"><option value="Alto">Particip.</option><option value="Alto">Alto</option><option value="Medio" selected>Medio</option><option value="Bajo">Bajo</option></select>
+                                <select id="amb-atencion" name="amb-atencion" aria-label="Nivel de Atención" class="text-[10px] p-2 bg-slate-900"><option value="" disabled selected>Atención</option><option value="Alto">Alto</option><option value="Medio" selected>Medio</option><option value="Bajo">Bajo</option></select>
+                                <select id="amb-respeto" name="amb-respeto" aria-label="Nivel de Respeto" class="text-[10px] p-2 bg-slate-900"><option value="" disabled selected>Respeto</option><option value="Alto">Alto</option><option value="Medio" selected>Medio</option><option value="Bajo">Bajo</option></select>
+                                <select id="amb-participacion" name="amb-participacion" aria-label="Nivel de Participación" class="text-[10px] p-2 bg-slate-900"><option value="" disabled selected>Particip.</option><option value="Alto">Alto</option><option value="Medio" selected>Medio</option><option value="Bajo">Bajo</option></select>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <div class="mt-10 pt-10 border-t border-white/5">
-                    <label class="text-[10px] font-black uppercase text-slate-500 mb-6 block">Factores Externos Detectados (Seleccione los necesarios)</label>
+                    <p class="text-[10px] font-black uppercase text-slate-500 mb-6 block">Factores Externos Detectados (Seleccione los necesarios)</p>
                     <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
                         <label class="flex items-center gap-3 p-3 bg-white/5 border border-white/10 rounded-xl cursor-pointer hover:bg-primary-green/5 hover:border-primary-green/30 transition-all text-[11px]">
                             <input type="checkbox" name="fact-ext-chk" class="fact-ext-chk w-4 h-4 rounded-md accent-primary-green" value="Disfunción Familiar">
@@ -243,7 +249,7 @@
                 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div class="space-y-4">
-                        <p role="heading" aria-level="3" class="text-[10px] font-black uppercase text-slate-500">Acciones Institucionales Aplicadas</p>
+                        <p class="text-[10px] font-black uppercase text-slate-500">Acciones Institucionales Aplicadas</p>
                         <div class="grid grid-cols-1 gap-2">
                             <label class="flex items-center gap-3 p-3 bg-white/5 border border-white/10 rounded-xl cursor-pointer hover:bg-white/10 text-xs">
                                 <input type="checkbox" name="estrategia-chk" class="estrategia-chk w-4 h-4 rounded accent-primary-green" value="Entrevista Inicial">
@@ -273,14 +279,13 @@
                                 <input type="checkbox" name="estrategia-chk" class="estrategia-chk w-4 h-4 rounded accent-primary-green" value="Suspensión">
                                 <span>Suspensión</span>
                             </label>
-                            <label class="flex flex-col gap-2 p-3 bg-white/5 border border-white/10 rounded-xl">
+                            <div class="flex flex-col gap-2 p-3 bg-white/5 border border-white/10 rounded-xl">
                                 <span class="flex items-center gap-3 text-xs">
                                     <input type="checkbox" id="chk-otra-est" class="w-4 h-4 rounded accent-primary-green">
                                     <label for="chk-otra-est">Otra estrategia específica:</label>
                                 </span>
-                                <label for="otra-est-text" class="sr-only">Detalle de la otra estrategia</label>
-                                <input type="text" id="otra-est-text" name="otra-est-text" placeholder="Describa brevemente..." class="text-[10px] p-2 bg-slate-900 border-none rounded">
-                            </label>
+                                <input type="text" id="otra-est-text" name="otra-est-text" aria-label="Detalle de la otra estrategia" placeholder="Describa brevemente..." class="text-[10px] p-2 bg-slate-900 border-none rounded">
+                            </div>
                         </div>
                     </div>
 

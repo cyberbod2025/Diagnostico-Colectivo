@@ -10,9 +10,15 @@ let currentStep = 1;
 async function checkAccess(pin) {
     if (!pin) return;
     try {
+        console.log("LOG: Verificando PIN institucional...");
         const { data: teacher, error } = await supabaseClient.from('personal').select('*').ilike('acceso_pin', pin.trim()).single();
-        if (error || !teacher) { alert("PIN NO VÁLIDO."); return; }
+        if (error || !teacher) { 
+            alert("PIN NO VÁLIDO. Verifique sus credenciales institucionales."); 
+            console.warn("LOG: Intento de acceso fallido.");
+            return; 
+        }
         
+        console.log("LOG: Acceso concedido a:", teacher.nombre);
         sessionStorage.setItem('sirde_session_pin', pin);
         await initData();
 
@@ -23,8 +29,8 @@ async function checkAccess(pin) {
             onTeacherChange();
         }
         document.getElementById('auth-wall').classList.add('hidden');
-        updateProgress(1); // Set initial progress
-    } catch (e) { console.error(e); }
+        updateProgress(1);
+    } catch (e) { console.error("Critical error in checkAccess:", e); }
 }
 
 async function initData() {
@@ -78,11 +84,18 @@ function updateProgress(step) {
 
 function validateNext(from, to) {
     if (from === 1) {
-        if (!document.getElementById('grupo').value) { alert("Seleccione un grupo."); return; }
+        const valDocente = document.getElementById('docente').value;
+        const valGrupo = document.getElementById('grupo').value;
+        const valAsignatura = document.getElementById('asignatura').value;
+        if (!valDocente || !valGrupo || !valAsignatura) { 
+            alert("Por favor complete Docente, Grupo y Asignatura para continuar."); 
+            return; 
+        }
     }
     
     document.getElementById(`step-${from}`).classList.add('hidden');
     document.getElementById(`step-${to}`).classList.remove('hidden');
+    if (to === 2) calculateImpact(); // Asegurar impacto al llegar al Paso 2
     if (to === 3) renderStudents(); // Asegurar render al llegar al Paso 3
     updateProgress(to);
     window.scrollTo(0, 0);
@@ -112,14 +125,32 @@ function onTeacherChange() {
 
 function updateCampo() {
     const val = document.getElementById('asignatura').value.toUpperCase();
-    const map = { 'MATEMÁTICAS': 'Saberes y P. Científico', 'BIOLOGÍA': 'Saberes y P. Científico', 'ESPAÑOL': 'Lenguajes', 'ARTES': 'Lenguajes', 'INGLÉS': 'Lenguajes' };
+    const map = { 
+        'MATEMÁTICAS': 'Saberes y P. Científico', 
+        'BIOLOGÍA': 'Saberes y P. Científico', 
+        'FÍSICA': 'Saberes y P. Científico',
+        'QUÍMICA': 'Saberes y P. Científico',
+        'TECNOLOGÍA': 'Saberes y P. Científico',
+        'ESPAÑOL': 'Lenguajes', 
+        'ARTES': 'Lenguajes', 
+        'INGLÉS': 'Lenguajes',
+        'HISTORIA': 'Ética, Naturaleza y Sociedades',
+        'GEOGRAFÍA': 'Ética, Naturaleza y Sociedades',
+        'FCYE': 'Ética, Naturaleza y Sociedades',
+        'VIDA SALUDABLE': 'De lo Humano y lo Comunitario',
+        'EDUCACIÓN FÍSICA': 'De lo Humano y lo Comunitario',
+        'SOCIOEMOCIONAL': 'De lo Humano y lo Comunitario'
+    };
     document.getElementById('campo_formativo').value = map[val] || 'De lo Humano y lo Comunitario';
 }
 
 function renderStudents() {
     const grupo = document.getElementById('grupo').value;
     const list = document.getElementById('student-list');
+    const badge = document.getElementById('group-name-badge');
     if (!list) return;
+
+    if (badge) badge.textContent = `GRUPO: ${grupo || '---'}`;
 
     console.log("LOG: renderStudents para grupo ->", grupo);
     
@@ -128,9 +159,8 @@ function renderStudents() {
         return;
     }
 
-    if (globalAlumnos.length === 0) {
-        list.innerHTML = '<p class="text-center text-primary-green text-[10px] uppercase font-black py-10 animate-pulse">Cargando base de datos escolar...</p>';
-        setTimeout(renderStudents, 1000); // Retry if data isn't ready
+    if (!globalAlumnos || globalAlumnos.length === 0) {
+        list.innerHTML = '<div class="p-8 text-center text-slate-500 text-xs italic">Cargando base de datos escolar...</div>';
         return;
     }
 
@@ -138,6 +168,11 @@ function renderStudents() {
         if (!s.grupo) return false;
         return s.grupo.toString().trim().toUpperCase() === grupo.toString().trim().toUpperCase();
     });
+
+    if (filtered.length === 0) {
+        list.innerHTML = `<div class="p-8 text-center text-slate-500 text-xs italic font-black uppercase text-red-500/50">No se encontraron alumnos para el grupo ${grupo}</div>`;
+        return;
+    }
     
     console.log("LOG: Alumnos filtrados ->", filtered.length);
     list.innerHTML = '';
@@ -160,20 +195,21 @@ function renderStudents() {
                         <span class="font-bold text-[13px] text-white tracking-tight leading-tight">${al.nombre_completo}</span>
                     </label>
                 </div>
-                ${['Desatención', 'Disrupción', 'Agresión', 'Tareas'].map(b => {
-                    const uniqueId = `behav-${al.id}-${b.replace(/\s+/g, '')}`;
-                    return `
-                        <div class="flex flex-col gap-2">
-                            <label for="${uniqueId}" class="text-[10px] font-black text-slate-400 uppercase tracking-tighter">${b}</label>
-                            <select id="${uniqueId}" name="${uniqueId}" class="behav-sel w-full text-xs p-3 bg-slate-900 rounded-xl text-white border-white/10" data-name="${b}">
-                                <option value="Nula">NIVEL: NULO</option>
-                                <option value="Baja">BAJO</option>
-                                <option value="Media">MEDIO</option>
-                                <option value="Alta">ALTO</option>
-                            </select>
-                        </div>
-                    `;
-                }).join('')}
+                <div id="sub-${al.id}" class="hidden space-y-4 pt-2 border-t border-white/5 mt-1">
+                    ${['Desatención', 'Disrupción', 'Agresión', 'Tareas'].map(b => {
+                        const uniqueId = `behav-${al.id}-${b.replace(/\s+/g, '')}`;
+                        return `
+                            <div class="flex flex-col gap-2">
+                                <label for="${uniqueId}" class="text-[10px] font-black text-slate-400 uppercase tracking-tighter">${b}</label>
+                                <select id="${uniqueId}" name="${uniqueId}" class="behav-sel w-full text-xs p-3 bg-slate-900 rounded-xl text-white border-white/10" data-name="${b}">
+                                    <option value="Nula">NIVEL: NULO</option>
+                                    <option value="Baja">BAJO</option>
+                                    <option value="Media">MEDIO</option>
+                                    <option value="Alta">ALTO</option>
+                                </select>
+                            </div>
+                        `;
+                    }).join('')}
                 </div>
             `;
             list.appendChild(div);
@@ -202,6 +238,7 @@ async function handleFormSubmit(e) {
     document.querySelectorAll('.chk-student:checked').forEach(chk => {
         const id = chk.getAttribute('data-id');
         const s = document.getElementById(`sub-${id}`);
+        if (!s) return;
         reported.push({
             alumno_id: id,
             nombre: globalAlumnos.find(a => a.id == id)?.nombre_completo,
@@ -209,15 +246,29 @@ async function handleFormSubmit(e) {
         });
     });
 
+    const estrategias = Array.from(document.querySelectorAll('.estrategia-chk:checked')).map(c => c.value);
+    if (document.getElementById('chk-otra-est')?.checked) {
+        const otraVal = document.getElementById('otra-est-text')?.value;
+        if (otraVal) estrategias.push(`OTRA: ${otraVal}`);
+    }
+
     const payload = {
         docente: document.getElementById('docente').value,
         grupo: document.getElementById('grupo').value,
         asignatura: document.getElementById('asignatura').value,
-        periodo: 'T2-2026',
+        campo_formativo: document.getElementById('campo_formativo').value,
+        periodo: document.getElementById('current-periodo')?.value || 'T2-2026',
         impacto: document.getElementById('impacto').value,
+        tiempo_conducta: document.getElementById('tiempo_conducta').value,
+        ambiente_aula: {
+            atencion: document.getElementById('amb-atencion').value,
+            respeto: document.getElementById('amb-respeto').value,
+            participacion: document.getElementById('amb-participacion').value
+        },
         factores_externos: Array.from(document.querySelectorAll('.fact-ext-chk:checked')).map(c => c.value).concat(document.getElementById('fact-ext-otro-chk').checked ? [document.getElementById('fact-ext-text').value] : []),
         alumnos_reportados: reported,
-        estrategias: Array.from(document.querySelectorAll('.estrategia-chk:checked')).map(c => c.value),
+        estrategias: estrategias,
+        eficacia_estrategias: document.getElementById('est-eficacia').value,
         comentarios: document.getElementById('comentarios').value,
         fecha: new Date().toISOString()
     };
@@ -278,4 +329,6 @@ function logoutSIRDE() { sessionStorage.clear(); location.reload(); }
 window.addEventListener('DOMContentLoaded', () => {
     const pin = sessionStorage.getItem('sirde_session_pin');
     if (pin) checkAccess(pin);
+    // Inicializar impacto si los elementos existen
+    if(document.querySelector('.impact-factor')) calculateImpact();
 });
