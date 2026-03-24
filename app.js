@@ -157,7 +157,9 @@ function calculateImpact() {
 }
 
 function onTeacherChange() {
-    const docenteName = document.getElementById('docente').value;
+    const el = document.getElementById('docente');
+    if (!el) return;
+    const docenteName = el.value;
     const p = globalPersonal.find(x => x.nombre === docenteName);
     if (p) {
         document.getElementById('asignatura').value = p.departamento || '';
