@@ -10,11 +10,11 @@ const CONFIG = {
 };
 
 const CAMPO_FORMATIVO_MAP = {
-    'Español': 'Lenguajes', 'Inglés': 'Lenguajes', 'Artes': 'Lenguajes', 'Música': 'Lenguajes',
-    'Matemáticas': 'Saberes y Pensamiento Científico', 'Biología': 'Saberes y Pensamiento Científico',
-    'Física': 'Saberes y Pensamiento Científico', 'Química': 'Saberes y Pensamiento Científico',
-    'Ciencias Química': 'Saberes y Pensamiento Científico', 'Laboratorio': 'Saberes y Pensamiento Científico',
-    'Geografía': 'Ética, Naturaleza y Sociedades', 'Historia': 'Ética, Naturaleza y Sociedades',
+    'Español': 'Lenguajes', 'Inglés': 'Lenguajes', 'Artes': 'Lenguajes', 'Música': 'Lenguajes', 'Español 1': 'Lenguajes', 'Español 2': 'Lenguajes', 'Español 3': 'Lenguajes',
+    'Matemáticas': 'Saberes y Pensamiento Científico', 'Biología': 'Saberes y Pensamiento Científico', 'Matemáticas 1': 'Saberes y Pensamiento Científico', 'Matemáticas 2': 'Saberes y Pensamiento Científico', 'Matemáticas 3': 'Saberes y Pensamiento Científico',
+    'Física': 'Saberes y Pensamiento Científico', 'Química': 'Saberes y Pensamiento Científico', 'Ciencias Física': 'Saberes y Pensamiento Científico', 'Ciencias Biología': 'Saberes y Pensamiento Científico',
+    'Ciencias Química': 'Saberes y Pensamiento Científico', 'Laboratorio': 'Saberes y Pensamiento Científico', 
+    'Geografía': 'Ética, Naturaleza y Sociedades', 'Historia': 'Ética, Naturaleza y Sociedades', 'Historia 1': 'Ética, Naturaleza y Sociedades', 'Historia 2': 'Ética, Naturaleza y Sociedades',
     'Formación Cívica y Ética': 'Ética, Naturaleza y Sociedades', 'F.CÍVICA Y ÉTICA': 'Ética, Naturaleza y Sociedades',
     'Educación Física': 'De lo Humano y lo Comunitario', 'EDUC. FÍSICA': 'De lo Humano y lo Comunitario',
     'Tecnología': 'De lo Humano y lo Comunitario', 'Tutoría': 'De lo Humano y lo Comunitario',
@@ -71,10 +71,32 @@ function onTeacherChange() {
 }
 
 function updateCampo() {
-    const asig = document.getElementById('asignatura').value;
-    // Normalizar para el mapa
-    let normalized = asig.charAt(0) + asig.slice(1).toLowerCase();
-    document.getElementById('campo_formativo').value = CAMPO_FORMATIVO_MAP[normalized] || CAMPO_FORMATIVO_MAP[asig] || 'Asignar campo...';
+    const asigInput = document.getElementById('asignatura');
+    const campoInput = document.getElementById('campo_formativo');
+    if (!asigInput || !campoInput) return;
+
+    let asig = asigInput.value.trim();
+    if (!asig) {
+        campoInput.value = 'Esperando asignatura...';
+        return;
+    }
+
+    // Normalización: "ESPAÑOL" -> "Español"
+    let normalized = asig.charAt(0).toUpperCase() + asig.slice(1).toLowerCase();
+    
+    // Búsqueda inteligente
+    let field = CAMPO_FORMATIVO_MAP[normalized] || 
+                CAMPO_FORMATIVO_MAP[asig.toUpperCase()] || 
+                CAMPO_FORMATIVO_MAP[asig] ||
+                null;
+
+    // Si no encuentra, buscar coincidencia parcial (Ej. si asig es "Ciencias 1" y mapa tiene "Ciencias")
+    if (!field) {
+        field = Object.keys(CAMPO_FORMATIVO_MAP).find(key => asig.includes(key) || key.includes(asig));
+        if (field) field = CAMPO_FORMATIVO_MAP[field];
+    }
+
+    campoInput.value = field || 'Asignar campo...';
 }
 
 function renderStudents() {

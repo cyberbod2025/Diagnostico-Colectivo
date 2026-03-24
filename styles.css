@@ -36,6 +36,22 @@ body {
     transition: all 0.2s ease;
 }
 
+input, select, textarea {
+    font-size: 1rem !important; /* Avoid zoom on iOS and better readability */
+    padding: 0.85rem !important;
+}
+
+@media (max-width: 640px) {
+    .card {
+        padding: 1rem;
+        border-radius: 0; /* Full width on mobile feels cleaner */
+        margin-bottom: 0.5rem;
+    }
+    h1 { font-size: 2rem; }
+    h2 { font-size: 1.4rem; }
+    .section-title { font-size: 0.8rem; padding-left: 0.75rem; margin-bottom: 1.5rem; }
+}
+
 .card:hover {
     border-color: var(--primary-blue);
     box-shadow: 0 0 20px rgba(0, 210, 255, 0.1);
@@ -43,29 +59,47 @@ body {
 
 h1, h2, h3 {
     color: var(--primary-blue);
-    margin-top: 0;
+    margin: 0;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
 }
 
+h1 { 
+    font-size: 3rem; 
+    font-weight: 950; 
+    line-height: 1;
+    color: var(--white);
+    text-shadow: 0 0 20px rgba(0, 210, 255, 0.3);
+} 
+h2 { 
+    font-size: 1.8rem; 
+    font-weight: 900; 
+    color: var(--primary-blue);
+} 
+
 .section-title {
-    font-size: 0.75rem;
+    font-size: 1rem;
     text-transform: uppercase;
-    letter-spacing: 0.1em;
-    font-weight: 800;
-    color: var(--text-muted);
-    border-left: 3px solid var(--primary-blue);
-    padding-left: 0.75rem;
-    margin-bottom: 1.5rem;
+    letter-spacing: 0.2em;
+    font-weight: 950;
+    color: var(--primary-blue);
+    border-left: 6px solid var(--primary-blue);
+    padding-left: 1.25rem;
+    margin-bottom: 2.5rem;
 }
 
 .input-group {
     margin-bottom: 1.5rem;
 }
 
-label {
+.input-group label {
     display: block;
-    font-size: 0.875rem;
-    font-weight: 600;
-    margin-bottom: 0.5rem;
+    font-size: 0.7rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 0.75rem;
+    letter-spacing: 0.05em;
 }
 
 input[type="text"],
