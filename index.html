@@ -1,4 +1,4 @@
-<!-- SIRDE-310 | Institutional Form with Wizard Blindaje -->
+<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -133,15 +133,15 @@
                         <div class="grid grid-cols-1 gap-3">
                             <div class="flex items-center justify-between p-3 bg-white/5 rounded-xl border border-white/10">
                                 <span class="text-xs">Nivel de Concentración</span>
-                                <select class="impact-factor text-xs bg-slate-900 border-none p-1" onchange="calculateImpact()"><option value="3">Óptimo</option><option value="2">Regular</option><option value="1">Deficiente</option></select>
+                                <select name="impactO-concentracion" class="impact-factor text-xs bg-slate-900 border-none p-1" onchange="calculateImpact()"><option value="3">Óptimo</option><option value="2">Regular</option><option value="1">Deficiente</option></select>
                             </div>
                             <div class="flex items-center justify-between p-3 bg-white/5 rounded-xl border border-white/10">
                                 <span class="text-xs">Cumplimiento de Tareas</span>
-                                <select class="impact-factor text-xs bg-slate-900 border-none p-1" onchange="calculateImpact()"><option value="3">Alto</option><option value="2" selected>Medio</option><option value="1">Bajo</option></select>
+                                <select name="impacto-tareas" class="impact-factor text-xs bg-slate-900 border-none p-1" onchange="calculateImpact()"><option value="3">Alto</option><option value="2" selected>Medio</option><option value="1">Bajo</option></select>
                             </div>
                             <div class="flex items-center justify-between p-3 bg-white/5 rounded-xl border border-white/10">
                                 <span class="text-xs">Clima de Convivencia</span>
-                                <select class="impact-factor text-xs bg-slate-900 border-none p-1" onchange="calculateImpact()"><option value="3">Sano</option><option value="2" selected>Tenso</option><option value="1">Hostil</option></select>
+                                <select name="impacto-convivencia" class="impact-factor text-xs bg-slate-900 border-none p-1" onchange="calculateImpact()"><option value="3">Sano</option><option value="2" selected>Tenso</option><option value="1">Hostil</option></select>
                             </div>
                         </div>
                     </div>
@@ -149,17 +149,17 @@
                     <div class="space-y-4">
                         <label class="text-[10px] font-black uppercase text-slate-500">Variables de Gestión</label>
                         <div class="input-group">
-                            <span class="text-[11px] text-slate-400">Tiempo de Clase p/ Conducta:</span>
-                            <select id="tiempo_conducta" class="w-full text-xs mt-1">
+                            <label for="tiempo_conducta" class="text-[11px] text-slate-400">Tiempo de Clase p/ Conducta:</label>
+                            <select id="tiempo_conducta" name="tiempo_conducta" class="w-full text-xs mt-1">
                                 <option value="<10%">&lt; 10%</option><option value="10-25%" selected>10% - 25%</option><option value="25-50%">25% - 50%</option><option value="+50%">&gt; 50%</option>
                             </select>
                         </div>
                         <div class="input-group">
                             <span class="text-[11px] text-slate-400">Ambiente de Aula (Promedio):</span>
                             <div class="grid grid-cols-3 gap-2 mt-1">
-                                <select id="amb-atencion" class="text-[10px] p-2 bg-slate-900"><option value="Alto">Atención</option><option value="Alto">Alto</option><option value="Medio" selected>Medio</option><option value="Bajo">Bajo</option></select>
-                                <select id="amb-respeto" class="text-[10px] p-2 bg-slate-900"><option value="Alto">Respeto</option><option value="Alto">Alto</option><option value="Medio" selected>Medio</option><option value="Bajo">Bajo</option></select>
-                                <select id="amb-participacion" class="text-[10px] p-2 bg-slate-900"><option value="Alto">Particip.</option><option value="Alto">Alto</option><option value="Medio" selected>Medio</option><option value="Bajo">Bajo</option></select>
+                                <select id="amb-atencion" name="amb-atencion" class="text-[10px] p-2 bg-slate-900"><option value="Alto">Atención</option><option value="Alto">Alto</option><option value="Medio" selected>Medio</option><option value="Bajo">Bajo</option></select>
+                                <select id="amb-respeto" name="amb-respeto" class="text-[10px] p-2 bg-slate-900"><option value="Alto">Respeto</option><option value="Alto">Alto</option><option value="Medio" selected>Medio</option><option value="Bajo">Bajo</option></select>
+                                <select id="amb-participacion" name="amb-participacion" class="text-[10px] p-2 bg-slate-900"><option value="Alto">Particip.</option><option value="Alto">Alto</option><option value="Medio" selected>Medio</option><option value="Bajo">Bajo</option></select>
                             </div>
                         </div>
                     </div>
@@ -169,39 +169,39 @@
                     <label class="text-[10px] font-black uppercase text-slate-500 mb-6 block">Factores Externos Detectados (Seleccione los necesarios)</label>
                     <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
                         <label class="flex items-center gap-3 p-3 bg-white/5 border border-white/10 rounded-xl cursor-pointer hover:bg-primary-green/5 hover:border-primary-green/30 transition-all text-[11px]">
-                            <input type="checkbox" class="fact-ext-chk w-4 h-4 rounded-md accent-primary-green" value="Disfunción Familiar">
+                            <input type="checkbox" name="fact-ext-chk" class="fact-ext-chk w-4 h-4 rounded-md accent-primary-green" value="Disfunción Familiar">
                             <span>Disfunción Familiar</span>
                         </label>
                         <label class="flex items-center gap-3 p-3 bg-white/5 border border-white/10 rounded-xl cursor-pointer hover:bg-primary-green/5 hover:border-primary-green/30 transition-all text-[11px]">
-                            <input type="checkbox" class="fact-ext-chk w-4 h-4 rounded-md accent-primary-green" value="Nivel Económico">
+                            <input type="checkbox" name="fact-ext-chk" class="fact-ext-chk w-4 h-4 rounded-md accent-primary-green" value="Nivel Económico">
                             <span>Nivel Económico</span>
                         </label>
                         <label class="flex items-center gap-3 p-3 bg-white/5 border border-white/10 rounded-xl cursor-pointer hover:bg-primary-green/5 hover:border-primary-green/30 transition-all text-[11px]">
-                            <input type="checkbox" class="fact-ext-chk w-4 h-4 rounded-md accent-primary-green" value="Violencia Entorno">
+                            <input type="checkbox" name="fact-ext-chk" class="fact-ext-chk w-4 h-4 rounded-md accent-primary-green" value="Violencia Entorno">
                             <span>Violencia Entorno</span>
                         </label>
                         <label class="flex items-center gap-3 p-3 bg-white/5 border border-white/10 rounded-xl cursor-pointer hover:bg-primary-green/5 hover:border-primary-green/30 transition-all text-[11px]">
-                            <input type="checkbox" class="fact-ext-chk w-4 h-4 rounded-md accent-primary-green" value="Adicciones">
+                            <input type="checkbox" name="fact-ext-chk" class="fact-ext-chk w-4 h-4 rounded-md accent-primary-green" value="Adicciones">
                             <span>Adicciones</span>
                         </label>
                         <label class="flex items-center gap-3 p-3 bg-white/5 border border-white/10 rounded-xl cursor-pointer hover:bg-primary-green/5 hover:border-primary-green/30 transition-all text-[11px]">
-                            <input type="checkbox" class="fact-ext-chk w-4 h-4 rounded-md accent-primary-green" value="Salud Mental">
+                            <input type="checkbox" name="fact-ext-chk" class="fact-ext-chk w-4 h-4 rounded-md accent-primary-green" value="Salud Mental">
                             <span>Salud Mental</span>
                         </label>
                         <label class="flex items-center gap-3 p-3 bg-white/5 border border-white/10 rounded-xl cursor-pointer hover:bg-primary-green/5 hover:border-primary-green/30 transition-all text-[11px]">
-                            <input type="checkbox" class="fact-ext-chk w-4 h-4 rounded-md accent-primary-green" value="Inasistencias">
+                            <input type="checkbox" name="fact-ext-chk" class="fact-ext-chk w-4 h-4 rounded-md accent-primary-green" value="Inasistencias">
                             <span>Inasistencias</span>
                         </label>
                         <label class="flex items-center gap-3 p-3 bg-white/5 border border-white/10 rounded-xl cursor-pointer hover:bg-primary-green/5 hover:border-primary-green/30 transition-all text-[11px]">
-                            <input type="checkbox" class="fact-ext-chk w-4 h-4 rounded-md accent-primary-green" value="Duelo/Pérdida">
+                            <input type="checkbox" name="fact-ext-chk" class="fact-ext-chk w-4 h-4 rounded-md accent-primary-green" value="Duelo/Pérdida">
                             <span>Duelo/Pérdida</span>
                         </label>
                         <label class="flex items-center gap-3 p-3 bg-white/5 border border-white/10 rounded-xl cursor-pointer hover:bg-primary-green/5 hover:border-primary-green/30 transition-all text-[11px]">
-                            <input type="checkbox" class="fact-ext-chk w-4 h-4 rounded-md accent-primary-green" value="Traslados largos">
+                            <input type="checkbox" name="fact-ext-chk" class="fact-ext-chk w-4 h-4 rounded-md accent-primary-green" value="Traslados largos">
                             <span>Traslados largos</span>
                         </label>
                         <label class="flex items-center gap-3 p-3 bg-white/5 border border-white/10 rounded-xl cursor-pointer hover:bg-primary-green/5 hover:border-primary-green/30 transition-all text-[11px]">
-                            <input type="checkbox" id="fact-ext-otro-chk" class="w-4 h-4 rounded-md accent-primary-green" onchange="toggleOtroFactor(this.checked)">
+                            <input type="checkbox" id="fact-ext-otro-chk" name="fact-ext-chk-otro" class="w-4 h-4 rounded-md accent-primary-green" onchange="toggleOtroFactor(this.checked)">
                             <span class="font-bold">Otro...</span>
                         </label>
                     </div>
@@ -245,31 +245,31 @@
                         <label class="text-[10px] font-black uppercase text-slate-500">Acciones Institucionales Aplicadas</label>
                         <div class="grid grid-cols-1 gap-2">
                             <label class="flex items-center gap-3 p-3 bg-white/5 border border-white/10 rounded-xl cursor-pointer hover:bg-white/10 text-xs">
-                                <input type="checkbox" class="estrategia-chk w-4 h-4 rounded accent-primary-green" value="Entrevista Inicial">
+                                <input type="checkbox" name="estrategia-chk" class="estrategia-chk w-4 h-4 rounded accent-primary-green" value="Entrevista Inicial">
                                 <span>Entrevista Inicial</span>
                             </label>
                             <label class="flex items-center gap-3 p-3 bg-white/5 border border-white/10 rounded-xl cursor-pointer hover:bg-white/10 text-xs">
-                                <input type="checkbox" class="estrategia-chk w-4 h-4 rounded accent-primary-green" value="Citatorio a Padres">
+                                <input type="checkbox" name="estrategia-chk" class="estrategia-chk w-4 h-4 rounded accent-primary-green" value="Citatorio a Padres">
                                 <span>Citatorio a Padres</span>
                             </label>
                             <label class="flex items-center gap-3 p-3 bg-white/5 border border-white/10 rounded-xl cursor-pointer hover:bg-white/10 text-xs">
-                                <input type="checkbox" class="estrategia-chk w-4 h-4 rounded accent-primary-green" value="Reporte Escrito">
+                                <input type="checkbox" name="estrategia-chk" class="estrategia-chk w-4 h-4 rounded accent-primary-green" value="Reporte Escrito">
                                 <span>Reporte Escrito</span>
                             </label>
                             <label class="flex items-center gap-3 p-3 bg-white/5 border border-white/10 rounded-xl cursor-pointer hover:bg-white/10 text-xs">
-                                <input type="checkbox" class="estrategia-chk w-4 h-4 rounded accent-primary-green" value="Firma de Compromiso">
+                                <input type="checkbox" name="estrategia-chk" class="estrategia-chk w-4 h-4 rounded accent-primary-green" value="Firma de Compromiso">
                                 <span>Firma de Compromiso</span>
                             </label>
                             <label class="flex items-center gap-3 p-3 bg-white/5 border border-white/10 rounded-xl cursor-pointer hover:bg-white/10 text-xs">
-                                <input type="checkbox" class="estrategia-chk w-4 h-4 rounded accent-primary-green" value="Canalización USAER/Orientación">
+                                <input type="checkbox" name="estrategia-chk" class="estrategia-chk w-4 h-4 rounded accent-primary-green" value="Canalización USAER/Orientación">
                                 <span>Canalización USAER/Orientación</span>
                             </label>
                             <label class="flex items-center gap-3 p-3 bg-white/5 border border-white/10 rounded-xl cursor-pointer hover:bg-white/10 text-xs">
-                                <input type="checkbox" class="estrategia-chk w-4 h-4 rounded accent-primary-green" value="Trabajo Especial">
+                                <input type="checkbox" name="estrategia-chk" class="estrategia-chk w-4 h-4 rounded accent-primary-green" value="Trabajo Especial">
                                 <span>Trabajo Especial</span>
                             </label>
                             <label class="flex items-center gap-3 p-3 bg-white/5 border border-white/10 rounded-xl cursor-pointer hover:bg-white/10 text-xs">
-                                <input type="checkbox" class="estrategia-chk w-4 h-4 rounded accent-primary-green" value="Suspensión">
+                                <input type="checkbox" name="estrategia-chk" class="estrategia-chk w-4 h-4 rounded accent-primary-green" value="Suspensión">
                                 <span>Suspensión</span>
                             </label>
                             <label class="flex flex-col gap-2 p-3 bg-white/5 border border-white/10 rounded-xl">
@@ -284,16 +284,16 @@
 
                     <div class="space-y-6">
                         <div class="input-group">
-                            <label>Impacto de las Estrategias</label>
-                            <select id="est-eficacia" class="w-full text-xs">
+                            <label for="est-eficacia">Impacto de las Estrategias</label>
+                            <select id="est-eficacia" name="est-eficacia" class="w-full text-xs">
                                 <option value="Alto">Alto Impacto (Mejoró conducta)</option>
                                 <option value="Medio" selected>Medio Impacto (Sigue igual)</option>
                                 <option value="Bajo">Bajo Impacto (Empeoró)</option>
                             </select>
                         </div>
                         <div class="input-group">
-                            <label>Comentarios / Acuerdos del CTE</label>
-                            <textarea id="comentarios" rows="5" placeholder="Escriba compromisos o acuerdos institucionales para este grupo..." class="w-full text-xs p-4 rounded-2xl bg-white/5 border-white/10"></textarea>
+                            <label for="comentarios">Comentarios / Acuerdos del CTE</label>
+                            <textarea id="comentarios" name="comentarios" rows="5" placeholder="Escriba compromisos o acuerdos institucionales para este grupo..." class="w-full text-xs p-4 rounded-2xl bg-white/5 border-white/10"></textarea>
                         </div>
                     </div>
                 </div>

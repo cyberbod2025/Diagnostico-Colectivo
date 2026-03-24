@@ -157,7 +157,7 @@ function renderStudents() {
                     ${['Desatención', 'Disrupción', 'Agresión', 'Tareas'].map(b => `
                         <div class="flex flex-col gap-2">
                             <span class="text-[10px] font-black text-slate-400 uppercase tracking-tighter">${b}</span>
-                            <select class="behav-sel w-full text-xs p-3 bg-slate-900 rounded-xl text-white border-white/10" data-name="${b}">
+                            <select name="behav-${al.id}-${b}" class="behav-sel w-full text-xs p-3 bg-slate-900 rounded-xl text-white border-white/10" data-name="${b}">
                                 <option value="Nula">NIVEL: NULO</option>
                                 <option value="Baja">BAJO</option>
                                 <option value="Media">MEDIO</option>
