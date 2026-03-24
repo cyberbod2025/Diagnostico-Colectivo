@@ -40,10 +40,7 @@
             <div class="flex flex-col items-center md:items-end gap-2 text-center md:text-right no-print">
                 <span class="text-[10px] font-black bg-primary-green text-[#02140f] px-4 py-1.5 rounded-full uppercase italic">Trimestre 2 (2026)</span>
                 <input type="hidden" id="current-periodo" value="T2-2026">
-                <div class="flex gap-4">
-                    <a href="dashboard.html" class="text-[10px] font-bold text-primary-green underline uppercase hover:text-white transition-colors">Dashboard General</a>
-                    <button onclick="logoutSIRDE()" class="text-[10px] font-bold text-red-500 hover:text-red-300 uppercase">Cerrar Sesión</button>
-                </div>
+                <a href="dashboard.html" class="text-[10px] font-bold text-primary-green underline uppercase hover:text-white transition-colors">Ver Análisis del Grupo</a>
             </div>
         </header>
 
@@ -247,8 +244,9 @@
         </form>
     </main>
 
-    <footer class="container mt-12 mb-8 text-center no-print">
-        <p class="text-[9px] font-bold text-slate-500 uppercase tracking-widest">© 2026 Respaldo Institucional SIRDE-310 • v1.0.1</p>
+    <footer class="container mt-12 mb-8 text-center no-print border-t border-white/5 pt-8">
+        <button onclick="logoutSIRDE()" class="mb-4 text-[10px] font-bold text-red-500 hover:text-red-400 uppercase tracking-widest border border-red-500/20 px-6 py-2 rounded-xl transition-all">Cerrar Sesión Institucional</button>
+        <p class="text-[9px] font-bold text-slate-600 uppercase tracking-widest">© 2026 Respaldo Institucional SIRDE-310 • v1.0.1</p>
     </footer>
 
     <script src="app.js"></script>
