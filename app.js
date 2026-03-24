@@ -6,13 +6,13 @@ const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 const _k = "SIRDE310_SECUNDARIA";
 const CONFIG = {
     PERIODOS_DISPONIBLES: ['Trímetros 1 (2026)', 'Trímetros 2 (2026)', 'Trímetros 3 (2026)', 'Diagnóstico Inicial'],
-    CURRENT_TEACHER: null
+    CURRENT_TEACHER: null,
+    IS_SPECTATOR: false
 };
 
 async function checkAccess(pin) {
     if (!pin) return false;
     
-    // 1. Buscar coincidencia individual en la base de datos de personal
     const { data: teacher, error } = await supabaseClient
         .from('personal')
         .select('*')
@@ -24,19 +24,41 @@ async function checkAccess(pin) {
         return false;
     }
 
-    // 2. Éxito: Guardar datos de sesión
     CONFIG.CURRENT_TEACHER = teacher;
     sessionStorage.setItem('sirde_session_pin', pin);
     
-    // 3. Pre-llenado Automático del Formulario de Huella Digital
-    document.getElementById('docente').value = teacher.nombre;
-    onTeacherChange(); // Llenará asignatura y campo automáticamente
+    // Identificar roles de SOLO LECTURA (Espectadores)
+    const rolesEspectador = ['DIRECCION', 'SUBDIRECCION', 'ORIENTACION', 'TRABAJO SOCIAL', 'MEDICO ESCOLAR'];
+    const depto = teacher.departamento?.toUpperCase() || '';
+    CONFIG.IS_SPECTATOR = rolesEspectador.some(rol => depto.includes(rol));
+
+    // Si es espectador en la página de captura, invitar al Dashboard
+    if (CONFIG.IS_SPECTATOR && window.location.pathname.includes('index.html')) {
+        const confirmGo = confirm("ACCESO COMO ESPECTADOR:\nUsted tiene permisos de consulta. ¿Desea ir al Dashboard de Análisis?");
+        if (confirmGo) window.location.href = 'dashboard.html';
+        else {
+            document.body.innerHTML = `
+                <div class="h-screen flex flex-col items-center justify-center bg-slate-900 text-white p-6 text-center">
+                    <h1 class="text-3xl font-black mb-4">MODO ESPECTADOR</h1>
+                    <p class="mb-8 opacity-70">Usted no tiene permisos para capturar datos en este formulario.</p>
+                    <a href="dashboard.html" class="btn-primary inline-block">IR AL DASHBOARD DE ANÁLISIS</a>
+                    <button onclick="logoutSIRDE()" class="mt-4 text-xs opacity-50 underline">Cerrar Sesión</button>
+                </div>
+            `;
+            return true;
+        }
+    }
+
+    // Pre-llenado Automático para Docentes
+    const docInput = document.getElementById('docente');
+    if(docInput) docInput.value = teacher.nombre;
     
-    // 4. Bloquear edición de datos personales (ya están identificados)
-    document.getElementById('docente').disabled = true;
-    document.getElementById('asignatura').readOnly = true;
+    onTeacherChange(); 
     
-    // 5. Ocultar muro
+    if(docInput) docInput.disabled = true;
+    const asigInput = document.getElementById('asignatura');
+    if(asigInput) asigInput.readOnly = true;
+    
     document.getElementById('auth-wall').classList.add('hidden');
     return true;
 }
