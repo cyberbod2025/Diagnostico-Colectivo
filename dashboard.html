@@ -424,56 +424,48 @@
             const partialEfficacy = results.filter(v => v === 'Parcialmente').length > reports.length * 0.3;
 
             let level = "🟢";
-            let color = "bg-green-50 border-green-500 text-green-900";
-            let actions = [];
+            let color = "bg-green-50/10 border-green-500 text-green-100";
+            let paragraphs = [];
 
             if (pressure >= 75 || (pressure >= 60 && lowEfficacy)) {
-                level = "🔴 CRÍTICO";
-                color = "bg-red-50 border-red-500 text-red-900";
-                actions = [
-                    "Canalización inmediata a tutoría y orientación académica.",
-                    "Citatorio formal a padres de familia para establecer compromisos institucionales.",
-                    "Diseño y aplicación de un plan de intervención conductual individualizado.",
-                    "Registro detallado en el expediente oficial para respaldo administrativo ante inspección."
+                color = "bg-red-500/10 border-red-500 text-white";
+                paragraphs = [
+                    "Se identifica un nivel crítico de presión docente en el grupo, asociado a una alta recurrencia de conductas disruptivas en múltiples asignaturas y una baja eficacia de las estrategias implementadas hasta el momento.",
+                    "Se recomienda la activación inmediata de un protocolo de intervención integral que incluya canalización a tutoría, citatorio formal a padres de familia y la elaboración de un plan de seguimiento individual para los alumnos prioritarios.",
+                    "Asimismo, se sugiere establecer una reunión de colegiado docente con carácter urgente, a fin de unificar criterios de intervención y dar seguimiento coordinado a los casos detectados.",
+                    "El objetivo es restablecer condiciones óptimas para el aprendizaje y recuperar la gestión efectiva del tiempo de clase."
                 ];
             } else if (pressure >= 50) {
-                level = "🟠 ALTO";
-                color = "bg-orange-50 border-orange-500 text-orange-900";
-                actions = [
-                    "Modificación de la estrategia pedagógica grupal ante baja respuesta previa.",
-                    "Implementar trabajo individual supervisado con monitoreo constante.",
-                    "Establecer firma de acuerdos de convivencia semanales.",
-                    "Seguimiento focalizado a la asistencia y puntualidad de los tutores."
+                color = "bg-orange-500/10 border-orange-500 text-white";
+                paragraphs = [
+                    "Se observa un estado de vulnerabilidad institucional en la dinámica del grupo. Las incidencias reportadas sugieren una resistencia a las estrategias pedagógicas convencionales, requiriendo un ajuste técnico en la intervención docente.",
+                    "Se recomienda implementar un sistema de seguimiento semanal con los tutores y priorizar el trabajo individual supervisado con los alumnos que presentan mayor índice de incidencia.",
+                    "Es pertinente formalizar acuerdos de convivencia específicos para este grupo antes del próximo corte administrativo."
                 ];
             } else if (pressure >= 25) {
-                level = "🟡 MEDIO";
-                color = "bg-yellow-50 border-yellow-500 text-yellow-900";
-                actions = [
-                    "Ajuste técnico de las estrategias actuales para mejorar la atención docente.",
-                    "Refuerzo positivo estructurado para incentivar la participación académica.",
-                    "Privilegiar el trabajo colaborativo guiado por el docente para mejorar el clima."
+                color = "bg-yellow-500/10 border-yellow-500 text-white";
+                paragraphs = [
+                    "La dinámica grupal presenta incidencias en rango medio que permiten una intervención preventiva sin necesidad de protocolos de emergencia.",
+                    "Se sugiere reforzar positivamente la participación académica y privilegiar estrategias de trabajo colaborativo guiado para mejorar el clima de respeto y atención.",
+                    "El monitoreo actual en bitácora es suficiente, centrando la atención en el refuerzo de valores institucionales."
                 ];
             } else {
-                level = "🟢 CONTROLADO";
-                color = "bg-green-50 border-green-500 text-green-900";
-                actions = [
-                    "Mantener las estrategias pedagógicas actuales con monitoreo ligero.",
-                    "Promover el refuerzo positivo constante para sostener el ambiente de aprendizaje.",
-                    "Registrar avances notables en bitácora para histórico pedagógico."
+                color = "bg-green-500/10 border-green-500 text-white";
+                paragraphs = [
+                    "El grupo mantiene condiciones óptimas para el proceso de enseñanza-aprendizaje con un índice de presión docente mínimo.",
+                    "Se recomienda sostener las estrategias actuales y registrar las mejores prácticas observadas en este periodo para su posible réplica institucional.",
+                    "El clima escolar se reporta estable con una gestión de tiempo altamente efectiva."
                 ];
             }
 
-            // Bonus logic (Multi-docente)
-            if (recurrentCount > 3) {
-                actions.push("🆘 <b>ALERTA:</b> Se recomienda reunión breve de colegiado docente para unificar criterios de intervención ante alumnos recurrentes en múltiples materias.");
+            // Bonus logic (Multi-docente) - Add at the end if applicable
+            if (recurrentCount > 3 && pressure < 75) {
+                paragraphs.push("<b>ALERTA INTER-ASIGNATURA:</b> Existe una detectada recurrencia de alumnos focatizados en varias materias; se recomienda comunicación breve entre los docentes involucrados para unificar el discurso de autoridad.");
             }
 
-            box.className = `p-6 rounded-xl border-l-4 ${color}`;
-            actions.forEach(act => {
-                list.innerHTML += `<div class="flex gap-2 text-xs font-semibold items-start">
-                    <span class="mt-1">➜</span>
-                    <span>${act}</span>
-                </div>`;
+            box.className = `p-6 rounded-xl border-l-4 ${color} backdrop-blur-sm`;
+            paragraphs.forEach(p => {
+                list.innerHTML += `<p class="text-[11px] font-medium leading-relaxed mb-3">${p}</p>`;
             });
         }
 
