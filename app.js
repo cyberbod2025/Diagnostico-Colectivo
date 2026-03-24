@@ -13,16 +13,22 @@ const CONFIG = {
 async function checkAccess(pin) {
     if (!pin) return false;
     
-    const { data: teacher, error } = await supabaseClient
-        .from('personal')
-        .select('*')
-        .ilike('acceso_pin', pin.trim())
-        .single();
+    console.log("Intentando acceso con PIN:", pin);
+    
+    try {
+        const { data: teacher, error } = await supabaseClient
+            .from('personal')
+            .select('*')
+            .ilike('acceso_pin', pin.trim())
+            .single();
 
-    if (error || !teacher) {
-        alert("PIN Institucional NO VÁLIDO. Verifique con Dirección.");
-        return false;
-    }
+        if (error || !teacher) {
+            console.error("Error BD:", error);
+            alert("PIN Institucional NO VÁLIDO. Verifique con Dirección.");
+            return false;
+        }
+        
+        console.log("Docente encontrado:", teacher.nombre);
 
     CONFIG.CURRENT_TEACHER = teacher;
     sessionStorage.setItem('sirde_session_pin', pin);
@@ -56,11 +62,16 @@ async function checkAccess(pin) {
     onTeacherChange(); 
     
     if(docInput) docInput.disabled = true;
-    const asigInput = document.getElementById('asignatura');
     if(asigInput) asigInput.readOnly = true;
     
     document.getElementById('auth-wall').classList.add('hidden');
     return true;
+    
+    } catch (e) {
+        console.error("Falla Crítica Auth:", e);
+        alert("Error de conexión. Verifique su internet.");
+        return false;
+    }
 }
 
 // Llamada al cargar para evitar re-login si ya tiene PIN en sesión
