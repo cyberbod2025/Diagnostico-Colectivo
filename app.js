@@ -121,8 +121,10 @@ function renderStudents() {
     const list = document.getElementById('student-list');
     if (!list) return;
 
+    console.log("LOG: renderStudents para grupo ->", grupo);
+    
     if (!grupo) {
-        list.innerHTML = '<p class="text-center text-slate-500 text-[10px] uppercase font-black py-10">Seleccione un grupo en el Paso 1</p>';
+        list.innerHTML = '<p class="text-center text-slate-500 text-[10px] uppercase font-black py-10">Seleccione un grupo en el Paso 1 para ver el listado</p>';
         return;
     }
 
@@ -132,7 +134,12 @@ function renderStudents() {
         return;
     }
 
-    const filtered = globalAlumnos.filter(a => a.grupo === grupo);
+    const filtered = globalAlumnos.filter(s => {
+        if (!s.grupo) return false;
+        return s.grupo.toString().trim().toUpperCase() === grupo.toString().trim().toUpperCase();
+    });
+    
+    console.log("LOG: Alumnos filtrados ->", filtered.length);
     list.innerHTML = '';
     console.log(`Renderizando ${filtered.length} alumnos para el grupo ${grupo}`);
     
@@ -153,18 +160,20 @@ function renderStudents() {
                         <span class="font-bold text-[13px] text-white tracking-tight leading-tight">${al.nombre_completo}</span>
                     </label>
                 </div>
-                <div id="sub-${al.id}" class="hidden p-5 bg-black/60 rounded-2xl grid grid-cols-2 gap-4 border border-white/10 animate-fade-in">
-                    ${['Desatención', 'Disrupción', 'Agresión', 'Tareas'].map(b => `
+                ${['Desatención', 'Disrupción', 'Agresión', 'Tareas'].map(b => {
+                    const uniqueId = `behav-${al.id}-${b.replace(/\s+/g, '')}`;
+                    return `
                         <div class="flex flex-col gap-2">
-                            <span class="text-[10px] font-black text-slate-400 uppercase tracking-tighter">${b}</span>
-                            <select name="behav-${al.id}-${b}" class="behav-sel w-full text-xs p-3 bg-slate-900 rounded-xl text-white border-white/10" data-name="${b}">
+                            <label for="${uniqueId}" class="text-[10px] font-black text-slate-400 uppercase tracking-tighter">${b}</label>
+                            <select id="${uniqueId}" name="${uniqueId}" class="behav-sel w-full text-xs p-3 bg-slate-900 rounded-xl text-white border-white/10" data-name="${b}">
                                 <option value="Nula">NIVEL: NULO</option>
                                 <option value="Baja">BAJO</option>
                                 <option value="Media">MEDIO</option>
                                 <option value="Alta">ALTO</option>
                             </select>
                         </div>
-                    `).join('')}
+                    `;
+                }).join('')}
                 </div>
             `;
             list.appendChild(div);
