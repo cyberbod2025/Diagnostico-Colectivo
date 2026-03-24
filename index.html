@@ -37,13 +37,8 @@
             </div>
                 <div class="flex flex-col items-end gap-2 text-right no-print">
                     <div class="flex items-center gap-2">
-                        <span class="text-[9px] font-bold text-slate-500 uppercase">Periodo:</span>
-                        <select id="current-periodo" class="text-[10px] p-1 font-bold border-none bg-slate-100 rounded" onchange="updatePeriodTitle()">
-                            <option value="T1-2026">Trímetros 1 (2026)</option>
-                            <option value="T2-2026" selected>Trímetros 2 (2026)</option>
-                            <option value="T3-2026">Trímetros 3 (2026)</option>
-                            <option value="T-DIAG">Diagnóstico Inicial</option>
-                        </select>
+                        <span id="current-period-text" class="text-xs font-bold bg-primary-green/20 text-primary-green px-3 py-1 rounded-full border border-primary-green/30">TRIMESTRE 2 (2026)</span>
+                        <input type="hidden" id="current-periodo" value="T2-2026">
                     </div>
                     <div class="flex gap-3">
                         <a href="dashboard.html" class="text-[10px] font-bold text-blue-800 underline uppercase">Dashboard</a>
@@ -259,25 +254,50 @@
                 </div>
 
                 <div class="pt-6 mt-6 bg-blue-50/30 p-4 rounded-lg">
-                    <p class="text-[10px] font-bold text-blue-900 uppercase mb-3">Factores Externos y Contexto</p>
-                    <div class="flex flex-col md:flex-row gap-4 items-start">
-                        <div class="flex items-center gap-2">
-                            <span class="text-xs font-bold">¿Factores externos influyen?</span>
-                            <select id="fact-ext-switch" class="text-xs p-1 rounded border-blue-200">
-                                <option value="No">No</option>
-                                <option value="Sí">Sí</option>
+                    <div class="space-y-4">
+                        <div class="flex flex-col gap-2">
+                            <span class="text-xs font-bold uppercase text-primary-green/60">¿Algún factor externo influye?</span>
+                            <select id="fact-ext-select" class="w-full text-xs p-3 rounded" onchange="toggleOtroFactor(this.value)">
+                                <option value="Ninguno">Ninguno detectado</option>
+                                <option value="Falta de apoyo familiar">Falta de apoyo familiar / Desinterés</option>
+                                <option value="Problemas económicos">Problemas económicos evidentes</option>
+                                <option value="Situación emocional/duelo">Situación emocional o duelo</option>
+                                <option value="Barreras de aprendizaje">Barreras de Aprendizaje (BAP)</option>
+                                <option value="Inasistencias constantes">Inasistencias constantes / Salud</option>
+                                <option value="Otro">Otro (Especificar...)</option>
                             </select>
                         </div>
-                        <input type="text" id="fact-ext-text" placeholder="Especifique brevemente (Entorno, familia, etc.)" class="text-xs p-2 bg-white border-blue-100 flex-1">
+                        <div id="otro-factor-container" class="hidden animate-fade-in">
+                            <input type="text" id="fact-ext-text" placeholder="Especifique el factor externo..." class="w-full text-xs p-3 border-dashed">
+                        </div>
                     </div>
                 </div>
             </section>
 
             <!-- ALUMNOS -->
             <section class="card">
-                <h2 class="section-title">Seguimiento Individual de Estudiantes</h2>
                 <div id="student-list" class="student-list">
-                    <p class="p-8 text-center text-slate-400 italic">Seleccione un grupo para cargar estudiantes...</p>
+                    <div class="p-8 text-center text-slate-500 border-2 border-dashed border-slate-200 rounded-xl">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto mb-3 opacity-20" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                        <p class="font-bold">SELECCIONE UN GRUPO PARA ACTIVAR EL LISTADO</p>
+                    </div>
+                </div>
+
+                <!-- ADD MANUAL STUDENT -->
+                <div id="manual-student-zone" class="mt-6 pt-6 border-t border-slate-100 hidden">
+                    <p class="text-[10px] font-bold text-slate-400 uppercase mb-4">Si requiere agregar a otros alumnos con situaciones recurrentes:</p>
+                    <div class="flex gap-2">
+                        <select id="manual-student-select" class="flex-1 text-xs p-2">
+                            <option value="">Buscar en toda la escuela...</option>
+                        </select>
+                        <button type="button" onclick="addManualStudent()" class="px-4 py-3 bg-primary-green text-[#02140f] rounded-lg flex items-center gap-2 text-xs font-black hover:scale-105 transition-all">
+                            <span>+</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="mt-8 flex justify-between items-center bg-white/5 p-4 rounded-xl border border-white/10">
+                    <p class="text-[10px] italic text-slate-400">Si ya terminó con los alumnos focalizados:</p>
+                    <button type="button" onclick="handleFormSubmit(event)" class="text-xs font-black text-primary-green hover:underline">FINALIZAR REPORTE →</button>
                 </div>
             </section>
 

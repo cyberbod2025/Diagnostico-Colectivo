@@ -506,8 +506,8 @@
 
         function renderRecurrentStudents(students) {
             const list = document.getElementById('recurrence-list');
-            list.innerHTML = `<div class="text-[9px] font-bold text-slate-400 mb-2 grid grid-cols-5 gap-2 border-b pb-1">
-                <div class="col-span-2">ALUMNO (TOP FOCALIZADOS)</div><div>DOCENTES</div><div>MATERIAS</div><div>NIVEL</div>
+            list.innerHTML = `<div class="text-[9px] font-bold text-slate-400 mb-2 grid grid-cols-6 gap-2 border-b pb-1">
+                <div class="col-span-2">ALUMNO (TOP)</div><div>DOCS</div><div class="col-span-2">MATERIAS</div><div>NIVEL</div>
             </div>`;
             
             Object.values(students)
@@ -521,12 +521,12 @@
                     if (teachersCount > 3) { color = "bg-red-500 text-white"; level = "CRÍTICO"; }
                     else if (teachersCount > 1) { color = "bg-orange-500 text-white"; level = "ALTO"; }
                     
-                    list.innerHTML += `<div class="grid grid-cols-5 gap-2 text-[10px] items-center py-2 border-b hover:bg-slate-50 transition-all">
+                    list.innerHTML += `<div class="grid grid-cols-6 gap-2 text-[10px] items-center py-2 border-b hover:bg-slate-50 transition-all">
                         <div class="col-span-2 font-black">
                             ${idx < 5 ? '⭐' : ''} ${s.name}
                         </div>
                         <div class="font-bold text-center">${teachersCount}</div>
-                        <div class="text-[9px] text-slate-500 italic truncate">${Array.from(s.subjects).join(', ')}</div>
+                        <div class="col-span-2 text-[9px] text-slate-300 italic leading-tight">${Array.from(s.subjects).join(', ')}</div>
                         <div class="text-center">
                             <span class="px-2 py-0.5 rounded-full text-[8px] font-black ${color}">${level}</span>
                         </div>
