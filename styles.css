@@ -1,17 +1,21 @@
 /* SIRDE-310 Institutional CSS */
 :root {
-    --primary-blue: #1e3a8a;
-    --bg-light: #f8fafc;
-    --border-gray: #e2e8f0;
-    --text-main: #0f172a;
-    --text-muted: #64748b;
+    --primary-blue: #00d2ff;
+    --navy-bg: #0f172a;
+    --card-bg: #1e293b;
+    --border-gray: #334155;
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
     --white: #ffffff;
+    --grad-blue: linear-gradient(135deg, #00d2ff 0%, #3a7bd5 100%);
+    --grad-purple: linear-gradient(135deg, #8e2de2 0%, #4a00e0 100%);
+    --grad-orange: linear-gradient(135deg, #f2994a 0%, #f2c94c 100%);
 }
 
 body {
-    background-color: var(--bg-light);
+    background-color: var(--navy-bg);
     color: var(--text-main);
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Outfit', 'Inter', system-ui, -apple-system, sans-serif;
     line-height: 1.5;
     margin: 0;
 }
@@ -23,17 +27,18 @@ body {
 }
 
 .card {
-    background: var(--white);
+    background: var(--card-bg);
     border: 1px solid var(--border-gray);
     border-radius: 12px;
     padding: 2rem;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
     margin-bottom: 2rem;
-    transition: transform 0.2s ease;
+    transition: all 0.2s ease;
 }
 
 .card:hover {
-    transform: translateY(-2px);
+    border-color: var(--primary-blue);
+    box-shadow: 0 0 20px rgba(0, 210, 255, 0.1);
 }
 
 h1, h2, h3 {
@@ -42,12 +47,13 @@ h1, h2, h3 {
 }
 
 .section-title {
-    font-size: 0.875rem;
+    font-size: 0.75rem;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
-    font-weight: 700;
-    border-bottom: 2px solid var(--primary-blue);
-    padding-bottom: 0.5rem;
+    letter-spacing: 0.1em;
+    font-weight: 800;
+    color: var(--text-muted);
+    border-left: 3px solid var(--primary-blue);
+    padding-left: 0.75rem;
     margin-bottom: 1.5rem;
 }
 
@@ -69,9 +75,11 @@ select,
 textarea {
     width: 100%;
     padding: 0.75rem;
+    background: #0f172a;
     border: 1px solid var(--border-gray);
-    border-radius: 6px;
-    font-size: 1rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    color: white;
     box-sizing: border-box;
 }
 
@@ -82,19 +90,23 @@ input:focus, select:focus, textarea:focus {
 }
 
 .btn-primary {
-    background-color: var(--primary-blue);
+    background: var(--grad-blue);
     color: white;
     border: none;
-    padding: 1rem 2rem;
-    border-radius: 6px;
-    font-weight: 700;
+    padding: 0.85rem 1.5rem;
+    border-radius: 50px; /* Rounded buttons like image */
+    font-weight: 800;
     cursor: pointer;
-    width: 100%;
-    font-size: 1rem;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 210, 255, 0.3);
 }
 
 .btn-primary:hover {
-    background-color: #1e40af;
+    transform: scale(1.02);
+    box-shadow: 0 6px 20px rgba(0, 210, 255, 0.4);
 }
 
 .btn-primary:disabled {
@@ -152,17 +164,23 @@ input:focus, select:focus, textarea:focus {
 
 /* Print Optimization */
 @media print {
-    body { background-color: white; padding: 0; }
+    body { background-color: white; padding: 0; color: black; font-size: 10pt; }
     .no-print { display: none !important; }
-    .card { border: 1px solid #eee; box-shadow: none; padding: 1rem; margin-bottom: 1rem; page-break-inside: avoid; }
+    .card { border: none; box-shadow: none; padding: 0.5rem 0; margin-bottom: 1rem; page-break-inside: avoid; }
     .container { max-width: 100%; width: 100%; padding: 0; }
-    h1, h2, h3 { color: black !important; }
-    .section-title { border-bottom-color: black !important; color: black !important; }
-    .student-entry { border: 1px solid #eee; margin-bottom: 0.5rem; page-break-inside: avoid; }
-    .student-subform { background: white !important; border-top: 1px solid #eee; }
-    input, select, textarea { border: 1px solid #ddd !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    h1, h2, h3 { color: black !important; margin: 5px 0; }
+    .section-title { border-bottom: 1px solid black !important; color: black !important; padding-bottom: 2px; margin-bottom: 10px; }
+    .student-entry { border-bottom: 1px solid #ddd; margin-bottom: 0px; page-break-inside: avoid; }
+    input, select, textarea { border: none !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
     .btn-primary { display: none !important; }
+    
+    /* Institutional Layout */
+    .official-header { display: flex !important; border-bottom: 2px solid black; padding-bottom: 10px; margin-bottom: 20px; }
+    .signature-zone { display: grid !important; grid-template-columns: 1fr 1fr; gap: 50px; margin-top: 50px; text-align: center; }
+    .signature-line { border-top: 1px solid black; padding-top: 5px; font-size: 9px; font-weight: bold; }
 }
+
+.official-header, .signature-zone { display: none; }
 
 /* Custom Scrollbar */
 ::-webkit-scrollbar { width: 6px; }

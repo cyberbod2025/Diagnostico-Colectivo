@@ -3,10 +3,10 @@ const SUPABASE_URL = 'https://uvnetpnjinxzhggoqmwz.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_oBpidcqpYzP_JMU-xYi9ZQ_HXYouwyL';
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-const _k = [51, 49, 48];
+const _k = "SIRDE310_SECUNDARIA";
 const CONFIG = {
-    ACCESS_PIN: _k.map(c => String.fromCharCode(c)).join(''),
-    CURRENT_PERIODO: 'Primer Trimestre 2026'
+    ACCESS_PIN: _k,
+    PERIODOS_DISPONIBLES: ['Trímetros 1 (2026)', 'Trímetros 2 (2026)', 'Trímetros 3 (2026)', 'Diagnóstico Inicial']
 };
 
 const CAMPO_FORMATIVO_MAP = {
@@ -159,7 +159,7 @@ async function handleFormSubmit(e) {
     const docente = document.getElementById('docente').value;
     const grupo = document.getElementById('grupo').value;
     const asignatura = document.getElementById('asignatura').value;
-    const periodo = CONFIG.CURRENT_PERIODO;
+    const periodo = document.getElementById('current-periodo').value;
 
     // 1. Check for duplicates
     const { data: existing } = await supabaseClient
@@ -223,10 +223,29 @@ async function handleFormSubmit(e) {
         impacto: document.getElementById('impacto').value,
         tiempo_conducta: document.getElementById('tiempo_conducta').value,
         nivel_grupo: document.getElementById('nivel_grupo').value,
-        conductas_grupales: Array.from(document.querySelectorAll('.chk-grupo')).map(sel => ({
-            type: sel.getAttribute('data-behav'),
-            level: sel.value
-        })),
+        ambiente: {
+            atencion: document.getElementById('amb-atencion').value,
+            respeto: document.getElementById('amb-respeto').value,
+            participacion: document.getElementById('amb-participacion').value
+        },
+        factores_externos: {
+            incluye: document.getElementById('fact-ext-switch').value,
+            descripcion: document.getElementById('fact-ext-text').value
+        },
+        conductas_grupales: Array.from(document.querySelectorAll('.chk-grupo')).map(sel => {
+            const behave = sel.getAttribute('data-behav');
+            const freqSel = document.querySelector(`.chk-grupo-freq[data-behav="${behave}"]`);
+            return {
+                type: behave,
+                level: sel.value,
+                frequency: freqSel ? freqSel.value : 'Ocasional'
+            };
+        }),
+        intervenciones: {
+            estrategias: Array.from(document.querySelectorAll('.estrategia-chk:checked')).map(el => el.value),
+            otra_estrategia: document.getElementById('chk-otra-est').checked ? document.getElementById('otra-est-text').value : '',
+            eficacia: document.getElementById('est-eficacia').value
+        },
         alumnos_reportados: reportedStudents,
         comentarios: document.getElementById('comentarios').value,
         fecha: new Date().toISOString()
@@ -260,11 +279,24 @@ function getAuthCode() {
 }
 
 function checkAccess(val) {
-    if (val === getAuthCode()) {
+    const accessCode = getAuthCode();
+    if (!val) val = prompt("SISTEMA SIRDE-310: Ingrese Clave de Acceso Institucional");
+    
+    if (val === accessCode) {
         sessionStorage.setItem('auth_sirde', 'true');
-        document.getElementById('auth-wall').style.display = 'none';
+        const wall = document.getElementById('auth-wall');
+        if (wall) wall.style.display = 'none';
         initData();
         return true;
+    } else {
+        document.body.innerHTML = `<div style="height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; background:#0f172a; color:white; font-family:sans-serif; text-align:center; padding:20px;">
+            <h1 style="color:#ef4444; font-size:2rem; font-weight:900;">ACCESO RESTRINGIDO</h1>
+            <p style="text-transform:uppercase; letter-spacing:2px; font-weight:700; color:#64748b; margin-top:10px;">Validación de Credenciales Fallida</p>
+            <div style="margin-top:30px; padding:20px; border:1px solid #1e293b; border-radius:12px; background:#1e293b;">
+                <p style="font-size:0.8rem; color:#94a3b8;">Este sistema es de uso exclusivo para personal docente de la Escuela Secundaria 310.</p>
+                <button onclick="location.reload()" style="margin-top:20px; padding:12px 24px; cursor:pointer; background:#3b82f6; color:white; border:none; border-radius:6px; font-weight:bold;">REINTENTAR ACCESO</button>
+            </div>
+        </div>`;
     }
     return false;
 }

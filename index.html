@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SIRDE-310 | Respaldo Docente Institucional</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -11,10 +12,10 @@
 <body class="p-4 md:p-8">
     <div id="auth-wall" class="fixed inset-0 z-[100] bg-slate-900/90 flex items-center justify-center p-4">
         <div class="card w-full max-w-sm text-center space-y-4">
-            <h1 class="text-xl font-black">Acceso SIRDE-310</h1>
-            <p class="text-xs text-slate-500 font-bold uppercase">Uso Interno Escolar</p>
-            <input type="password" id="entry-pin" placeholder="CONTRASEÑA" class="w-full">
-            <button onclick="if(checkAccess(document.getElementById('entry-pin').value)) {} else { alert('Incorrecto'); }" class="btn-primary">INGRESAR</button>
+            <h1 class="text-xl font-black italic">CONTROL INSTITUCIONAL</h1>
+            <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Validación de Credenciales SIRDE</p>
+            <input type="password" id="entry-pin" placeholder="CLAVE DE ACCESO" class="w-full text-center tracking-widest font-black">
+            <button onclick="if(checkAccess(document.getElementById('entry-pin').value)) {} else { alert('ACCESO DENEGADO'); }" class="btn-primary">ACCEDER AL SISTEMA</button>
         </div>
     </div>
 
@@ -34,10 +35,21 @@
                     <p class="text-[9px] font-bold text-slate-400">Escuela Secundaria Diurna No. 310 "Presidentes de México" • Turno Vespertino</p>
                 </div>
             </div>
-            <div class="text-right no-print flex flex-col items-end gap-1">
-                <a href="dashboard.html" class="text-[10px] font-bold text-blue-800 underline">Ir al Dashboard de Análisis</a>
-                <button onclick="logoutSIRDE()" class="text-[10px] font-bold text-red-600 hover:text-red-800 uppercase">Cerrar Sesión</button>
-            </div>
+                <div class="flex flex-col items-end gap-2 text-right no-print">
+                    <div class="flex items-center gap-2">
+                        <span class="text-[9px] font-bold text-slate-500 uppercase">Periodo:</span>
+                        <select id="current-periodo" class="text-[10px] p-1 font-bold border-none bg-slate-100 rounded" onchange="updatePeriodTitle()">
+                            <option value="T1-2026">Trímetros 1 (2026)</option>
+                            <option value="T2-2026">Trímetros 2 (2026)</option>
+                            <option value="T3-2026">Trímetros 3 (2026)</option>
+                            <option value="T-DIAG">Diagnóstico Inicial</option>
+                        </select>
+                    </div>
+                    <div class="flex gap-3">
+                        <a href="dashboard.html" class="text-[10px] font-bold text-blue-800 underline uppercase">Dashboard</a>
+                        <button onclick="logoutSIRDE()" class="text-[10px] font-bold text-red-600 hover:text-red-800 uppercase">Cerrar Sesión</button>
+                    </div>
+                </div>
         </header>
 
         <form id="sirde-form" onsubmit="handleFormSubmit(event)" class="space-y-6">
@@ -137,6 +149,11 @@
                                 <option value="Media" selected>Media</option>
                                 <option value="Alta">Alta</option>
                             </select>
+                            <select class="chk-grupo-freq text-[10px] border-none bg-slate-50 ml-2" data-behav="Interrupciones">
+                                <option value="Ocasional">Ocasional</option>
+                                <option value="Frecuente">Frecuente</option>
+                                <option value="Muy Frecuente">Muy Frecuente</option>
+                            </select>
                         </div>
                         <div class="flex items-center justify-between p-2 border border-slate-200 rounded">
                             <span class="text-xs font-bold">Agresiones</span>
@@ -145,6 +162,11 @@
                                 <option value="Baja">Baja</option>
                                 <option value="Media">Media</option>
                                 <option value="Alta">Alta</option>
+                            </select>
+                            <select class="chk-grupo-freq text-[10px] border-none bg-slate-50 ml-2" data-behav="Agresión">
+                                <option value="Ocasional">Ocasional</option>
+                                <option value="Frecuente">Frecuente</option>
+                                <option value="Muy Frecuente">Muy Frecuente</option>
                             </select>
                         </div>
                         <div class="flex items-center justify-between p-2 border border-slate-200 rounded">
@@ -155,6 +177,11 @@
                                 <option value="Media">Media</option>
                                 <option value="Alta">Alta</option>
                             </select>
+                            <select class="chk-grupo-freq text-[10px] border-none bg-slate-50 ml-2" data-behav="Desafío">
+                                <option value="Ocasional">Ocasional</option>
+                                <option value="Frecuente">Frecuente</option>
+                                <option value="Muy Frecuente">Muy Frecuente</option>
+                            </select>
                         </div>
                         <div class="flex items-center justify-between p-2 border border-slate-200 rounded">
                             <span class="text-xs font-bold">Apatía/No trabaja</span>
@@ -163,6 +190,11 @@
                                 <option value="Baja">Baja</option>
                                 <option value="Media">Media</option>
                                 <option value="Alta">Alta</option>
+                            </select>
+                            <select class="chk-grupo-freq text-[10px] border-none bg-slate-50 ml-2" data-behav="Apatía">
+                                <option value="Ocasional">Ocasional</option>
+                                <option value="Frecuente">Frecuente</option>
+                                <option value="Muy Frecuente">Muy Frecuente</option>
                             </select>
                         </div>
                         <div class="flex items-center justify-between p-2 border border-slate-200 rounded">
@@ -173,6 +205,11 @@
                                 <option value="Media">Media</option>
                                 <option value="Alta">Alta</option>
                             </select>
+                            <select class="chk-grupo-freq text-[10px] border-none bg-slate-50 ml-2" data-behav="Groserías">
+                                <option value="Ocasional">Ocasional</option>
+                                <option value="Frecuente">Frecuente</option>
+                                <option value="Muy Frecuente">Muy Frecuente</option>
+                            </select>
                         </div>
                         <div class="flex items-center justify-between p-2 border border-slate-200 rounded">
                             <span class="text-xs font-bold">Uso de Celular</span>
@@ -182,7 +219,56 @@
                                 <option value="Media">Media</option>
                                 <option value="Alta">Alta</option>
                             </select>
+                            <select class="chk-grupo-freq text-[10px] border-none bg-slate-50 ml-2" data-behav="Celular">
+                                <option value="Ocasional">Ocasional</option>
+                                <option value="Frecuente">Frecuente</option>
+                                <option value="Muy Frecuente">Muy Frecuente</option>
+                            </select>
                         </div>
+                    </div>
+                </div>
+
+                <div class="pt-6 border-t border-slate-100 mt-6">
+                    <p class="text-[10px] font-bold text-slate-500 uppercase mb-3">Ambiente del Grupo e Indicadores de Integridad</p>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="input-group-sub">
+                            <label class="text-[10px] uppercase text-slate-400">Nivel de Atención</label>
+                            <select id="amb-atencion" class="text-xs p-2 bg-slate-50 border-none rounded w-full">
+                                <option value="Bajo">Bajo</option>
+                                <option value="Medio" selected>Medio</option>
+                                <option value="Alto">Alto</option>
+                            </select>
+                        </div>
+                        <div class="input-group-sub">
+                            <label class="text-[10px] uppercase text-slate-400">Nivel de Respeto</label>
+                            <select id="amb-respeto" class="text-xs p-2 bg-slate-50 border-none rounded w-full">
+                                <option value="Bajo">Bajo</option>
+                                <option value="Medio" selected>Medio</option>
+                                <option value="Alto">Alto</option>
+                            </select>
+                        </div>
+                        <div class="input-group-sub">
+                            <label class="text-[10px] uppercase text-slate-400">Participación</label>
+                            <select id="amb-participacion" class="text-xs p-2 bg-slate-50 border-none rounded w-full">
+                                <option value="Bajo">Bajo</option>
+                                <option value="Medio" selected>Medio</option>
+                                <option value="Alto">Alto</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pt-6 mt-6 bg-blue-50/30 p-4 rounded-lg">
+                    <p class="text-[10px] font-bold text-blue-900 uppercase mb-3">Factores Externos y Contexto</p>
+                    <div class="flex flex-col md:flex-row gap-4 items-start">
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs font-bold">¿Factores externos influyen?</span>
+                            <select id="fact-ext-switch" class="text-xs p-1 rounded border-blue-200">
+                                <option value="No">No</option>
+                                <option value="Sí">Sí</option>
+                            </select>
+                        </div>
+                        <input type="text" id="fact-ext-text" placeholder="Especifique brevemente (Entorno, familia, etc.)" class="text-xs p-2 bg-white border-blue-100 flex-1">
                     </div>
                 </div>
             </section>
@@ -195,13 +281,86 @@
                 </div>
             </section>
 
-            <!-- COMENTARIOS -->
-            <section class="card">
-                <h2 class="section-title">Observaciones y Estrategias</h2>
-                <textarea id="comentarios" rows="3" placeholder="Intervenciones aplicadas hasta el momento..." class="w-full"></textarea>
-                <div class="mt-8">
-                    <button type="submit" id="btn-submit" class="btn-primary">REGISTRAR DIAGNÓSTICO INSTITUCIONAL</button>
+            <!-- ESTRATEGIAS DE INTERVENCIÓN -->
+            <section class="card bg-slate-50 border-slate-200">
+                <h2 class="section-title">Estrategias de Intervención Docente</h2>
+                <p class="text-[10px] font-bold text-slate-400 uppercase mb-4">Seleccione las acciones aplicadas con el grupo</p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 mb-6">
+                    <label class="flex items-center gap-2 p-2 bg-white rounded border border-slate-100 hover:border-blue-200 cursor-pointer transition-all">
+                        <input type="checkbox" class="estrategia-chk" value="Llamada de atención verbal">
+                        <span class="text-xs">Llamada de atención verbal</span>
+                    </label>
+                    <label class="flex items-center gap-2 p-2 bg-white rounded border border-slate-100 hover:border-blue-200 cursor-pointer transition-all">
+                        <input type="checkbox" class="estrategia-chk" value="Cambio de lugar">
+                        <span class="text-xs">Cambio de lugar</span>
+                    </label>
+                    <label class="flex items-center gap-2 p-2 bg-white rounded border border-slate-100 hover:border-blue-200 cursor-pointer transition-all">
+                        <input type="checkbox" class="estrategia-chk" value="Trabajo individual supervisado">
+                        <span class="text-xs">Trabajo individual supervisado</span>
+                    </label>
+                    <label class="flex items-center gap-2 p-2 bg-white rounded border border-slate-100 hover:border-blue-200 cursor-pointer transition-all">
+                        <input type="checkbox" class="estrategia-chk" value="Trabajo colaborativo guiado">
+                        <span class="text-xs">Trabajo colaborativo guiado</span>
+                    </label>
+                    <label class="flex items-center gap-2 p-2 bg-white rounded border border-slate-100 hover:border-blue-200 cursor-pointer transition-all">
+                        <input type="checkbox" class="estrategia-chk" value="Acuerdo de conducta con el alumno">
+                        <span class="text-xs">Acuerdo de conducta con el alumno</span>
+                    </label>
+                    <label class="flex items-center gap-2 p-2 bg-white rounded border border-slate-100 hover:border-blue-200 cursor-pointer transition-all">
+                        <input type="checkbox" class="estrategia-chk" value="Registro en bitácora">
+                        <span class="text-xs">Registro en bitácora</span>
+                    </label>
+                    <label class="flex items-center gap-2 p-2 bg-white rounded border border-slate-100 hover:border-blue-200 cursor-pointer transition-all">
+                        <input type="checkbox" class="estrategia-chk" value="Citatorio a padres">
+                        <span class="text-xs">Citatorio a padres</span>
+                    </label>
+                    <label class="flex items-center gap-2 p-2 bg-white rounded border border-slate-100 hover:border-blue-200 cursor-pointer transition-all">
+                        <input type="checkbox" class="estrategia-chk" value="Canalización a tutoría">
+                        <span class="text-xs">Canalización a tutoría</span>
+                    </label>
+                    <label class="flex items-center gap-2 p-2 bg-white rounded border border-slate-100 hover:border-blue-200 cursor-pointer transition-all">
+                        <input type="checkbox" class="estrategia-chk" value="Actividad diferenciada">
+                        <span class="text-xs">Actividad diferenciada</span>
+                    </label>
+                    <label class="flex items-center gap-2 p-2 bg-white rounded border border-slate-100 hover:border-blue-200 cursor-pointer transition-all">
+                        <input type="checkbox" class="estrategia-chk" value="Refuerzo positivo">
+                        <span class="text-xs">Refuerzo positivo</span>
+                    </label>
+                    <label class="flex items-center gap-2 p-2 bg-white rounded border border-slate-100 hover:border-blue-200 cursor-pointer transition-all">
+                        <input type="checkbox" class="estrategia-chk" value="Tiempo fuera (pausa breve)">
+                        <span class="text-xs">Tiempo fuera (pausa breve)</span>
+                    </label>
+                    <label class="flex items-center gap-2 p-2 bg-white rounded border border-slate-100 hover:border-blue-200 cursor-pointer transition-all">
+                        <input type="checkbox" class="estrategia-chk" value="Seguimiento individual">
+                        <span class="text-xs">Seguimiento individual</span>
+                    </label>
+                    <label class="flex items-center gap-2 p-2 bg-white rounded border border-slate-100 hover:border-blue-200 cursor-pointer transition-all col-span-full">
+                        <input type="checkbox" id="chk-otra-est" onchange="document.getElementById('otra-est-text').classList.toggle('hidden')">
+                        <span class="text-xs font-bold text-blue-800">Otra estrategia...</span>
+                    </label>
                 </div>
+
+                <textarea id="otra-est-text" rows="2" placeholder="Describe brevemente la estrategia aplicada..." class="w-full hidden mb-6 text-xs"></textarea>
+
+                <div class="pt-6 border-t border-slate-200 flex flex-col md:flex-row items-center justify-between gap-4">
+                    <div class="flex items-center gap-4">
+                        <span class="text-sm font-black text-slate-800 italic uppercase">¿Funcionó la estrategia?</span>
+                        <select id="est-eficacia" class="text-xs p-2 bg-white border-slate-300 rounded font-bold">
+                            <option value="Pendiente">--- Selecciones ---</option>
+                            <option value="Sí" class="text-green-600">Sí, resultados visibles</option>
+                            <option value="Parcialmente" class="text-orange-600">Parcialmente</option>
+                            <option value="No" class="text-red-600">No funcionó / Empeoró</option>
+                        </select>
+                    </div>
+                    <button type="submit" id="btn-submit" class="btn-primary md:w-auto px-12">REGISTRAR DIAGNÓSTICO INSTITUCIONAL</button>
+                </div>
+            </section>
+
+            <!-- COMENTARIOS ADICIONALES -->
+            <section class="card">
+                <h2 class="section-title">Comentarios Adicionales</h2>
+                <textarea id="comentarios" rows="2" placeholder="Cualquier dato extra que el CTE deba conocer..." class="w-full text-xs"></textarea>
             </section>
         </form>
 

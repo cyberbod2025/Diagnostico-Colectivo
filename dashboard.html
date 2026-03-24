@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SIRDE-310 | Análisis Institucional Colectivo</title>
+    <title>Tablero de Análisis | SIRDE-310</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -30,10 +31,10 @@
 <body class="p-4 md:p-8">
     <div id="auth-wall" class="fixed inset-0 z-[100] bg-slate-900/90 flex items-center justify-center p-4">
         <div class="card w-full max-w-sm text-center space-y-4">
-            <h1 class="text-xl font-black">Validación Institucional</h1>
-            <p class="text-xs text-slate-500 font-bold uppercase">Acceso Restringido Dashboard</p>
-            <input type="password" id="entry-pin" placeholder="CONTRASEÑA" class="w-full">
-            <button onclick="if(checkAccess(document.getElementById('entry-pin').value)) {} else { alert('Incorrecto'); }" class="btn-primary">INGRESAR</button>
+            <h1 class="text-xl font-black italic">VALIDACIÓN INSTITUCIONAL</h1>
+            <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Acceso Restringido Dashboard SIRDE</p>
+            <input type="password" id="entry-pin" placeholder="CLAVE DE ACCESO" class="w-full text-center tracking-widest font-black">
+            <button onclick="if(checkAccess(document.getElementById('entry-pin').value)) {} else { document.body.innerHTML = 'Acceso Restringido'; }" class="btn-primary">ACCEDER AL ANÁLISIS</button>
         </div>
     </div>
 
@@ -55,30 +56,32 @@
                 </div>
             </div>
             <div class="flex flex-col items-end gap-3 no-print">
-                <div class="flex gap-2">
-                    <div style="flex: 1; min-width: 200px;">
-                        <label style="display: block; font-size: 0.65rem; font-weight: 700; color: #64748b; margin-bottom: 0.5rem; text-transform: uppercase;">Filtrar por Grupo</label>
-                        <select id="filter-grupo" onchange="renderDashboard()" style="width: 100%; padding: 0.6rem; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 0.85rem;">
-                            <option value="Todos">Todos los Grupos (12)</option>
-                            <option value="1º A">1º A</option>
-                            <option value="1º B">1º B</option>
-                            <option value="1º C">1º C</option>
-                            <option value="1º D">1º D</option>
-                            <option value="2º A">2º A</option>
-                            <option value="2º B">2º B</option>
-                            <option value="2º C">2º C</option>
-                            <option value="2º D">2º D</option>
-                            <option value="3º A">3º A</option>
-                            <option value="3º B">3º B</option>
-                            <option value="3º C">3º C</option>
-                            <option value="3º D">3º D</option>
+                <div class="flex flex-col md:flex-row gap-2">
+                    <div style="min-width: 150px;">
+                        <label class="text-[9px] font-bold text-slate-400 uppercase">Periodo</label>
+                        <select id="filter-periodo" onchange="runAnalysis()" class="w-full p-2 border border-slate-200 rounded text-xs font-bold">
+                            <option value="T1-2026">T1-2026</option>
+                            <option value="T2-2026">T2-2026</option>
+                            <option value="T3-2026">T3-2026</option>
+                            <option value="T-DIAG">Diagnóstico</option>
                         </select>
                     </div>
-                    <button onclick="window.print()" class="px-4 py-2 border border-black font-bold text-[10px] rounded hover:bg-slate-50 transition-all uppercase">
-                        Imprimir Informe
-                    </button>
+                    <div style="min-width: 150px;">
+                        <label class="text-[9px] font-bold text-slate-400 uppercase">Filtrar Grupo</label>
+                        <select id="filter-grupo" onchange="runAnalysis()" class="w-full p-2 border border-slate-200 rounded text-xs font-bold">
+                            <option value="Todos">Todos (12)</option>
+                            <option value="1º A">1º A</option><option value="1º B">1º B</option><option value="1º C">1º C</option><option value="1º D">1º D</option>
+                            <option value="2º A">2º A</option><option value="2º B">2º B</option><option value="2º C">2º C</option><option value="2º D">2º D</option>
+                            <option value="3º A">3º A</option><option value="3º B">3º B</option><option value="3º C">3º C</option><option value="3º D">3º D</option>
+                        </select>
+                    </div>
+                    <div class="flex items-end">
+                        <button onclick="window.print()" class="px-4 py-2 bg-slate-900 text-white font-bold text-[10px] rounded hover:bg-slate-800 transition-all uppercase">
+                            Generar Reporte Formal
+                        </button>
+                    </div>
                 </div>
-                <button onclick="logoutSIRDE()" class="text-[10px] font-bold text-red-600 hover:text-red-800 uppercase">Cerrar Sesión Activa</button>
+                <button onclick="logoutSIRDE()" class="text-[10px] font-bold text-red-600 hover:text-red-800 uppercase">Cerrar Sesión</button>
             </div>
         </header>
 
@@ -126,8 +129,58 @@
                 <ul id="cte-list" class="text-sm space-y-2 list-disc pl-5 text-orange-900 font-medium">
                     <!-- Se llena con JS -->
                 </ul>
+
+                <hr class="my-6 border-orange-200 opacity-30">
+                
+                <!-- CEREBRO SIRDE: RECOMENDACIONES AUTOMÁTICAS -->
+                <div id="ai-recommendations" class="p-6 rounded-xl border-l-4">
+                    <div class="flex items-center gap-2 mb-4">
+                        <span class="p-1 px-2 text-[8px] font-black bg-white rounded shadow-sm uppercase tracking-widest text-slate-900">IA SIRDE-310</span>
+                        <h3 class="text-xs font-black uppercase tracking-tight">Acciones Sugeridas (Respaldo Institucional)</h3>
+                    </div>
+                    <div id="ai-actions-list" class="space-y-4">
+                        <!-- Generado por JS -->
+                    </div>
+                </div>
             </div>
         </section>
+        <!-- LA JOYA: ÍNDICE DE PRESIÓN DOCENTE -->
+        <section class="card bg-slate-900 text-white mb-8 border-none overflow-hidden relative">
+            <div class="absolute top-0 right-0 p-4">
+                <div id="sem-dot" class="w-4 h-4 rounded-full animate-pulse shadow-[0_0_15px_rgba(255,255,255,0.5)]"></div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 items-center gap-6">
+                <div class="text-center md:text-left">
+                    <p class="text-[10px] font-black uppercase text-slate-400 tracking-widest mb-1">Indicador Estratégico CTE</p>
+                    <h2 class="text-2xl font-black italic text-white mb-0">ÍNDICE DE PRESIÓN DOCENTE</h2>
+                </div>
+                <div class="text-center">
+                    <h4 id="presion-label" class="text-5xl font-black mb-1">-</h4>
+                    <p id="presion-desc" class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">Cargando...</p>
+                </div>
+                <div class="bg-white/10 p-4 rounded-lg backdrop-blur-sm">
+                    <div id="presion-meter" class="h-2 bg-slate-700 rounded-full overflow-hidden mb-2">
+                        <div id="presion-bar" class="h-full bg-blue-500 transition-all duration-1000" style="width: 0%"></div>
+                    </div>
+                    <p class="text-[9px] text-slate-300 italic">Métrica ponderada de Tiempo Perdido, Impacto Curricular y Recurrencia estudiantil.</p>
+                </div>
+            </div>
+        </section>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <section class="card text-center p-6">
+                <p class="text-[10px] font-bold text-slate-500 uppercase mb-2">Reportes Totales</p>
+                <h4 id="stat-total" class="text-4xl font-black text-slate-900 italic">0</h4>
+            </section>
+            <section class="card text-center p-6">
+                <p class="text-[10px] font-bold text-slate-500 uppercase mb-2">Docentes Participantes</p>
+                <h4 id="stat-teachers" class="text-4xl font-black text-slate-900 italic">0</h4>
+            </section>
+            <section class="card text-center p-6">
+                <p class="text-[10px] font-bold text-slate-500 uppercase mb-2">Alumnos en Incidencia</p>
+                <h4 id="stat-students" class="text-4xl font-black text-slate-900 italic">0</h4>
+            </section>
+        </div>
 
         <!-- PATRONES Y RECURRENCIA -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -145,128 +198,353 @@
             </section>
         </div>
 
-        <section class="card print:mt-8">
-            <h2 class="section-title">Efectividad de Seguimiento con Padres</h2>
-            <div class="grid grid-cols-2 gap-8 text-center">
+        <!-- ESTADÍSTICAS AVANZADAS -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <section class="card">
+                <h2 class="section-title">Indicadores de Tiempo e Impacto</h2>
+                <div class="space-y-4">
+                    <div class="flex justify-between items-center py-2 border-b">
+                        <span class="text-xs font-bold uppercase text-slate-500">Tiempo de Clase p/ Gestión Conducta:</span>
+                        <span id="avg-time" class="text-sm font-black text-blue-900">0%</span>
+                    </div>
+                    <div class="flex justify-between items-center py-2 border-b">
+                        <span class="text-xs font-bold uppercase text-slate-500">Impacto en los Aprendizajes:</span>
+                        <span id="avg-impact" class="text-sm font-black text-blue-900">-</span>
+                    </div>
+                    <div class="flex justify-between items-center py-2 border-b">
+                        <span class="text-xs font-bold uppercase text-slate-500">Promedio Clima de Aula:</span>
+                        <span id="avg-climate" class="text-sm font-black text-blue-900">-</span>
+                    </div>
+                    <div class="flex justify-between items-center py-2">
+                        <span class="text-xs font-bold uppercase text-slate-500">Asistencia Efectiva Padres:</span>
+                        <span id="avg-parental" class="text-sm font-black text-blue-900">0%</span>
+                    </div>
+                </div>
+            </section>
+            
+            <section class="card">
+                <h2 class="section-title">Ambiente Promedio</h2>
+                <div class="space-y-4">
+                    <div id="env-bars" class="space-y-2">
+                        <!-- Bars for Attention, respect, etc -->
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- ANÁLISIS DE ESTRATEGIAS -->
+        <section class="card mt-8">
+            <h2 class="section-title">Estrategias y Efectividad Institucional</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <div>
-                  <p class="text-[10px] font-bold text-slate-500 uppercase">Citatorios Enviados</p>
-                  <h4 id="stat-cited" class="text-3xl font-black">0</h4>
+                    <p class="text-[10px] font-bold text-slate-400 uppercase mb-4">Estrategias más utilizadas</p>
+                    <div id="strat-freq" class="space-y-2"></div>
                 </div>
                 <div>
-                  <p class="text-[10px] font-bold text-slate-500 uppercase">Respuesta de Padres</p>
-                  <h4 id="stat-attended" class="text-3xl font-black">0</h4>
+                    <p class="text-[10px] font-bold text-green-600 uppercase mb-4">Asociadas a MEJORA (ÉXITO)</p>
+                    <div id="strat-plus" class="space-y-2"></div>
+                </div>
+                <div>
+                    <p class="text-[10px] font-bold text-red-600 uppercase mb-4">Asociadas a NULO IMPACTO / RIESGO</p>
+                    <div id="strat-minus" class="space-y-2"></div>
                 </div>
             </div>
         </section>
+        <!-- ZONA DE FIRMAS (Sólo Impresión) -->
+        <div class="signature-zone">
+            <div class="flex flex-col items-center">
+                <div class="h-16 w-1"></div>
+                <div class="signature-line w-full">DOCENTE (S) DE GRUPO</div>
+            </div>
+            <div class="flex flex-col items-center">
+                <div class="h-16 w-1"></div>
+                <div class="signature-line w-full">V.B. DIRECCIÓN / CTE</div>
+            </div>
+        </div>
     </main>
 
     <script src="app.js"></script>
     <script>
         async function runAnalysis() {
             const grupo = document.getElementById('filter-grupo').value;
-            if (!grupo) return;
+            const periodo = document.getElementById('filter-periodo').value;
+            
+            document.getElementById('print-label').textContent = `${grupo} | PERIODO: ${periodo} | FECHA: ${new Date().toLocaleDateString()}`;
 
-            document.getElementById('print-label').textContent = `INFORME GRUPO: ${grupo} | PERIODO 2026`;
+            let query = supabaseClient.from('respuestas_docentes').select('*').eq('periodo', periodo);
+            if (grupo !== 'Todos') query = query.eq('grupo', grupo);
 
-            const { data, error } = await supabaseClient
-                .from('respuestas_docentes')
-                .select('*')
-                .eq('grupo', grupo);
-
+            const { data, error } = await query;
             if (data) renderAnalysis(data);
         }
 
         function renderAnalysis(reports) {
+            if (reports.length === 0) {
+                document.getElementById('conclusions-container').innerHTML = "No hay datos para este periodo/grupo.";
+                return;
+            }
+
             const total = reports.length;
             const teachers = new Set(reports.map(r => r.docente)).size;
-            const impacts = reports.map(r => r.impacto);
-            const modeImpact = getMode(impacts);
+
+            // 1. Tiempo Perdido (Ponderado)
+            const timeMap = { "<10%": 5, "10-25%": 17, "25-50%": 37, "+50%": 60 };
+            const avgTime = reports.reduce((acc, r) => acc + (timeMap[r.tiempo_conducta] || 0), 0) / total;
+            document.getElementById('avg-time').textContent = Math.round(avgTime) + "%";
+
+            // 2. Impacto (Ponderado)
+            const impactMap = { "Bajo": 1, "Medio": 2, "Alto": 3, "Crítico": 4 };
+            const impactLabels = ["", "Bajo", "Medio", "Alto", "Crítico"];
+            const avgImpactVal = reports.reduce((acc, r) => acc + (impactMap[r.impacto] || 2), 0) / total;
+            document.getElementById('avg-impact').textContent = impactLabels[Math.round(avgImpactVal)];
+
+            // 3. Clima Aula (Ambiente)
+            const scaleMap = { "Bajo": 1, "Medio": 2, "Alto": 3 };
+            const avgAttention = reports.reduce((acc, r) => acc + (scaleMap[r.ambiente?.atencion] || 2), 0) / total;
+            const avgRespect = reports.reduce((acc, r) => acc + (scaleMap[r.ambiente?.respeto] || 2), 0) / total;
+            const avgParticip = reports.reduce((acc, r) => acc + (scaleMap[r.ambiente?.participacion] || 2), 0) / total;
+            const globalClimate = (avgAttention + avgRespect + avgParticip) / 3;
+            document.getElementById('avg-climate').textContent = globalClimate.toFixed(1) + " / 3.0";
+
+            // 4. Asistencia Padres
+            let totalCited = 0, totalAttended = 0;
+            const studentCounts = {}; // { id: { name, teachers: Set, subjects: Set, reports: 0 } }
+            
+            reports.forEach(r => {
+                (r.alumnos_reportados || []).forEach(al => {
+                    if (al.citado) totalCited++;
+                    if (al.acudio === 'SÍ') totalAttended++;
+
+                    if (!studentCounts[al.alumno_id]) {
+                        studentCounts[al.alumno_id] = { name: al.nombre, teachers: new Set(), subjects: new Set(), reports: 0 };
+                    }
+                    studentCounts[al.alumno_id].reports++;
+                    studentCounts[al.alumno_id].teachers.add(r.docente);
+                    studentCounts[al.alumno_id].subjects.add(r.asignatura);
+                });
+            });
+            const parentPct = totalCited > 0 ? Math.round((totalAttended / totalCited) * 100) : 0;
+            document.getElementById('avg-parental').textContent = parentPct + "%";
+
+            // Narrative Generation
+            generateConclusions(reports, teachers, parentPct, studentCounts);
+            
+            // Recurrence List
+            renderRecurrentStudents(studentCounts);
+            
+            // Strategies Analysis
+            renderInterventions(reports);
+            
+            // Pressure Index (La Joya)
+            const recurrentCount = Object.values(studentCounts).filter(s => s.teachers.size > 1).length;
+            const pressure = calculatePressure(avgTime, avgImpactVal, recurrentCount);
+            
+            // AI RECOMENDACIONES (The Brain)
+            processAIRec(reports, pressure, recurrentCount);
             
             // Stats UI
             document.getElementById('stat-total').textContent = total;
             document.getElementById('stat-teachers').textContent = teachers;
-            document.getElementById('stat-impact').textContent = modeImpact || '-';
+            document.getElementById('stat-students').textContent = Object.keys(studentCounts).length;
+        }
 
-            // Alumnos & Conductas
-            const studentCounts = {}; // { id: { count, behaviors: [], cited: 0, attended: 0 } }
-            const behaviorsFreq = {};
+        function renderInterventions(reports) {
+            const freq = {}, success = {}, fail = {};
             
             reports.forEach(r => {
-                (r.conductas_grupales || []).forEach(b => {
-                    behaviorsFreq[b] = (behaviorsFreq[b] || 0) + 1;
-                });
-                (r.alumnos_reportados || []).forEach(al => {
-                    if (!studentCounts[al.alumno_id]) {
-                       studentCounts[al.alumno_id] = { name: al.nombre, count: 0, behaviors: [], cited: 0, attended: 0, teachers: new Set() };
-                    }
-                    studentCounts[al.alumno_id].count++;
-                    studentCounts[al.alumno_id].teachers.add(r.docente);
-                    al.behaviors.forEach(b => studentCounts[al.alumno_id].behaviors.push(b));
-                    if (al.citado) studentCounts[al.alumno_id].cited++;
-                    if (al.acudio === 'SÍ') studentCounts[al.alumno_id].attended++;
+                const inter = r.intervenciones;
+                if (!inter || !inter.estrategias) return;
+
+                const allStrats = [...inter.estrategias];
+                if (inter.otra_estrategia) allStrats.push("Estrategia personalizada (Otras)");
+
+                allStrats.forEach(s => {
+                    freq[s] = (freq[s] || 0) + 1;
+                    if (inter.eficacia === 'Sí') success[s] = (success[s] || 0) + 1;
+                    if (inter.eficacia === 'No') fail[s] = (fail[s] || 0) + 1;
                 });
             });
 
-            document.getElementById('stat-students').textContent = Object.keys(studentCounts).length;
-            
-            // Automated Conclusion
-            let topBehaviors = Object.entries(behaviorsFreq).sort((a,b) => b[1] - a[1]).slice(0, 2).map(x => x[0]);
-            let totalCited = Object.values(studentCounts).reduce((acc,s) => acc + s.cited, 0);
-            let totalAttended = Object.values(studentCounts).reduce((acc,s) => acc + s.attended, 0);
+            const draw = (data, containerId, colorClass) => {
+                const container = document.getElementById(containerId);
+                const sorted = Object.entries(data).sort((a,b) => b[1] - a[1]).slice(0, 5);
+                container.innerHTML = sorted.length ? '' : '<p class="text-[10px] italic text-slate-300">Pendiente de datos...</p>';
+                sorted.forEach(([name, count]) => {
+                    container.innerHTML += `<div class="flex justify-between items-center py-1 border-b border-slate-50">
+                        <span class="text-[10px] font-bold text-slate-700 leading-tight pr-2">${name}</span>
+                        <span class="px-2 py-0.5 rounded ${colorClass} text-[9px] font-black">${count}</span>
+                    </div>`;
+                });
+            };
 
-            let conclusion = `Se ha generado un diagnóstico colectivo fundamentado en ${total} reportes de ${teachers} docentes distintos. 
-                              El nivel de impacto en el aprendizaje predominante se define como ${modeImpact}. 
-                              Se observa una coincidencia crítica en conductas de ${topBehaviors.join(' y ')}. 
-                              En cuanto al seguimiento con padres, se han emitido ${totalCited} citatorios, con una respuesta efectiva del ${totalCited > 0 ? Math.round((totalAttended/totalCited)*100) : 0}% de los casos registrados.`;
-            
-            document.getElementById('conclusions-container').innerHTML = conclusion;
+            draw(freq, 'strat-freq', 'bg-slate-100 text-slate-500');
+            draw(success, 'strat-plus', 'bg-green-100 text-green-700');
+            draw(fail, 'strat-minus', 'bg-red-100 text-red-700');
+        }
 
-            // CTE Section
-            document.getElementById('cte-zone').style.display = 'block';
+        function calculatePressure(time, impact, students) {
+            // Score 0-100
+            const score = Math.min(100, (time * 0.4) + (impact * 15) + (students * 3));
+            const bar = document.getElementById('presion-bar');
+            const label = document.getElementById('presion-label');
+            const desc = document.getElementById('presion-desc');
+            const dot = document.getElementById('sem-dot');
+            
+            label.textContent = Math.round(score);
+            bar.style.width = score + '%';
+
+            if (score < 25) {
+                desc.textContent = "BAJO - CONDICIONES ÓPTIMAS";
+                bar.style.backgroundColor = "#22c55e"; // Green
+                dot.style.backgroundColor = "#22c55e";
+            } else if (score < 50) {
+                desc.textContent = "MEDIO - REVISIÓN PREVENTIVA";
+                bar.style.backgroundColor = "#eab308"; // Yellow
+                dot.style.backgroundColor = "#eab308";
+            } else if (score < 75) {
+                desc.textContent = "ALTO - REQUIERE INTERVENCIÓN";
+                bar.style.backgroundColor = "#f97316"; // Orange
+                dot.style.backgroundColor = "#f97316";
+            } else {
+                desc.textContent = "CRÍTICO - PRIORIDAD CTE";
+                bar.style.backgroundColor = "#ef4444"; // Red
+                dot.style.backgroundColor = "#ef4444";
+            }
+            return score;
+        }
+
+        function processAIRec(reports, pressure, recurrentCount) {
+            const list = document.getElementById('ai-actions-list');
+            const box = document.getElementById('ai-recommendations');
+            list.innerHTML = '';
+            
+            // Find overall efficacy
+            const results = reports.map(r => r.intervenciones?.eficacia);
+            const lowEfficacy = results.filter(v => v === 'No').length > reports.length * 0.3;
+            const partialEfficacy = results.filter(v => v === 'Parcialmente').length > reports.length * 0.3;
+
+            let level = "🟢";
+            let color = "bg-green-50 border-green-500 text-green-900";
+            let actions = [];
+
+            if (pressure >= 75 || (pressure >= 60 && lowEfficacy)) {
+                level = "🔴 CRÍTICO";
+                color = "bg-red-50 border-red-500 text-red-900";
+                actions = [
+                    "Canalización inmediata a tutoría y orientación académica.",
+                    "Citatorio formal a padres de familia para establecer compromisos institucionales.",
+                    "Diseño y aplicación de un plan de intervención conductual individualizado.",
+                    "Registro detallado en el expediente oficial para respaldo administrativo ante inspección."
+                ];
+            } else if (pressure >= 50) {
+                level = "🟠 ALTO";
+                color = "bg-orange-50 border-orange-500 text-orange-900";
+                actions = [
+                    "Modificación de la estrategia pedagógica grupal ante baja respuesta previa.",
+                    "Implementar trabajo individual supervisado con monitoreo constante.",
+                    "Establecer firma de acuerdos de convivencia semanales.",
+                    "Seguimiento focalizado a la asistencia y puntualidad de los tutores."
+                ];
+            } else if (pressure >= 25) {
+                level = "🟡 MEDIO";
+                color = "bg-yellow-50 border-yellow-500 text-yellow-900";
+                actions = [
+                    "Ajuste técnico de las estrategias actuales para mejorar la atención docente.",
+                    "Refuerzo positivo estructurado para incentivar la participación académica.",
+                    "Privilegiar el trabajo colaborativo guiado por el docente para mejorar el clima."
+                ];
+            } else {
+                level = "🟢 CONTROLADO";
+                color = "bg-green-50 border-green-500 text-green-900";
+                actions = [
+                    "Mantener las estrategias pedagógicas actuales con monitoreo ligero.",
+                    "Promover el refuerzo positivo constante para sostener el ambiente de aprendizaje.",
+                    "Registrar avances notables en bitácora para histórico pedagógico."
+                ];
+            }
+
+            // Bonus logic (Multi-docente)
+            if (recurrentCount > 3) {
+                actions.push("🆘 <b>ALERTA:</b> Se recomienda reunión breve de colegiado docente para unificar criterios de intervención ante alumnos recurrentes en múltiples materias.");
+            }
+
+            box.className = `p-6 rounded-xl border-l-4 ${color}`;
+            actions.forEach(act => {
+                list.innerHTML += `<div class="flex gap-2 text-xs font-semibold items-start">
+                    <span class="mt-1">➜</span>
+                    <span>${act}</span>
+                </div>`;
+            });
+        }
+
+        function generateConclusions(reports, teachers, parentPct, students) {
+            const container = document.getElementById('conclusions-container');
             const cteList = document.getElementById('cte-list');
+            document.getElementById('cte-zone').style.display = 'block';
             cteList.innerHTML = '';
+
+            const recurrentAlumni = Object.values(students).filter(s => s.teachers.size > 1);
             
-            const highRecurrence = Object.values(studentCounts).filter(s => s.teachers.size > 1);
-            if(highRecurrence.length > 0) cteList.innerHTML += `<li>Se detectaron ${highRecurrence.length} alumnos con recurrencia crítica reportados por múltiples docentes.</li>`;
-            if(modeImpact === 'Crítico' || modeImpact === 'Alto') cteList.innerHTML += `<li>El clima de aprendizaje del grupo requiere intervención urgente ante el nivel de impacto reportado como '${modeImpact}'.</li>`;
-            if(totalCited > 0 && (totalAttended/totalCited < 0.5)) cteList.innerHTML += `<li>La respuesta de los padres de familia se encuentra por debajo del 50%, sugiriendo una falta de apoyo institucional en el hogar.</li>`;
+            let text = `Basado en el análisis institucional de ${reports.length} diagnósticos pedagógicos de ${teachers} especialidades docentes, `;
             
-            // Lists
-            renderPatternList(behaviorsFreq, teachers);
-            renderRecurrentStudents(studentCounts);
+            if (recurrentAlumni.length > 3) {
+                text += `se observa una coincidencia significativa entre docentes de distintas asignaturas respecto a conductas disruptivas en el grupo, particularmente la recurrencia multidisciplinaria en ${recurrentAlumni.length} alumnos específicos, lo cual impacta negativamente el avance curricular. `;
+            } else {
+                text += `la dinámica grupal se reporta estable con incidencias focalizadas en casos individuales aislados. `;
+            }
+
+            text += `La efectividad de la vinculación con los tutores legales se sitúa en un ${parentPct}%, `;
             
-            document.getElementById('stat-cited').textContent = totalCited;
-            document.getElementById('stat-attended').textContent = totalAttended;
+            if (parentPct < 50) {
+                text += `evidenciando una brecha de seguimiento institucional desde el hogar que debilita el alcance de las metas de aprendizaje de este periodo. `;
+            } else {
+                text += `mostrando una respuesta favorable y un compromiso participativo por parte de los padres en el fortalecimiento académico. `;
+            }
+
+            container.innerHTML = text;
+
+            // CTE Points
+            if (recurrentAlumni.length > 0) {
+                cteList.innerHTML += `<li>Atención sistémica urgente a ${recurrentAlumni.length} alumnos con patrones conductuales recurrentes en más de 2 materias.</li>`;
+            }
+            if (parentPct < 50) {
+                cteList.innerHTML += `<li>Implementar estrategias de sensibilización familiar ante el bajo índice de asistencia (<50%).</li>`;
+            }
+            
+            const highExt = reports.filter(r => r.factores_externos?.incluye === 'Sí').length;
+            if ((highExt / reports.length) > 0.3) {
+                cteList.innerHTML += `<li>El ${Math.round((highExt/reports.length)*100)}% de la plantilla docente detecta factores externos (familiares/entorno) incidiendo directamente en el aula.</li>`;
+            }
         }
 
-        function renderPatternList(freq, totalT) {
-            const list = document.getElementById('pattern-list');
-            list.innerHTML = '';
-            if (totalT === 0) return;
-            Object.entries(freq).sort((a,b) => b[1]-a[1]).forEach(([name, count]) => {
-                const pct = Math.round((count / totalT) * 100);
-                list.innerHTML += `<div style="display: flex; justify-content: space-between; border-bottom: 1px dotted #ccc; padding: 4px 0;">
-                    <span class="text-xs font-bold uppercase">${name}</span>
-                    <span class="text-xs font-black text-blue-900">${pct}% de docentes</span>
-                </div>`;
-            });
-        }
-
-        function renderRecurrentStudents(counts) {
+        function renderRecurrentStudents(students) {
             const list = document.getElementById('recurrence-list');
-            list.innerHTML = '';
-            Object.values(counts).sort((a,b) => b.count - a.count).slice(0, 10).forEach(s => {
-                const isCrit = s.teachers.size > 1;
-                list.innerHTML += `<div class="p-4 border border-slate-200 rounded-lg">
-                    <div class="flex justify-between items-start">
-                        <span class="text-xs font-black uppercase">${s.name}</span>
-                        <span class="text-[9px] font-bold ${isCrit ? 'text-red-700 bg-red-50' : 'text-slate-400'} px-2 py-1 rounded">
-                            Reportado por ${s.teachers.size} docentes
-                        </span>
-                    </div>
-                    <p class="text-[9px] text-slate-500 italic mt-1">${[...new Set(s.behaviors)].join(', ')}</p>
-                </div>`;
-            });
+            list.innerHTML = `<div class="text-[9px] font-bold text-slate-400 mb-2 grid grid-cols-5 gap-2 border-b pb-1">
+                <div class="col-span-2">ALUMNO (TOP FOCALIZADOS)</div><div>DOCENTES</div><div>MATERIAS</div><div>NIVEL</div>
+            </div>`;
+            
+            Object.values(students)
+                .sort((a,b) => b.teachers.size - a.teachers.size)
+                .slice(0, 8)
+                .forEach((s, idx) => {
+                    const teachersCount = s.teachers.size;
+                    let color = "bg-slate-100 text-slate-500";
+                    let level = "Bajo";
+                    
+                    if (teachersCount > 3) { color = "bg-red-500 text-white"; level = "CRÍTICO"; }
+                    else if (teachersCount > 1) { color = "bg-orange-500 text-white"; level = "ALTO"; }
+                    
+                    list.innerHTML += `<div class="grid grid-cols-5 gap-2 text-[10px] items-center py-2 border-b hover:bg-slate-50 transition-all">
+                        <div class="col-span-2 font-black">
+                            ${idx < 5 ? '⭐' : ''} ${s.name}
+                        </div>
+                        <div class="font-bold text-center">${teachersCount}</div>
+                        <div class="text-[9px] text-slate-500 italic truncate">${Array.from(s.subjects).join(', ')}</div>
+                        <div class="text-center">
+                            <span class="px-2 py-0.5 rounded-full text-[8px] font-black ${color}">${level}</span>
+                        </div>
+                    </div>`;
+                });
         }
 
         function getMode(arr) {
