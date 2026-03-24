@@ -371,33 +371,7 @@ async function handleFormSubmit(e) {
     }
 }
 
-// Auth Centralized
-function getAuthCode() {
-    return CONFIG.ACCESS_PIN;
-}
-
-function checkAccess(val) {
-    const accessCode = getAuthCode();
-    if (!val) val = prompt("SISTEMA SIRDE-310: Ingrese Clave de Acceso Institucional");
-    
-    if (val === accessCode) {
-        sessionStorage.setItem('auth_sirde', 'true');
-        const wall = document.getElementById('auth-wall');
-        if (wall) wall.style.display = 'none';
-        initData();
-        return true;
-    } else {
-        document.body.innerHTML = `<div style="height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; background:#0f172a; color:white; font-family:sans-serif; text-align:center; padding:20px;">
-            <h1 style="color:#ef4444; font-size:2rem; font-weight:900;">ACCESO RESTRINGIDO</h1>
-            <p style="text-transform:uppercase; letter-spacing:2px; font-weight:700; color:#64748b; margin-top:10px;">Validación de Credenciales Fallida</p>
-            <div style="margin-top:30px; padding:20px; border:1px solid #1e293b; border-radius:12px; background:#1e293b;">
-                <p style="font-size:0.8rem; color:#94a3b8;">Este sistema es de uso exclusivo para personal docente de la Escuela Secundaria 310.</p>
-                <button onclick="location.reload()" style="margin-top:20px; padding:12px 24px; cursor:pointer; background:#3b82f6; color:white; border:none; border-radius:6px; font-weight:bold;">REINTENTAR ACCESO</button>
-            </div>
-        </div>`;
-    }
-    return false;
-}
+// Auth Visibility Toggle Wrapper
 
 function togglePinVisibility(inputId) {
     const pinInput = document.getElementById(inputId);
