@@ -51,20 +51,27 @@
             </div>
         </header>
 
-        <!-- PROGRESS TRACKER -->
         <div class="max-w-xl mx-auto mb-10 px-4 no-print">
             <div class="flex justify-between items-center relative">
                 <div class="absolute h-0.5 bg-white/10 w-full top-1/2 -translate-y-1/2 z-0"></div>
                 <div id="prog-bar" class="absolute h-0.5 bg-primary-green w-0 top-1/2 -translate-y-1/2 z-0 transition-all duration-500"></div>
                 
-                ${[1, 2, 3, 4].map(s => `
-                    <div class="relative z-10 flex flex-col items-center gap-2">
-                        <div id="step-dot-${s}" class="w-8 h-8 rounded-full bg-slate-800 border-2 border-white/10 flex items-center justify-center text-[10px] font-black transition-all">
-                            ${s}
-                        </div>
-                        <span id="step-lbl-${s}" class="text-[8px] font-bold text-slate-500 uppercase tracking-tighter">Paso ${s}</span>
-                    </div>
-                `).join('')}
+                <div class="relative z-10 flex flex-col items-center gap-2">
+                    <div id="step-dot-1" class="w-8 h-8 rounded-full bg-slate-800 border-2 border-white/10 flex items-center justify-center text-[10px] font-black transition-all">1</div>
+                    <span id="step-lbl-1" class="text-[8px] font-bold text-slate-500 uppercase tracking-tighter">Paso 1</span>
+                </div>
+                <div class="relative z-10 flex flex-col items-center gap-2">
+                    <div id="step-dot-2" class="w-8 h-8 rounded-full bg-slate-800 border-2 border-white/10 flex items-center justify-center text-[10px] font-black transition-all">2</div>
+                    <span id="step-lbl-2" class="text-[8px] font-bold text-slate-500 uppercase tracking-tighter">Paso 2</span>
+                </div>
+                <div class="relative z-10 flex flex-col items-center gap-2">
+                    <div id="step-dot-3" class="w-8 h-8 rounded-full bg-slate-800 border-2 border-white/10 flex items-center justify-center text-[10px] font-black transition-all">3</div>
+                    <span id="step-lbl-3" class="text-[8px] font-bold text-slate-500 uppercase tracking-tighter">Paso 3</span>
+                </div>
+                <div class="relative z-10 flex flex-col items-center gap-2">
+                    <div id="step-dot-4" class="w-8 h-8 rounded-full bg-slate-800 border-2 border-white/10 flex items-center justify-center text-[10px] font-black transition-all">4</div>
+                    <span id="step-lbl-4" class="text-[8px] font-bold text-slate-500 uppercase tracking-tighter">Paso 4</span>
+                </div>
             </div>
         </div>
 
@@ -151,12 +158,38 @@
                 <div class="mt-10 pt-10 border-t border-white/5">
                     <label class="text-[10px] font-black uppercase text-slate-500 mb-6 block">Factores Externos Detectados (Seleccione los necesarios)</label>
                     <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                        ${['Disfunción Familiar', 'Nivel Económico', 'Violencia Entorno', 'Adicciones', 'Salud Mental', 'Inasistencias', 'Duelo/Pérdida', 'Traslados largos'].map(f => `
-                            <label class="flex items-center gap-3 p-3 bg-white/5 border border-white/10 rounded-xl cursor-pointer hover:bg-primary-green/5 hover:border-primary-green/30 transition-all text-[11px]">
-                                <input type="checkbox" class="fact-ext-chk w-4 h-4 rounded-md accent-primary-green" value="${f}">
-                                <span>${f}</span>
-                            </label>
-                        `).join('')}
+                        <label class="flex items-center gap-3 p-3 bg-white/5 border border-white/10 rounded-xl cursor-pointer hover:bg-primary-green/5 hover:border-primary-green/30 transition-all text-[11px]">
+                            <input type="checkbox" class="fact-ext-chk w-4 h-4 rounded-md accent-primary-green" value="Disfunción Familiar">
+                            <span>Disfunción Familiar</span>
+                        </label>
+                        <label class="flex items-center gap-3 p-3 bg-white/5 border border-white/10 rounded-xl cursor-pointer hover:bg-primary-green/5 hover:border-primary-green/30 transition-all text-[11px]">
+                            <input type="checkbox" class="fact-ext-chk w-4 h-4 rounded-md accent-primary-green" value="Nivel Económico">
+                            <span>Nivel Económico</span>
+                        </label>
+                        <label class="flex items-center gap-3 p-3 bg-white/5 border border-white/10 rounded-xl cursor-pointer hover:bg-primary-green/5 hover:border-primary-green/30 transition-all text-[11px]">
+                            <input type="checkbox" class="fact-ext-chk w-4 h-4 rounded-md accent-primary-green" value="Violencia Entorno">
+                            <span>Violencia Entorno</span>
+                        </label>
+                        <label class="flex items-center gap-3 p-3 bg-white/5 border border-white/10 rounded-xl cursor-pointer hover:bg-primary-green/5 hover:border-primary-green/30 transition-all text-[11px]">
+                            <input type="checkbox" class="fact-ext-chk w-4 h-4 rounded-md accent-primary-green" value="Adicciones">
+                            <span>Adicciones</span>
+                        </label>
+                        <label class="flex items-center gap-3 p-3 bg-white/5 border border-white/10 rounded-xl cursor-pointer hover:bg-primary-green/5 hover:border-primary-green/30 transition-all text-[11px]">
+                            <input type="checkbox" class="fact-ext-chk w-4 h-4 rounded-md accent-primary-green" value="Salud Mental">
+                            <span>Salud Mental</span>
+                        </label>
+                        <label class="flex items-center gap-3 p-3 bg-white/5 border border-white/10 rounded-xl cursor-pointer hover:bg-primary-green/5 hover:border-primary-green/30 transition-all text-[11px]">
+                            <input type="checkbox" class="fact-ext-chk w-4 h-4 rounded-md accent-primary-green" value="Inasistencias">
+                            <span>Inasistencias</span>
+                        </label>
+                        <label class="flex items-center gap-3 p-3 bg-white/5 border border-white/10 rounded-xl cursor-pointer hover:bg-primary-green/5 hover:border-primary-green/30 transition-all text-[11px]">
+                            <input type="checkbox" class="fact-ext-chk w-4 h-4 rounded-md accent-primary-green" value="Duelo/Pérdida">
+                            <span>Duelo/Pérdida</span>
+                        </label>
+                        <label class="flex items-center gap-3 p-3 bg-white/5 border border-white/10 rounded-xl cursor-pointer hover:bg-primary-green/5 hover:border-primary-green/30 transition-all text-[11px]">
+                            <input type="checkbox" class="fact-ext-chk w-4 h-4 rounded-md accent-primary-green" value="Traslados largos">
+                            <span>Traslados largos</span>
+                        </label>
                         <label class="flex items-center gap-3 p-3 bg-white/5 border border-white/10 rounded-xl cursor-pointer hover:bg-primary-green/5 hover:border-primary-green/30 transition-all text-[11px]">
                             <input type="checkbox" id="fact-ext-otro-chk" class="w-4 h-4 rounded-md accent-primary-green" onchange="toggleOtroFactor(this.checked)">
                             <span class="font-bold">Otro...</span>
@@ -201,12 +234,34 @@
                     <div class="space-y-4">
                         <label class="text-[10px] font-black uppercase text-slate-500">Acciones Institucionales Aplicadas</label>
                         <div class="grid grid-cols-1 gap-2">
-                            ${['Entrevista Inicial', 'Citatorio a Padres', 'Reporte Escrito', 'Firma de Compromiso', 'Canalización USAER/Orientación', 'Trabajo Especial', 'Suspensión'].map(e => `
-                                <label class="flex items-center gap-3 p-3 bg-white/5 border border-white/10 rounded-xl cursor-pointer hover:bg-white/10 text-xs">
-                                    <input type="checkbox" class="estrategia-chk w-4 h-4 rounded accent-primary-green" value="${e}">
-                                    <span>${e}</span>
-                                </label>
-                            `).join('')}
+                            <label class="flex items-center gap-3 p-3 bg-white/5 border border-white/10 rounded-xl cursor-pointer hover:bg-white/10 text-xs">
+                                <input type="checkbox" class="estrategia-chk w-4 h-4 rounded accent-primary-green" value="Entrevista Inicial">
+                                <span>Entrevista Inicial</span>
+                            </label>
+                            <label class="flex items-center gap-3 p-3 bg-white/5 border border-white/10 rounded-xl cursor-pointer hover:bg-white/10 text-xs">
+                                <input type="checkbox" class="estrategia-chk w-4 h-4 rounded accent-primary-green" value="Citatorio a Padres">
+                                <span>Citatorio a Padres</span>
+                            </label>
+                            <label class="flex items-center gap-3 p-3 bg-white/5 border border-white/10 rounded-xl cursor-pointer hover:bg-white/10 text-xs">
+                                <input type="checkbox" class="estrategia-chk w-4 h-4 rounded accent-primary-green" value="Reporte Escrito">
+                                <span>Reporte Escrito</span>
+                            </label>
+                            <label class="flex items-center gap-3 p-3 bg-white/5 border border-white/10 rounded-xl cursor-pointer hover:bg-white/10 text-xs">
+                                <input type="checkbox" class="estrategia-chk w-4 h-4 rounded accent-primary-green" value="Firma de Compromiso">
+                                <span>Firma de Compromiso</span>
+                            </label>
+                            <label class="flex items-center gap-3 p-3 bg-white/5 border border-white/10 rounded-xl cursor-pointer hover:bg-white/10 text-xs">
+                                <input type="checkbox" class="estrategia-chk w-4 h-4 rounded accent-primary-green" value="Canalización USAER/Orientación">
+                                <span>Canalización USAER/Orientación</span>
+                            </label>
+                            <label class="flex items-center gap-3 p-3 bg-white/5 border border-white/10 rounded-xl cursor-pointer hover:bg-white/10 text-xs">
+                                <input type="checkbox" class="estrategia-chk w-4 h-4 rounded accent-primary-green" value="Trabajo Especial">
+                                <span>Trabajo Especial</span>
+                            </label>
+                            <label class="flex items-center gap-3 p-3 bg-white/5 border border-white/10 rounded-xl cursor-pointer hover:bg-white/10 text-xs">
+                                <input type="checkbox" class="estrategia-chk w-4 h-4 rounded accent-primary-green" value="Suspensión">
+                                <span>Suspensión</span>
+                            </label>
                             <label class="flex flex-col gap-2 p-3 bg-white/5 border border-white/10 rounded-xl">
                                 <span class="flex items-center gap-3 text-xs">
                                     <input type="checkbox" id="chk-otra-est" class="w-4 h-4 rounded accent-primary-green">

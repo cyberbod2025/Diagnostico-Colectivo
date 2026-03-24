@@ -55,20 +55,23 @@ function updateProgress(step) {
     for (let i = 1; i <= 4; i++) {
         const dot = document.getElementById(`step-dot-${i}`);
         const lbl = document.getElementById(`step-lbl-${i}`);
+        if (!dot || !lbl) continue; // SEGURIDAD: evitar crash si no existen
+
         if (i < step) {
-            dot.classList.replace('bg-slate-800', 'bg-primary-green');
-            dot.classList.replace('text-white', 'text-[#02140f]');
-            dot.classList.add('border-primary-green');
-            lbl.classList.replace('text-slate-500', 'text-primary-green');
+            dot.classList.add('bg-primary-green', 'text-[#02140f]', 'border-primary-green');
+            dot.classList.remove('bg-slate-800', 'border-white/10', 'text-slate-500');
+            lbl.classList.add('text-primary-green');
+            lbl.classList.remove('text-slate-500');
         } else if (i === step) {
-            dot.classList.add('bg-white/20', 'border-primary-green', 'scale-125');
-            dot.classList.remove('bg-slate-800');
-            lbl.classList.replace('text-slate-500', 'text-white');
+            dot.classList.add('border-primary-green', 'scale-110', 'shadow-[0_0_15px_rgba(0,255,166,0.4)]');
+            dot.classList.remove('bg-slate-800', 'text-[#02140f]');
+            dot.style.backgroundColor = 'white';
+            lbl.classList.add('text-white');
+            lbl.classList.remove('text-slate-500');
         } else {
-            dot.classList.remove('bg-primary-green', 'bg-white/20', 'border-primary-green', 'scale-125');
-            dot.classList.add('bg-slate-800');
-            lbl.classList.replace('text-primary-green', 'text-slate-500');
-            lbl.classList.replace('text-white', 'text-slate-500');
+            dot.className = 'w-8 h-8 rounded-full bg-slate-800 border-2 border-white/10 flex items-center justify-center text-[10px] font-black transition-all';
+            dot.style.backgroundColor = '';
+            lbl.className = 'text-[8px] font-bold text-slate-500 uppercase tracking-tighter';
         }
     }
 }
