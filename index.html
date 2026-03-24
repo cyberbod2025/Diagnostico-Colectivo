@@ -15,7 +15,7 @@
             <h1 class="text-xl font-black italic">CONTROL INSTITUCIONAL</h1>
             <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Validación de Credenciales SIRDE</p>
             <input type="password" id="entry-pin" placeholder="CLAVE DE ACCESO" class="w-full text-center tracking-widest font-black">
-            <button onclick="if(checkAccess(document.getElementById('entry-pin').value)) {} else { alert('ACCESO DENEGADO'); }" class="btn-primary">ACCEDER AL SISTEMA</button>
+            <button onclick="checkAccess(document.getElementById('entry-pin').value)" class="btn-primary">ACCEDER AL SISTEMA</button>
         </div>
     </div>
 

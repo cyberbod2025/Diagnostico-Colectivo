@@ -28,7 +28,7 @@
             <h1 class="text-xl font-black italic">VALIDACIÓN INSTITUCIONAL</h1>
             <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Acceso Restringido Dashboard SIRDE</p>
             <input type="password" id="entry-pin" placeholder="CLAVE DE ACCESO" class="w-full text-center tracking-widest font-black">
-            <button onclick="if(checkAccess(document.getElementById('entry-pin').value)) {} else { document.body.innerHTML = 'Acceso Restringido'; }" class="btn-primary">ACCEDER AL ANÁLISIS</button>
+            <button onclick="checkAccess(document.getElementById('entry-pin').value)" class="btn-primary">ACCEDER AL ANÁLISIS</button>
         </div>
     </div>
 

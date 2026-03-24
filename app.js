@@ -5,9 +5,51 @@ const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 const _k = "SIRDE310_SECUNDARIA";
 const CONFIG = {
-    ACCESS_PIN: _k,
-    PERIODOS_DISPONIBLES: ['Trímetros 1 (2026)', 'Trímetros 2 (2026)', 'Trímetros 3 (2026)', 'Diagnóstico Inicial']
+    PERIODOS_DISPONIBLES: ['Trímetros 1 (2026)', 'Trímetros 2 (2026)', 'Trímetros 3 (2026)', 'Diagnóstico Inicial'],
+    CURRENT_TEACHER: null
 };
+
+async function checkAccess(pin) {
+    if (!pin) return false;
+    
+    // 1. Buscar coincidencia individual en la base de datos de personal
+    const { data: teacher, error } = await supabaseClient
+        .from('personal')
+        .select('*')
+        .eq('acceso_pin', pin.trim())
+        .single();
+
+    if (error || !teacher) {
+        alert("PIN Institucional NO VÁLIDO. Verifique con Dirección.");
+        return false;
+    }
+
+    // 2. Éxito: Guardar datos de sesión
+    CONFIG.CURRENT_TEACHER = teacher;
+    sessionStorage.setItem('sirde_session_pin', pin);
+    
+    // 3. Pre-llenado Automático del Formulario de Huella Digital
+    document.getElementById('docente').value = teacher.nombre;
+    onTeacherChange(); // Llenará asignatura y campo automáticamente
+    
+    // 4. Bloquear edición de datos personales (ya están identificados)
+    document.getElementById('docente').disabled = true;
+    document.getElementById('asignatura').readOnly = true;
+    
+    // 5. Ocultar muro
+    document.getElementById('auth-wall').classList.add('hidden');
+    return true;
+}
+
+// Llamada al cargar para evitar re-login si ya tiene PIN en sesión
+window.addEventListener('load', async () => {
+    const savedPin = sessionStorage.getItem('sirde_session_pin');
+    if (savedPin) {
+        const pinInput = document.getElementById('entry-pin');
+        if (pinInput) pinInput.value = savedPin;
+        await checkAccess(savedPin);
+    }
+});
 
 const CAMPO_FORMATIVO_MAP = {
     'Español': 'Lenguajes', 'Inglés': 'Lenguajes', 'Artes': 'Lenguajes', 'Música': 'Lenguajes', 'Español 1': 'Lenguajes', 'Español 2': 'Lenguajes', 'Español 3': 'Lenguajes',
@@ -324,6 +366,7 @@ function checkAccess(val) {
 }
 
 function logoutSIRDE() {
-    sessionStorage.removeItem('auth_sirde');
-    location.reload();
+    sessionStorage.removeItem('sirde_session_pin');
+    sessionStorage.removeItem('auth_sirde'); // Ensure the key set by checkAccess is also removed
+    window.location.reload();
 }
