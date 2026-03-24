@@ -129,7 +129,7 @@
                 <h2 class="section-title">2. Diagnóstico Colectivo del Grupo</h2>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div class="space-y-4">
-                        <label class="text-[10px] font-black uppercase text-slate-500">Factores de Impacto Curricular</label>
+                        <p role="heading" aria-level="3" class="text-[10px] font-black uppercase text-slate-500">Factores de Impacto Curricular</p>
                         <div class="grid grid-cols-1 gap-3">
                             <div class="flex items-center justify-between p-3 bg-white/5 rounded-xl border border-white/10">
                                 <label for="impacto-concentracion" class="text-xs">Nivel de Concentración</label>
@@ -147,7 +147,7 @@
                     </div>
 
                     <div class="space-y-4">
-                        <label class="text-[10px] font-black uppercase text-slate-500">Variables de Gestión</label>
+                        <p role="heading" aria-level="3" class="text-[10px] font-black uppercase text-slate-500">Variables de Gestión</p>
                         <div class="input-group">
                             <label for="tiempo_conducta" class="text-[11px] text-slate-400">Tiempo de Clase p/ Conducta:</label>
                             <select id="tiempo_conducta" name="tiempo_conducta" class="w-full text-xs mt-1">
@@ -155,7 +155,7 @@
                             </select>
                         </div>
                         <div class="input-group">
-                            <label class="text-[11px] text-slate-400">Ambiente de Aula (Promedio):</label>
+                            <p role="heading" aria-level="3" class="text-[11px] text-slate-400">Ambiente de Aula (Promedio):</p>
                             <div class="grid grid-cols-3 gap-2 mt-1">
                                 <select id="amb-atencion" name="amb-atencion" class="text-[10px] p-2 bg-slate-900"><option value="Alto">Atención</option><option value="Alto">Alto</option><option value="Medio" selected>Medio</option><option value="Bajo">Bajo</option></select>
                                 <select id="amb-respeto" name="amb-respeto" class="text-[10px] p-2 bg-slate-900"><option value="Alto">Respeto</option><option value="Alto">Alto</option><option value="Medio" selected>Medio</option><option value="Bajo">Bajo</option></select>
@@ -206,7 +206,8 @@
                         </label>
                     </div>
                     <div id="otro-factor-container" class="mt-4 hidden animate-fade-in">
-                        <input type="text" id="fact-ext-text" placeholder="Especifique el factor externo..." class="w-full text-xs p-4 rounded-2xl bg-white/5 border-dashed border-primary-green/30 text-primary-green">
+                        <label for="fact-ext-text" class="sr-only">Especifique el factor externo</label>
+                        <input type="text" id="fact-ext-text" name="fact-ext-text" placeholder="Especifique el factor externo..." class="w-full text-xs p-4 rounded-2xl bg-white/5 border-dashed border-primary-green/30 text-primary-green">
                     </div>
                 </div>
 
@@ -242,7 +243,7 @@
                 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div class="space-y-4">
-                        <label class="text-[10px] font-black uppercase text-slate-500">Acciones Institucionales Aplicadas</label>
+                        <p role="heading" aria-level="3" class="text-[10px] font-black uppercase text-slate-500">Acciones Institucionales Aplicadas</p>
                         <div class="grid grid-cols-1 gap-2">
                             <label class="flex items-center gap-3 p-3 bg-white/5 border border-white/10 rounded-xl cursor-pointer hover:bg-white/10 text-xs">
                                 <input type="checkbox" name="estrategia-chk" class="estrategia-chk w-4 h-4 rounded accent-primary-green" value="Entrevista Inicial">
@@ -275,9 +276,10 @@
                             <label class="flex flex-col gap-2 p-3 bg-white/5 border border-white/10 rounded-xl">
                                 <span class="flex items-center gap-3 text-xs">
                                     <input type="checkbox" id="chk-otra-est" class="w-4 h-4 rounded accent-primary-green">
-                                    <span>Otra estrategia específica:</span>
+                                    <label for="chk-otra-est">Otra estrategia específica:</label>
                                 </span>
-                                <input type="text" id="otra-est-text" placeholder="Describa brevemente..." class="text-[10px] p-2 bg-slate-900 border-none rounded">
+                                <label for="otra-est-text" class="sr-only">Detalle de la otra estrategia</label>
+                                <input type="text" id="otra-est-text" name="otra-est-text" placeholder="Describa brevemente..." class="text-[10px] p-2 bg-slate-900 border-none rounded">
                             </label>
                         </div>
                     </div>
