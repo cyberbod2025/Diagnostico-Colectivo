@@ -55,15 +55,34 @@ async function checkAccess(pin) {
         }
     }
 
+    // Asegurar que los datos base estén cargados antes de auto-llenar
+    if (typeof initData === 'function' && globalPersonal.length === 0) {
+        await initData();
+    }
+
     // Pre-llenado Automático para Docentes
     const docInput = document.getElementById('docente');
-    if(docInput) docInput.value = teacher.nombre;
+    if(docInput) {
+        // Añadir el nombre si no existe en el select (caso limpieza de tabla)
+        if (![...docInput.options].some(o => o.value === teacher.nombre)) {
+            const opt = new Option(teacher.nombre, teacher.nombre);
+            docInput.add(opt);
+        }
+        docInput.value = teacher.nombre;
+        docInput.disabled = true;
+    }
     
-    onTeacherChange(); 
-    
-    if(docInput) docInput.disabled = true;
+    // Auto-llenar Asignatura y Campo Formativo si existen en la BD
     const asigInput = document.getElementById('asignatura');
-    if(asigInput) asigInput.readOnly = true;
+    if(asigInput && teacher.departamento) {
+        asigInput.value = teacher.departamento;
+        asigInput.readOnly = true;
+        
+        // Disparar la lógica de campo formativo
+        updateCampo(); 
+    }
+
+    onTeacherChange(); 
     
     document.getElementById('auth-wall').classList.add('hidden');
     return true;
@@ -384,6 +403,22 @@ function togglePinVisibility(inputId) {
 
 function logoutSIRDE() {
     sessionStorage.removeItem('sirde_session_pin');
-    sessionStorage.removeItem('auth_sirde'); // Ensure the key set by checkAccess is also removed
+    sessionStorage.removeItem('auth_sirde');
     window.location.reload();
 }
+
+function updatePeriodTitle() {
+    const sel = document.getElementById('current-periodo');
+    if (!sel) return;
+    const text = sel.options[sel.selectedIndex].text;
+    console.log("Periodo actualizado a:", text);
+}
+
+// Inicialización de Periodo por defecto (Trimestre 2)
+window.addEventListener('DOMContentLoaded', () => {
+    const sel = document.getElementById('current-periodo');
+    if (sel) {
+        sel.value = 'T2-2026';
+        updatePeriodTitle();
+    }
+});

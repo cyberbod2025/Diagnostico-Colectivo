@@ -1,23 +1,27 @@
-/* SIRDE-310 Institutional CSS */
+/* SIRDE-310 Premium Dark Green Skin */
 :root {
-    --primary-blue: #00d2ff;
-    --navy-bg: #0f172a;
-    --card-bg: #1e293b;
-    --border-gray: #334155;
-    --text-main: #f8fafc;
-    --text-muted: #94a3b8;
+    --primary-green: #10b981;
+    --primary-glow: rgba(16, 185, 129, 0.4);
+    --dark-bg: #022c22;
+    --dark-bg-alt: #064e3b;
+    --card-bg: rgba(6, 78, 59, 0.4);
+    --glass-border: rgba(16, 185, 129, 0.15);
+    --text-main: #ecfdf5;
+    --text-muted: #a7f3d0;
     --white: #ffffff;
-    --grad-blue: linear-gradient(135deg, #00d2ff 0%, #3a7bd5 100%);
-    --grad-purple: linear-gradient(135deg, #8e2de2 0%, #4a00e0 100%);
-    --grad-orange: linear-gradient(135deg, #f2994a 0%, #f2c94c 100%);
+    --grad-green: linear-gradient(135deg, #059669 0%, #10b981 100%);
+    --grad-dark: linear-gradient(180deg, #022c22 0%, #064e3b 100%);
+    --grad-accent: linear-gradient(135deg, #34d399 0%, #059669 100%);
 }
 
 body {
-    background-color: var(--navy-bg);
+    background: var(--grad-dark);
+    background-attachment: fixed;
     color: var(--text-main);
     font-family: 'Outfit', 'Inter', system-ui, -apple-system, sans-serif;
     line-height: 1.5;
     margin: 0;
+    min-height: 100vh;
 }
 
 .container {
@@ -26,62 +30,38 @@ body {
     padding: 2rem 1rem;
 }
 
+/* Glassmorphism Cards */
 .card, 
 .bg-slate-50, 
 .bg-white, 
 .bg-blue-50\/30 {
     background: var(--card-bg) !important;
-    border: 1px solid var(--border-gray) !important;
+    backdrop-filter: blur(12px) saturate(180%);
+    -webkit-backdrop-filter: blur(12px) saturate(180%);
+    border: 1px solid var(--glass-border) !important;
     color: var(--text-main) !important;
-    border-radius: 12px;
-    padding: 2rem;
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+    border-radius: 16px;
+    padding: 2.5rem;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
     margin-bottom: 2rem;
-    transition: all 0.2s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+.card:hover {
+    border-color: var(--primary-green);
+    box-shadow: 0 8px 32px 0 var(--primary-glow);
+}
+
+/* Typography & Colors */
 label, span, p, h1, h2, h3, h4 {
     color: var(--text-main) !important;
 }
 
-.text-slate-500, .text-slate-400, .text-slate-900 {
+.text-slate-500, .text-slate-400, .text-slate-900, .text-slate-600 {
     color: var(--text-muted) !important;
 }
 
-.estrategia-chk + span,
-.chk-student + span {
-    color: var(--text-main) !important;
-}
-
-.bg-white.rounded.border {
-    background: #0f172a !important;
-    border-color: #334155 !important;
-}
-
-select {
-    background-color: #0f172a !important;
-    color: white !important;
-    border: 1px solid #334155 !important;
-}
-
-@media (max-width: 640px) {
-    .card {
-        padding: 1rem;
-        border-radius: 0; /* Full width on mobile feels cleaner */
-        margin-bottom: 0.5rem;
-    }
-    h1 { font-size: 2rem; }
-    h2 { font-size: 1.4rem; }
-    .section-title { font-size: 0.8rem; padding-left: 0.75rem; margin-bottom: 1.5rem; }
-}
-
-.card:hover {
-    border-color: var(--primary-blue);
-    box-shadow: 0 0 20px rgba(0, 210, 255, 0.1);
-}
-
 h1, h2, h3 {
-    color: var(--primary-blue);
     margin: 0;
     line-height: 1.1;
     letter-spacing: -0.02em;
@@ -90,39 +70,36 @@ h1, h2, h3 {
 h1 { 
     font-size: 3rem; 
     font-weight: 950; 
-    line-height: 1;
     color: var(--white);
-    text-shadow: 0 0 20px rgba(0, 210, 255, 0.3);
+    text-shadow: 0 0 20px var(--primary-glow);
 } 
+
 h2 { 
     font-size: 1.8rem; 
     font-weight: 900; 
-    color: var(--primary-blue);
+    color: var(--primary-green);
 } 
 
 .section-title {
-    font-size: 1rem;
+    font-size: 0.9rem;
     text-transform: uppercase;
-    letter-spacing: 0.2em;
+    letter-spacing: 0.25em;
     font-weight: 950;
-    color: var(--primary-blue);
-    border-left: 6px solid var(--primary-blue);
-    padding-left: 1.25rem;
+    color: var(--primary-green);
+    border-left: 5px solid var(--primary-green);
+    padding-left: 1.5rem;
     margin-bottom: 2.5rem;
 }
 
-.input-group {
-    margin-bottom: 1.5rem;
-}
-
+/* Form Elements - Translúcido Oscuro */
 .input-group label {
     display: block;
-    font-size: 0.7rem;
+    font-size: 0.75rem;
     font-weight: 800;
     text-transform: uppercase;
     color: var(--text-muted);
-    margin-bottom: 0.75rem;
-    letter-spacing: 0.05em;
+    margin-bottom: 1rem;
+    letter-spacing: 0.1em;
 }
 
 input[type="text"],
@@ -131,115 +108,121 @@ input[type="password"],
 select,
 textarea {
     width: 100%;
-    padding: 0.75rem;
-    background: #0f172a;
-    border: 1px solid var(--border-gray);
-    border-radius: 8px;
-    font-size: 0.9rem;
-    color: white;
+    padding: 1rem;
+    background: rgba(2, 44, 34, 0.6) !important;
+    border: 1px solid var(--glass-border) !important;
+    border-radius: 12px;
+    font-size: 0.95rem;
+    color: var(--white) !important;
     box-sizing: border-box;
+    transition: all 0.2s ease;
 }
 
 input:focus, select:focus, textarea:focus {
     outline: none;
-    border-color: var(--primary-blue);
-    box-shadow: 0 0 0 2px rgba(30, 58, 138, 0.1);
+    border-color: var(--primary-green) !important;
+    background: rgba(2, 44, 34, 0.8) !important;
+    box-shadow: 0 0 15px var(--primary-glow);
 }
 
+/* Buttons - Green Gradients */
 .btn-primary {
-    background: var(--grad-blue);
-    color: white;
+    background: var(--grad-green);
+    color: var(--white);
     border: none;
-    padding: 0.85rem 1.5rem;
-    border-radius: 50px; /* Rounded buttons like image */
-    font-weight: 800;
+    padding: 1rem 2rem;
+    border-radius: 50px;
+    font-weight: 900;
     cursor: pointer;
-    font-size: 0.85rem;
+    font-size: 0.9rem;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(0, 210, 255, 0.3);
+    letter-spacing: 0.1em;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
 }
 
 .btn-primary:hover {
-    transform: scale(1.02);
-    box-shadow: 0 6px 20px rgba(0, 210, 255, 0.4);
+    transform: translateY(-3px) scale(1.03);
+    box-shadow: 0 10px 25px rgba(16, 185, 129, 0.5);
+    background: var(--grad-accent);
 }
 
-.btn-primary:disabled {
-    background-color: #94a3b8;
-    cursor: not-allowed;
-}
-
-/* Toggles & Options */
-.option-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-    gap: 0.75rem;
-}
-
-.option-item {
-    border: 1px solid var(--border-gray);
-    padding: 0.75rem;
-    border-radius: 6px;
-    text-align: center;
-    cursor: pointer;
-    font-size: 0.8125rem;
-    font-weight: 600;
-}
-
-.option-item.active {
-    background-color: var(--primary-blue);
-    color: white;
-    border-color: var(--primary-blue);
-}
-
-/* Student List */
-.student-list {
-    border: 1px solid var(--border-gray);
-    border-radius: 6px;
-    max-height: 400px;
-    overflow-y: auto;
-}
-
+/* Student List Customization */
 .student-entry {
-    padding: 1rem;
-    border-bottom: 1px solid var(--border-gray);
+    padding: 1.25rem;
+    border-bottom: 1px solid var(--glass-border);
+    transition: background 0.2s ease;
+}
+
+.student-entry:hover {
+    background: rgba(16, 185, 129, 0.05);
 }
 
 .student-subform {
-    background: #f1f5f9;
-    padding: 1rem;
-    border-radius: 6px;
-    margin-top: 1rem;
-    display: none;
+    background: rgba(2, 44, 34, 0.4);
+    border: 1px solid var(--glass-border);
+    padding: 1.5rem;
+    border-radius: 12px;
+    margin-top: 1.25rem;
 }
 
-.student-subform.visible {
-    display: block;
+/* Authentication Wall Matching */
+#auth-wall {
+    background: radial-gradient(circle at center, var(--dark-bg-alt) 0%, var(--dark-bg) 100%) !important;
 }
 
-/* Print Optimization */
-@media print {
-    body { background-color: white; padding: 0; color: black; font-size: 10pt; }
-    .no-print { display: none !important; }
-    .card { border: none; box-shadow: none; padding: 0.5rem 0; margin-bottom: 1rem; page-break-inside: avoid; }
-    .container { max-width: 100%; width: 100%; padding: 0; }
-    h1, h2, h3 { color: black !important; margin: 5px 0; }
-    .section-title { border-bottom: 1px solid black !important; color: black !important; padding-bottom: 2px; margin-bottom: 10px; }
-    .student-entry { border-bottom: 1px solid #ddd; margin-bottom: 0px; page-break-inside: avoid; }
-    input, select, textarea { border: none !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-    .btn-primary { display: none !important; }
-    
-    /* Institutional Layout */
-    .official-header { display: flex !important; border-bottom: 2px solid black; padding-bottom: 10px; margin-bottom: 20px; }
-    .signature-zone { display: grid !important; grid-template-columns: 1fr 1fr; gap: 50px; margin-top: 50px; text-align: center; }
-    .signature-line { border-top: 1px solid black; padding-top: 5px; font-size: 9px; font-weight: bold; }
+#auth-wall .card {
+    background: rgba(6, 78, 59, 0.6) !important;
+    border: 1px solid var(--primary-green) !important;
 }
 
-.official-header, .signature-zone { display: none; }
+/* Checkboxes & Selects specifically */
+.impact-factor {
+    background: rgba(6, 78, 59, 0.5) !important;
+}
 
-/* Custom Scrollbar */
-::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: var(--bg-light); }
-::-webkit-scrollbar-thumb { background: var(--border-gray); border-radius: 10px; }
+/* Sidebar/Nav adjustments */
+.border-b-2 {
+    border-color: var(--glass-border) !important;
+}
+
+.bg-slate-900 {
+    background: var(--dark-bg-alt) !important;
+}
+
+/* Mobile Adjustments */
+@media (max-width: 640px) {
+    .card {
+        padding: 1.5rem;
+        border-radius: 0;
+        margin-bottom: 0.5rem;
+    }
+    h1 { font-size: 2.2rem; }
+    h2 { font-size: 1.5rem; }
+    .section-title { font-size: 0.85rem; padding-left: 1rem; margin-bottom: 2rem; }
+}
+
+/* Custom Scrollbar Premium Green */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: var(--dark-bg); }
+::-webkit-scrollbar-thumb { 
+    background: var(--dark-bg-alt); 
+    border: 2px solid var(--dark-bg);
+    border-radius: 10px; 
+}
+::-webkit-scrollbar-thumb:hover { background: var(--primary-green); }
+
+/* Impact Badges Style */
+#impacto {
+    color: var(--primary-green) !important;
+    text-shadow: 0 0 10px var(--primary-glow);
+}
+
+/* Dashboards and tables */
+.table, th, td {
+    border-color: var(--glass-border) !important;
+}
+
+.bg-blue-50, .bg-slate-100 {
+    background: rgba(6, 78, 59, 0.2) !important;
+}
