@@ -4,7 +4,7 @@
   "description": "Sistema de Diagnóstico Docente integrado con Supabase",
   "main": "index.html",
   "scripts": {
-    "start": "serve ."
+    "start": "serve -l 3001 ."
   },
   "devDependencies": {
     "tailwindcss": "^4.2.2"
