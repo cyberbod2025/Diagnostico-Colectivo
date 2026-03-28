@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tablero de Análisis | SIRDE-310</title>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Montserrat:ital,wght@0,700;0,900;1,900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -15,10 +15,12 @@
                 theme: {
                     extend: {
                         colors: {
-                            'primary-green': '#00ffa6'
+                            'primary-green': '#06b6d4', // Mapped to primary-cyan
+                            'primary-glow': 'rgba(6, 182, 212, 0.6)'
                         },
                         fontFamily: {
-                            'outfit': ['Outfit', 'sans-serif']
+                            'inter': ['Inter', 'sans-serif'],
+                            'montserrat': ['Montserrat', 'sans-serif']
                         }
                     }
                 }
@@ -39,9 +41,13 @@
         }
     </style>
 </head>
-<body class="p-4 md:p-8">
+<body class="p-4 md:p-8 relative">
+    <!-- Animated Blobs -->
+    <div class="bg-blob blob-1"></div>
+    <div class="bg-blob blob-2"></div>
+
     <div id="auth-wall" class="fixed inset-0 z-[100] bg-slate-900/90 flex items-center justify-center p-4">
-        <div class="card w-full max-w-sm text-center space-y-8">
+        <div class="card premium-glass w-full max-w-sm text-center space-y-8 animate-fade-up">
             <h1 class="text-xl font-black italic">VALIDACIÓN INSTITUCIONAL</h1>
             <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Acceso Restringido Dashboard SIRDE</p>
             <div class="relative">
@@ -58,9 +64,9 @@
         <!-- HEADER INSTITUCIONAL -->
         <header class="flex items-center justify-between border-b-2 border-slate-950 pb-6 mb-8">
             <div class="flex items-center gap-6">
-                <img src="logo_secundaria_310.svg" alt="Logo" class="h-16 w-auto">
+                <img src="logo_secundaria_310.svg" alt="Logo" class="h-16 w-auto" style="mix-blend-mode: color-burn; opacity: 0.9;">
                 <div class="space-y-1">
-                    <h1 class="text-2xl font-black tracking-tighter m-0 uppercase">TABLERO ANALÍTICO SIRDE-310</h1>
+                    <h1 class="text-2xl font-black text-gradient-animate tracking-tighter m-0 uppercase title-font">TABLERO ANALÍTICO SIRDE-310</h1>
                     <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Respaldo Docente • Secundaria 310</p>
                     <div class="no-print mt-1 flex gap-4">
                         <a href="index.html" class="text-[9px] font-bold text-blue-800 hover:underline uppercase">← Regresar al Formulario</a>
