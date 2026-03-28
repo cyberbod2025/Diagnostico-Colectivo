@@ -274,14 +274,15 @@
             try {
                 const { data, error } = await supabaseClient
                     .from('personal')
-                    .select('id, nombre, pin_entregado, acceso_pin')
+                    .select('id, nombre, rol, pin_entregado, acceso_pin')
                     .order('nombre');
                     
                 if (error) throw error;
                 systemUsers = data.filter(u => u.rol !== 'secretaria');
                 renderList();
             } catch (err) {
-                document.getElementById('teacher-list').innerHTML = `<p class="text-center text-red-400 text-xs">Error de conexión. Desliza hacia abajo para refrescar.</p>`;
+                console.error("Error cargando nómina:", err);
+                document.getElementById('teacher-list').innerHTML = `<p class="text-center text-red-400 text-xs">Error de conexión: ${err.message || err.details || 'Revisa la consola'}. Desliza hacia abajo para refrescar.</p>`;
             }
         }
 
