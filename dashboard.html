@@ -62,8 +62,9 @@
                 <div class="space-y-1">
                     <h1 class="text-2xl font-black tracking-tighter m-0 uppercase">TABLERO ANALÍTICO SIRDE-310</h1>
                     <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Respaldo Docente • Secundaria 310</p>
-                    <div class="no-print mt-1">
-                        <a href="index.html" class="text-[9px] font-bold text-blue-800 hover:underline uppercase">← Regresar al Formulario de Captura</a>
+                    <div class="no-print mt-1 flex gap-4">
+                        <a href="index.html" class="text-[9px] font-bold text-blue-800 hover:underline uppercase">← Regresar al Formulario</a>
+                        <a href="invitacion.html" class="text-[9px] font-bold text-primary-green hover:underline uppercase tracking-widest">★ Monitorear Activaciones</a>
                     </div>
                 </div>
             </div>
@@ -324,15 +325,34 @@
             
             reports.forEach(r => {
                 (r.alumnos_reportados || []).forEach(al => {
-                    if (al.citado) totalCited++;
-                    if (al.acudio === 'SÍ') totalAttended++;
+                    const seg = al.seguimiento_padres || {};
+                    const isCited = seg.citatorio_enviado === 'Sí' || al.citado; // Compatible with old and new
+                    const hasAttended = seg.padres_asistieron === 'Sí' || al.acudio === 'SÍ' || al.acudio === 'Sí';
+
+                    if (isCited) totalCited++;
+                    if (hasAttended) totalAttended++;
 
                     if (!studentCounts[al.alumno_id]) {
-                        studentCounts[al.alumno_id] = { name: al.nombre, teachers: new Set(), subjects: new Set(), reports: 0 };
+                        studentCounts[al.alumno_id] = { 
+                            name: al.nombre, 
+                            teachers: new Set(), 
+                            subjects: new Set(), 
+                            reports: 0,
+                            seguimiento: { 
+                                t_social: seg.intervencion_orientacion || 'No',
+                                tutor: seg.intervencion_tutor || 'No',
+                                direccion: seg.escalado_direccion || 'No'
+                            }
+                        };
                     }
                     studentCounts[al.alumno_id].reports++;
                     studentCounts[al.alumno_id].teachers.add(r.docente);
                     studentCounts[al.alumno_id].subjects.add(r.asignatura);
+                    
+                    // Actualizar estatus si ya intervino alguien en otros reportes
+                    if (seg.intervencion_orientacion === 'Sí') studentCounts[al.alumno_id].seguimiento.t_social = 'Sí';
+                    if (seg.intervencion_tutor === 'Sí') studentCounts[al.alumno_id].seguimiento.tutor = 'Sí';
+                    if (seg.escalado_direccion === 'Sí') studentCounts[al.alumno_id].seguimiento.direccion = 'Sí';
                 });
             });
             const parentPct = totalCited > 0 ? Math.round((totalAttended / totalCited) * 100) : 0;
@@ -524,7 +544,7 @@
         function renderRecurrentStudents(students) {
             const list = document.getElementById('recurrence-list');
             list.innerHTML = `<div class="text-[9px] font-bold text-slate-400 mb-2 grid grid-cols-6 gap-2 border-b pb-1">
-                <div class="col-span-2">ALUMNO (TOP)</div><div>DOCS</div><div class="col-span-2">MATERIAS</div><div>NIVEL</div>
+                <div class="col-span-2">ALUMNO (TOP)</div><div>DOCS</div><div class="col-span-2">MATERIAS</div><div>ESTATUS REC.</div>
             </div>`;
             
             Object.values(students)
@@ -532,15 +552,24 @@
                 .slice(0, 8)
                 .forEach((s, idx) => {
                     const teachersCount = s.teachers.size;
+                    const seg = s.seguimiento || { t_social: 'No', tutor: 'No', direccion: 'No' };
                     let color = "bg-slate-100 text-slate-500";
                     let level = "Bajo";
                     
                     if (teachersCount > 3) { color = "bg-red-500 text-white"; level = "CRÍTICO"; }
                     else if (teachersCount > 1) { color = "bg-orange-500 text-white"; level = "ALTO"; }
                     
+                    // Icons for interventions
+                    const icons = `
+                        <span title="Tutor de Grupo" class="p-1 rounded ${seg.tutor === 'Sí' ? 'bg-blue-100 text-blue-600' : 'bg-slate-50 text-slate-300 opacity-20'}">👤</span>
+                        <span title="Orientación/T. Social" class="p-1 rounded ${seg.t_social === 'Sí' ? 'bg-purple-100 text-purple-600' : 'bg-slate-50 text-slate-300 opacity-20'}">🧠</span>
+                        <span title="Dirección" class="p-1 rounded ${seg.direccion === 'Sí' ? 'bg-red-100 text-red-600' : 'bg-slate-50 text-slate-300 opacity-20'}">🏢</span>
+                    `;
+
                     list.innerHTML += `<div class="grid grid-cols-6 gap-2 text-[10px] items-center py-2 border-b hover:bg-slate-50 transition-all">
                         <div class="col-span-2 font-black">
                             ${idx < 5 ? '⭐' : ''} ${s.name}
+                            <div class="flex gap-1 mt-1">${icons}</div>
                         </div>
                         <div class="font-bold text-center">${teachersCount}</div>
                         <div class="col-span-2 text-[9px] text-slate-300 italic leading-tight">${Array.from(s.subjects).join(', ')}</div>
@@ -549,6 +578,13 @@
                         </div>
                     </div>`;
                 });
+            
+            // Terminology Legend
+            list.innerHTML += `<div class="mt-4 p-3 bg-slate-50 rounded-lg flex flex-wrap gap-4 text-[9px] border border-slate-100">
+                <span class="text-slate-400 font-bold uppercase">Glosario de Niveles:</span>
+                <span class="text-slate-600 font-medium"><b>Nulo:</b> Sin incidencia o conducta estable.</span>
+                <span class="text-red-600 font-medium"><b>Alto:</b> Incidencia crítica o recurrente.</span>
+            </div>`;
         }
 
         function getMode(arr) {

@@ -1,7 +1,9 @@
 /* SIRDE-310 | Logic & Wizard Blindaje v1.0.2 */
 const SUPABASE_URL = 'https://uvnetpnjinxzhggoqmwz.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_oBpidcqpYzP_JMU-xYi9ZQ_HXYouwyL';
-const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+    db: { schema: 'colectivo' }
+});
 
 let globalAlumnos = [];
 let globalPersonal = [];
@@ -25,10 +27,20 @@ async function checkAccess(pin) {
             return;
         }
 
+        // CONTROL DE ACCESO AL DASHBOARD: EXCLUSIVO PARA HUGO SANCHEZ
+        const isHugo = user.nombre.includes("SANCHEZ") && user.nombre.includes("HUGO");
+
         if (user.rol === 'directivo' || user.rol === 'subdireccion') {
-            console.log("LOG: Acceso como Observador (Directivo). Redirigiendo a Dashboard...");
-            window.location.href = 'dashboard.html';
-            return;
+            if (isHugo) {
+                console.log("LOG: Acceso concedido al Administrador. Redirigiendo a Dashboard...");
+                sessionStorage.setItem('auth_sirde', 'true');
+                sessionStorage.setItem('sirde_user_name', user.nombre);
+                window.location.href = 'dashboard.html';
+                return;
+            } else {
+                alert("ACCESO RESTRINGIDO: Actualmente el acceso a resultados está limitado al administrador del sistema por razones de privacidad.");
+                return;
+            }
         }
         
         console.log("LOG: Acceso concedido a:", user.nombre);
@@ -42,7 +54,7 @@ async function checkAccess(pin) {
             onTeacherChange();
         }
         document.getElementById('auth-wall').classList.add('hidden');
-        updateProgress(1);
+        if (typeof updateProgress === 'function') updateProgress(1);
     } catch (e) { console.error("Critical error in checkAccess:", e); }
 }
 
@@ -179,9 +191,11 @@ function renderStudents() {
     const grupo = document.getElementById('grupo').value;
     const list = document.getElementById('student-list');
     const badge = document.getElementById('group-name-badge');
+    const instruction = document.getElementById('student-list-instruction');
     if (!list) return;
 
     if (badge) badge.textContent = `GRUPO: ${grupo || '---'}`;
+    if (instruction) instruction.classList.toggle('hidden', !grupo);
 
     console.log("LOG: renderStudents para grupo ->", grupo);
     
@@ -215,7 +229,10 @@ function renderStudents() {
                 behaviors: { 'Atención': 'Nula', 'Trabajo en Clase': 'Nula', 'Lenguaje Inapropiado': 'Nula', 'Sigue Indicaciones': 'Nula' },
                 citatorio: 'No',
                 acudio: 'No',
-                cumplio: 'No'
+                cumplio: 'No',
+                intervencion_tutor: 'No',
+                intervencion_orientacion: 'No',
+                escalado_direccion: 'No'
             };
             
             // Si no estaba en la tienda, agrégalo para que no se pierda al re-renderizar
@@ -272,6 +289,35 @@ function renderStudents() {
                                 <option value="Sí" ${data.cumplio === 'Sí' ? 'selected' : ''}>Cumplimiento parcial/total</option>
                             </select>
                         </div>
+
+                        <!-- NUEVOS CAMPOS DE ESTATUS DE SEGUIMIENTO -->
+                        <div class="pt-4 border-t border-white/10 mt-2 space-y-3">
+                            <p class="text-[9px] font-black text-slate-500 uppercase tracking-widest">Estatus de Intervención Institucional</p>
+                            
+                            <div class="flex items-center justify-between gap-4 p-2 bg-white/5 rounded-lg">
+                                <span class="text-[10px] font-bold text-white uppercase">¿Intervención Tutor de Grupo?</span>
+                                <select onchange="saveExtraField('${al.id}', 'intervencion_tutor', this.value)" class="text-[10px] p-1 bg-slate-800 rounded border-none text-white">
+                                    <option value="No" ${data.intervencion_tutor === 'No' ? 'selected' : ''}>No</option>
+                                    <option value="Sí" ${data.intervencion_tutor === 'Sí' ? 'selected' : ''}>Sí</option>
+                                </select>
+                            </div>
+
+                            <div class="flex items-center justify-between gap-4 p-2 bg-white/5 rounded-lg">
+                                <span class="text-[10px] font-bold text-white uppercase">¿Orientación / T. Social?</span>
+                                <select onchange="saveExtraField('${al.id}', 'intervencion_orientacion', this.value)" class="text-[10px] p-1 bg-slate-800 rounded border-none text-white">
+                                    <option value="No" ${data.intervencion_orientacion === 'No' ? 'selected' : ''}>No</option>
+                                    <option value="Sí" ${data.intervencion_orientacion === 'Sí' ? 'selected' : ''}>Sí</option>
+                                </select>
+                            </div>
+
+                            <div class="flex items-center justify-between gap-4 p-2 bg-white/5 rounded-lg border border-red-500/20">
+                                <span class="text-[10px] font-bold text-red-400 uppercase">¿Escaló a Dirección?</span>
+                                <select onchange="saveExtraField('${al.id}', 'escalado_direccion', this.value)" class="text-[10px] p-1 bg-slate-900 rounded border-none text-red-400 font-black">
+                                    <option value="No" ${data.escalado_direccion === 'No' ? 'selected' : ''}>No</option>
+                                    <option value="Sí" ${data.escalado_direccion === 'Sí' ? 'selected' : ''}>SÍ (URGENTE)</option>
+                                </select>
+                            </div>
+                        </div>
                     </div>
                 </div>
             `;
@@ -289,7 +335,10 @@ function toggleStudentSub(id, v) {
             behaviors: { 'Atención': 'Nula', 'Trabajo en Clase': 'Nula', 'Lenguaje Inapropiado': 'Nula', 'Sigue Indicaciones': 'Nula' },
             citatorio: 'No',
             acudio: 'No',
-            cumplio: 'No'
+            cumplio: 'No',
+            intervencion_tutor: 'No',
+            intervencion_orientacion: 'No',
+            escalado_direccion: 'No'
         };
     } else {
         studentSelections[id].checked = v;
@@ -312,7 +361,8 @@ function saveExtraField(id, field, value) {
         studentSelections[id] = { 
             checked: true, 
             behaviors: { 'Atención': 'Nula', 'Trabajo en Clase': 'Nula', 'Lenguaje Inapropiado': 'Nula', 'Sigue Indicaciones': 'Nula' },
-            citatorio: 'No', acudio: 'No', cumplio: 'No'
+            citatorio: 'No', acudio: 'No', cumplio: 'No',
+            intervencion_tutor: 'No', intervencion_orientacion: 'No', escalado_direccion: 'No'
         };
     }
     studentSelections[id][field] = value;
@@ -370,7 +420,10 @@ async function handleFormSubmit(e) {
                 seguimiento_padres: {
                     citatorio_enviado: s.citatorio,
                     padres_asistieron: s.acudio,
-                    acuerdos_cumplidos: s.cumplio
+                    acuerdos_cumplidos: s.cumplio,
+                    intervencion_tutor: s.intervencion_tutor || 'No',
+                    intervencion_orientacion: s.intervencion_orientacion || 'No',
+                    escalado_direccion: s.escalado_direccion || 'No'
                 }
             });
         }

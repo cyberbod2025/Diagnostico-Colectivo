@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invitación Institucional | SIRDE-310</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        :root {
+            --primary-green: #00ffa6;
+            --bg-dark: #020b09;
+            --card-glass: rgba(255, 255, 255, 0.03);
+        }
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: radial-gradient(circle at top right, #0a251e 0%, var(--bg-dark) 60%);
+            color: #f8fafc;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        .glass-card {
+            background: var(--card-glass);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+        }
+        .btn-green {
+            background: var(--primary-green);
+            color: var(--bg-dark);
+            font-weight: 800;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .btn-green:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 25px rgba(0, 255, 166, 0.4);
+        }
+        .animate-float {
+            animation: float 6s ease-in-out infinite;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        .dimmed {
+            opacity: 0.3;
+            filter: grayscale(1);
+        }
+        .pulse-border {
+            border: 1px solid var(--primary-green);
+            animation: pulse-border 2s infinite;
+        }
+        @keyframes pulse-border {
+            0% { box-shadow: 0 0 0 0 rgba(0, 255, 166, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(0, 255, 166, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(0, 255, 166, 0); }
+        }
+        .pin-display {
+            font-family: 'Courier New', Courier, monospace;
+            background: rgba(0, 0, 0, 1);
+            padding: 1rem;
+            border-radius: 0.5rem;
+            color: var(--primary-green);
+            font-size: 1.5rem;
+            font-weight: 900;
+            letter-spacing: 4px;
+            border: 1px dashed var(--primary-green);
+        }
+        /* Custom scrollbar */
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(0, 255, 166, 0.2); border-radius: 10px; }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+    <div class="max-w-4xl mx-auto space-y-12">
+        <!-- HEADER / OBJETIVO -->
+        <header class="text-center space-y-6 pt-8 animate-float">
+            <h1 class="text-4xl md:text-6xl font-black italic tracking-tighter leading-none">
+                UNA NUEVA ERA DE <br>
+                <span class="text-primary-green uppercase">DIAGNÓSTICO COLECTIVO</span>
+            </h1>
+            <div class="max-w-2xl mx-auto space-y-4">
+                <p class="text-slate-400 text-lg leading-relaxed">
+                    La educación actual nos exige ser más ágiles e institucionales. El sistema <b>SIRDE-310</b> nace de la necesidad de consolidar el impacto pedagógico de nuestras asignaturas en un solo lugar.
+                </p>
+                <div class="flex flex-wrap justify-center gap-4 text-[10px] font-bold uppercase tracking-widest text-primary-green">
+                    <span class="flex items-center gap-2 border border-primary-green/20 px-3 py-1 rounded-full">⚡ SÓLO 3 MINUTOS</span>
+                    <span class="flex items-center gap-2 border border-primary-green/20 px-3 py-1 rounded-full">📊 IMPACTO DIRECTO AL CTE</span>
+                    <span class="flex items-center gap-2 border border-primary-green/20 px-3 py-1 rounded-full">🛡️ RESPALDO DOCENTE</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- SECCIÓN DE ACTIVACIÓN -->
+        <section class="glass-card p-8 rounded-3xl space-y-8 relative overflow-hidden">
+            <div class="absolute -top-10 -right-10 w-40 h-40 bg-primary-green/10 rounded-full blur-3xl"></div>
+            
+            <div class="text-center">
+                <h2 class="text-xl font-bold uppercase tracking-tight">Portal de Activación de Credenciales</h2>
+                <p class="text-xs text-slate-500 font-medium italic">Favor de buscar su nombre en el listado para obtener su PIN institucional único.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+                <!-- LISTADO DE DOCENTES (VIVO) -->
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Activación de Personal (Secundaria 310)</h3>
+                        <span id="active-count" class="text-[10px] font-bold text-primary-green bg-primary-green/10 px-2 py-0.5 rounded">0/0</span>
+                    </div>
+                    <div id="teacher-list" class="max-h-80 overflow-y-auto space-y-2 pr-2 custom-scrollbar">
+                        <!-- Generado por JS -->
+                        <div class="p-4 text-center text-xs italic text-slate-600">Cargando nómina institucional...</div>
+                    </div>
+                </div>
+
+                <!-- PANEL DE ACCIÓN -->
+                <div id="action-panel" class="hidden glass-card p-6 rounded-2xl border-primary-green/30 bg-primary-green/5 shadow-2xl flex flex-col items-center text-center space-y-6">
+                    <div class="w-16 h-16 bg-primary-green/20 rounded-full flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-primary-green" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                        </svg>
+                    </div>
+                    <div>
+                        <h4 id="selected-name" class="text-lg font-black text-white italic">--</h4>
+                        <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1">¿Es usted el docente seleccionado?</p>
+                    </div>
+                    <p class="text-[11px] text-yellow-400/80 leading-tight">Al confirmar, se revelará su PIN de seguridad. <br><b>SOLO SE MOSTRARÁ UNA VEZ.</b></p>
+                    <button id="btn-reveal" onclick="revealPin()" class="btn-green w-full py-4 rounded-xl text-sm">SÍ, REVELAR MI CLAVE PERSONAL</button>
+                    <button onclick="cancelSelection()" class="text-[10px] text-slate-500 font-bold hover:text-white transition-colors">CANCELAR / NO SOY YO</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- FOOTER / SUPPORT -->
+        <footer class="text-center pb-20 space-y-4">
+            <p class="text-[10px] text-slate-600 font-bold uppercase tracking-[4px]">Secundaria Diurna No. 310 • "Presidentes de México"</p>
+        </footer>
+    </div>
+
+    <!-- MODAL DE PIN (OVERLAY) -->
+    <div id="pin-modal" class="hidden fixed inset-0 z-[200] bg-slate-900/98 backdrop-blur-xl flex items-center justify-center p-4">
+        <div class="max-w-md w-full glass-card p-10 rounded-3xl border-primary-green text-center space-y-8 animate-float">
+            <div class="space-y-2">
+                <span class="bg-red-600 text-[10px] font-black px-3 py-1 rounded-full text-white uppercase tracking-widest">SEGURIDAD INSTITUCIONAL</span>
+                <h2 class="text-2xl font-black italic">ESTA ES SU CLAVE DE ACCESO</h2>
+            </div>
+            
+            <div class="relative group">
+                <div id="revealed-pin" class="pin-display">********</div>
+                <p class="text-[10px] font-bold text-slate-500 mt-4 uppercase tracking-tighter">Tome captura o anótelo. No se volverá a mostrar.</p>
+            </div>
+
+            <div class="bg-primary-green/5 p-4 rounded-2xl text-[11px] text-slate-400 text-left leading-relaxed">
+                <p>Su PIN es personal e intransferible. Es necesario para:</p>
+                <ul class="list-disc pl-5 mt-2 space-y-1">
+                    <li>Acceder al formulario SIRDE-310.</li>
+                    <li>Registrar informes de impacto institucional.</li>
+                    <li>Firmar digitalmente su reporte docente.</li>
+                </ul>
+            </div>
+
+            <button onclick="goToLogin()" class="btn-green w-full py-5 rounded-2xl text-base shadow-[0_0_30px_rgba(0,255,166,0.3)]">ENTENDIDO, IR AL LOGIN</button>
+        </div>
+    </div>
+
+    <script>
+        const SUPABASE_URL = 'https://uvnetpnjinxzhggoqmwz.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_oBpidcqpYzP_JMU-xYi9ZQ_HXYouwyL';
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+            db: { schema: 'colectivo' }
+        });
+
+        let currentUser = null;
+        let payroll = [];
+
+        async function loadTeachers() {
+            const { data, error } = await supabaseClient.from('personal').select('id, nombre, pin_entregado, acceso_pin').order('nombre');
+            if (error) { console.error(error); return; }
+            payroll = data.filter(x => x.rol !== 'secretaria'); // Excepto personal administrativo
+            renderTeacherList();
+        }
+
+        function renderTeacherList() {
+            const list = document.getElementById('teacher-list');
+            list.innerHTML = '';
+            
+            let delivered = 0;
+            payroll.forEach(p => {
+                const isActivated = p.pin_entregado;
+                if (isActivated) delivered++;
+                
+                const btn = document.createElement('button');
+                btn.className = `w-full text-left p-4 rounded-2xl transition-all flex items-center justify-between border ${isActivated ? 'dimmed border-white/5 bg-transparent' : 'bg-white/5 border-white/10 hover:border-primary-green/50 hover:bg-white/10 cursor-pointer'}`;
+                btn.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <span class="text-[11px] font-bold text-slate-500 w-6">${isActivated ? '✔️' : 'ID'}</span>
+                        <span class="text-[12px] font-bold tracking-tight ${isActivated ? 'text-slate-600' : 'text-slate-100'}">${p.nombre}</span>
+                    </div>
+                `;
+                if (!isActivated) {
+                    btn.onclick = () => selectTeacher(p);
+                }
+                list.appendChild(btn);
+            });
+            document.getElementById('active-count').textContent = `${delivered}/${payroll.length}`;
+        }
+
+        function selectTeacher(user) {
+            currentUser = user;
+            document.getElementById('selected-name').textContent = user.nombre;
+            document.getElementById('action-panel').classList.remove('hidden');
+            document.getElementById('action-panel').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function cancelSelection() {
+            currentUser = null;
+            document.getElementById('action-panel').classList.add('hidden');
+        }
+
+        async function revealPin() {
+            if (!currentUser) return;
+            
+            const { error } = await supabaseClient
+                .from('personal')
+                .update({ pin_entregado: true })
+                .eq('id', currentUser.id);
+
+            if (error) {
+                alert("Error de conexión. Intente de nuevo.");
+                return;
+            }
+
+            document.getElementById('revealed-pin').textContent = currentUser.acceso_pin;
+            document.getElementById('pin-modal').classList.remove('hidden');
+        }
+
+        function goToLogin() {
+            window.location.href = 'index.html';
+        }
+
+        window.onload = loadTeachers;
+    </script>
+</body>
+</html>
