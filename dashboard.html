@@ -284,7 +284,7 @@
             
             document.getElementById('print-label').textContent = `${grupo} | PERIODO: ${periodo} | FECHA: ${new Date().toLocaleDateString()}`;
 
-            let query = supabaseClient.from('respuestas_docentes').select('*').eq('periodo', periodo);
+            let query = supabaseClient.from('colectivo_respuestas_docentes').select('*').eq('periodo', periodo);
             if (grupo !== 'Todos') query = query.eq('grupo', grupo);
 
             const { data, error } = await query;
@@ -605,3 +605,4 @@
     </script>
 </body>
 </html>
+

@@ -263,9 +263,7 @@
     <script>
         const SUPABASE_URL = 'https://uvnetpnjinxzhggoqmwz.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_oBpidcqpYzP_JMU-xYi9ZQ_HXYouwyL';
-        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
-            db: { schema: 'colectivo' }
-        });
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {});
 
         let systemUsers = [];
         let activeUser = null;
@@ -273,7 +271,7 @@
         async function init() {
             try {
                 const { data, error } = await supabaseClient
-                    .from('personal')
+                    .from('colectivo_personal')
                     .select('id, nombre, rol, pin_entregado, acceso_pin')
                     .order('nombre');
                     
@@ -365,7 +363,7 @@
             try {
                 // Actualización a DB (Simulada para prueba rápida o real)
                 const { error } = await supabaseClient
-                    .from('personal')
+                    .from('colectivo_personal')
                     .update({ pin_entregado: true })
                     .eq('id', activeUser.id);
 
@@ -393,3 +391,4 @@
     </script>
 </body>
 </html>
+

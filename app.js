@@ -1,9 +1,7 @@
 /* SIRDE-310 | Logic & Wizard Blindaje v1.0.2 */
 const SUPABASE_URL = 'https://uvnetpnjinxzhggoqmwz.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_oBpidcqpYzP_JMU-xYi9ZQ_HXYouwyL';
-const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
-    db: { schema: 'colectivo' }
-});
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {});
 
 let globalAlumnos = [];
 let globalPersonal = [];
@@ -15,7 +13,7 @@ async function checkAccess(pin) {
     if (!pin) return;
     try {
         console.log("LOG: Verificando PIN institucional...");
-        const { data: user, error } = await supabaseClient.from('personal').select('*').ilike('acceso_pin', pin.trim()).single();
+        const { data: user, error } = await supabaseClient.from('colectivo_personal').select('*').ilike('acceso_pin', pin.trim()).single();
         if (error || !user) { 
             alert("PIN NO VÁLIDO. Verifique sus credenciales institucionales o contacte a la Dirección."); 
             console.warn("LOG: Intento de acceso fallido.");
@@ -60,11 +58,11 @@ async function checkAccess(pin) {
 
 async function initData() {
     console.log("Iniciando carga de datos escolar...");
-    const { data: p, error: ep } = await supabaseClient.from('personal').select('nombre, departamento, rol').order('nombre');
+    const { data: p, error: ep } = await supabaseClient.from('colectivo_personal').select('nombre, departamento, rol').order('nombre');
     globalPersonal = p || [];
     if (ep) console.error("Error cargando personal:", ep);
     
-    const { data: a, error: ea } = await supabaseClient.from('alumnos').select('*').order('nombre_completo');
+    const { data: a, error: ea } = await supabaseClient.from('colectivo_alumnos').select('*').order('nombre_completo');
     globalAlumnos = a || [];
     if (ea) console.error("Error cargando alumnos:", ea);
     
@@ -467,7 +465,7 @@ async function handleFormSubmit(e) {
     };
 
     try {
-        const { error } = await supabaseClient.from('respuestas_docentes').insert([payload]);
+        const { error } = await supabaseClient.from('colectivo_respuestas_docentes').insert([payload]);
         if (error) throw error;
         
         document.body.innerHTML = `
@@ -525,3 +523,4 @@ window.addEventListener('DOMContentLoaded', () => {
     // Inicializar impacto si los elementos existen
     if(document.querySelector('.impact-factor')) calculateImpact();
 });
+
