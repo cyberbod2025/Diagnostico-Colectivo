@@ -41,7 +41,7 @@
                 <img src="logo_secundaria_310.svg" alt="Logo" class="h-20 w-auto opacity-80" style="mix-blend-mode: plus-lighter;">
                 <h1 class="text-xl font-black italic text-primary-green">CONTROL INSTITUCIONAL</h1>
             </div>
-            <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Validación de Credenciales SIRDE</p>
+            <label for="entry-pin" class="block text-[10px] font-bold text-slate-500 uppercase tracking-widest">Validación de Credenciales SIRDE</label>
             <div class="relative">
                 <input type="password" id="entry-pin" placeholder="CLAVE DE ACCESO" class="w-full text-center tracking-widest font-black pr-12 py-4 rounded-2xl bg-white/5 border-white/10 text-white">
                 <button type="button" onclick="togglePinVisibility('entry-pin')" class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white p-2">
@@ -214,7 +214,7 @@
                             <input type="checkbox" name="fact-ext-chk" class="fact-ext-chk w-4 h-4 rounded-md accent-primary-green" value="Traslados largos">
                             <span>Traslados largos</span>
                         </label>
-                        <label class="flex items-center gap-3 p-3 bg-white/5 border border-white/10 rounded-xl cursor-pointer hover:bg-primary-green/5 hover:border-primary-green/30 transition-all text-[11px]">
+                        <label for="fact-ext-otro-chk" class="flex items-center gap-3 p-3 bg-white/5 border border-white/10 rounded-xl cursor-pointer hover:bg-primary-green/5 hover:border-primary-green/30 transition-all text-[11px]">
                             <input type="checkbox" id="fact-ext-otro-chk" name="fact-ext-chk-otro" class="w-4 h-4 rounded-md accent-primary-green" onchange="toggleOtroFactor(this.checked)">
                             <span class="font-bold">Otro...</span>
                         </label>

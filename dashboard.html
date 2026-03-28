@@ -38,7 +38,7 @@
     <div id="auth-wall" class="fixed inset-0 z-[100] bg-transparent/90 flex items-center justify-center p-4">
         <div class="card premium-glass w-full max-w-sm text-center space-y-8 animate-fade-up">
             <h1 class="text-xl font-black italic">VALIDACIÓN INSTITUCIONAL</h1>
-            <p class="text-sm font-bold text-slate-400 uppercase tracking-widest">Acceso Restringido Dashboard SIRDE</p>
+            <label for="entry-pin" class="block text-sm font-bold text-slate-400 uppercase tracking-widest">Acceso Restringido Dashboard SIRDE</label>
             <div class="relative">
                 <input type="password" id="entry-pin" placeholder="CLAVE DE ACCESO" class="w-full text-center tracking-widest font-black pr-12">
                 <button type="button" onclick="togglePinVisibility('entry-pin')" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white transition-colors p-1">
@@ -66,7 +66,7 @@
             <div class="flex flex-col items-end gap-3 no-print">
                 <div class="flex flex-col md:flex-row gap-2">
                     <div style="min-width: 150px;">
-                        <label class="text-xs font-bold text-slate-400 uppercase">Periodo</label>
+                        <label for="filter-periodo" class="text-xs font-bold text-slate-400 uppercase">Periodo</label>
                         <select id="filter-periodo" onchange="runAnalysis()" class="w-full p-2 border border-slate-200 rounded text-xs font-bold">
                             <option value="T1-2026">T1-2026</option>
                             <option value="T2-2026">T2-2026</option>
@@ -75,7 +75,7 @@
                         </select>
                     </div>
                     <div style="min-width: 150px;">
-                        <label class="text-xs font-bold text-slate-400 uppercase">Filtrar Grupo</label>
+                        <label for="filter-grupo" class="text-xs font-bold text-slate-400 uppercase">Filtrar Grupo</label>
                         <select id="filter-grupo" onchange="runAnalysis()" class="w-full p-2 border border-slate-200 rounded text-xs font-bold">
                             <option value="Todos">Todos (12)</option>
                             <option value="1º A">1º A</option><option value="1º B">1º B</option><option value="1º C">1º C</option><option value="1º D">1º D</option>

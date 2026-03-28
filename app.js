@@ -265,7 +265,7 @@ function renderStudents() {
                     <!-- Seguimiento de Citatorios y Padres -->
                     <div class="space-y-4 pt-4 border-t border-white/10 mt-2">
                         <div class="flex flex-col gap-2">
-                            <label class="text-[10px] font-black text-blue-400 uppercase italic tracking-tighter">¿Se han enviado citatorios?</label>
+                            <label for="cit-${al.id}" class="text-[10px] font-black text-blue-400 uppercase italic tracking-tighter">¿Se han enviado citatorios?</label>
                             <select onchange="saveExtraField('${al.id}', 'citatorio', this.value); syncConditionalFields('${al.id}')" id="cit-${al.id}" class="w-full text-xs p-3 bg-slate-900 rounded-xl text-white border-white/10">
                                 <option value="No" ${data.citatorio === 'No' ? 'selected' : ''}>No, ninguno</option>
                                 <option value="Sí" ${data.citatorio === 'Sí' ? 'selected' : ''}>Sí, formalmente</option>
@@ -273,7 +273,7 @@ function renderStudents() {
                         </div>
                         
                         <div id="cond-acudierom-${al.id}" class="${data.citatorio === 'Sí' ? '' : 'hidden'} animate-fade-in flex flex-col gap-2">
-                            <label class="text-[10px] font-black text-blue-400 uppercase italic tracking-tighter">¿Han acudido sus papás?</label>
+                            <label for="acu-${al.id}" class="text-[10px] font-black text-blue-400 uppercase italic tracking-tighter">¿Han acudido sus papás?</label>
                             <select onchange="saveExtraField('${al.id}', 'acudio', this.value); syncConditionalFields('${al.id}')" id="acu-${al.id}" class="w-full text-xs p-3 bg-slate-900 rounded-xl text-white border-white/10">
                                 <option value="No" ${data.acudio === 'No' ? 'selected' : ''}>No han asistido</option>
                                 <option value="Sí" ${data.acudio === 'Sí' ? 'selected' : ''}>Sí, asistieron</option>
@@ -281,7 +281,7 @@ function renderStudents() {
                         </div>
 
                         <div id="cond-cumplio-${al.id}" class="${data.acudio === 'Sí' ? '' : 'hidden'} animate-fade-in flex flex-col gap-2">
-                            <label class="text-[10px] font-black text-blue-400 uppercase italic tracking-tighter">¿Han cumplido acuerdos?</label>
+                            <label for="cum-${al.id}" class="text-[10px] font-black text-blue-400 uppercase italic tracking-tighter">¿Han cumplido acuerdos?</label>
                             <select onchange="saveExtraField('${al.id}', 'cumplio', this.value)" id="cum-${al.id}" class="w-full text-xs p-3 bg-slate-900 rounded-xl text-white border-white/10">
                                 <option value="No" ${data.cumplio === 'No' ? 'selected' : ''}>Incumplimiento</option>
                                 <option value="Sí" ${data.cumplio === 'Sí' ? 'selected' : ''}>Cumplimiento parcial/total</option>
@@ -293,24 +293,24 @@ function renderStudents() {
                             <p class="text-[9px] font-black text-slate-500 uppercase tracking-widest">Estatus de Intervención Institucional</p>
                             
                             <div class="flex items-center justify-between gap-4 p-2 bg-white/5 rounded-lg">
-                                <span class="text-[10px] font-bold text-white uppercase">¿Intervención Tutor de Grupo?</span>
-                                <select onchange="saveExtraField('${al.id}', 'intervencion_tutor', this.value)" class="text-[10px] p-1 bg-slate-800 rounded border-none text-white">
+                                <label for="tut-${al.id}" class="text-[10px] font-bold text-white uppercase">¿Intervención Tutor de Grupo?</label>
+                                <select id="tut-${al.id}" onchange="saveExtraField('${al.id}', 'intervencion_tutor', this.value)" class="text-[10px] p-1 bg-slate-800 rounded border-none text-white">
                                     <option value="No" ${data.intervencion_tutor === 'No' ? 'selected' : ''}>No</option>
                                     <option value="Sí" ${data.intervencion_tutor === 'Sí' ? 'selected' : ''}>Sí</option>
                                 </select>
                             </div>
 
                             <div class="flex items-center justify-between gap-4 p-2 bg-white/5 rounded-lg">
-                                <span class="text-[10px] font-bold text-white uppercase">¿Orientación / T. Social?</span>
-                                <select onchange="saveExtraField('${al.id}', 'intervencion_orientacion', this.value)" class="text-[10px] p-1 bg-slate-800 rounded border-none text-white">
+                                <label for="ori-${al.id}" class="text-[10px] font-bold text-white uppercase">¿Orientación / T. Social?</label>
+                                <select id="ori-${al.id}" onchange="saveExtraField('${al.id}', 'intervencion_orientacion', this.value)" class="text-[10px] p-1 bg-slate-800 rounded border-none text-white">
                                     <option value="No" ${data.intervencion_orientacion === 'No' ? 'selected' : ''}>No</option>
                                     <option value="Sí" ${data.intervencion_orientacion === 'Sí' ? 'selected' : ''}>Sí</option>
                                 </select>
                             </div>
 
                             <div class="flex items-center justify-between gap-4 p-2 bg-white/5 rounded-lg border border-red-500/20">
-                                <span class="text-[10px] font-bold text-red-400 uppercase">¿Escaló a Dirección?</span>
-                                <select onchange="saveExtraField('${al.id}', 'escalado_direccion', this.value)" class="text-[10px] p-1 bg-slate-900 rounded border-none text-red-400 font-black">
+                                <label for="dir-${al.id}" class="text-[10px] font-bold text-red-400 uppercase">¿Escaló a Dirección?</label>
+                                <select id="dir-${al.id}" onchange="saveExtraField('${al.id}', 'escalado_direccion', this.value)" class="text-[10px] p-1 bg-slate-900 rounded border-none text-red-400 font-black">
                                     <option value="No" ${data.escalado_direccion === 'No' ? 'selected' : ''}>No</option>
                                     <option value="Sí" ${data.escalado_direccion === 'Sí' ? 'selected' : ''}>SÍ (URGENTE)</option>
                                 </select>
