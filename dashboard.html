@@ -294,6 +294,9 @@
 
             const total = reports.length;
             const teachers = new Set(reports.map(r => r.docente)).size;
+            
+            document.getElementById('stat-total').textContent = total;
+            document.getElementById('stat-teachers').textContent = teachers;
 
             // 1. Tiempo Perdido (Ponderado)
             const timeMap = { "<10%": 5, "10-25%": 17, "25-50%": 37, "+50%": 60 };
@@ -352,6 +355,8 @@
             });
             const parentPct = totalCited > 0 ? Math.round((totalAttended / totalCited) * 100) : 0;
             document.getElementById('avg-parental').textContent = parentPct + "%";
+            
+            document.getElementById('stat-students').textContent = Object.keys(studentCounts).length;
 
             // Narrative Generation
             generateConclusions(reports, teachers, parentPct, studentCounts);
