@@ -27,29 +27,17 @@
             }
         }
     </script>
-    <style>
-        .conclusion-card {
-            border-left: 6px solid var(--primary-blue);
-            line-height: 1.6;
-            background: #1e293b !important;
-            color: #f8fafc !important;
-        }
-        .cte-section {
-            border: 2px dashed var(--primary-blue);
-            margin-top: 1.5rem;
-            background: rgba(30, 41, 59, 0.5) !important;
-        }
-    </style>
+    
 </head>
 <body class="p-4 md:p-8 relative">
     <!-- Animated Blobs -->
     <div class="bg-blob blob-1"></div>
     <div class="bg-blob blob-2"></div>
 
-    <div id="auth-wall" class="fixed inset-0 z-[100] bg-slate-900/90 flex items-center justify-center p-4">
+    <div id="auth-wall" class="fixed inset-0 z-[100] bg-transparent/90 flex items-center justify-center p-4">
         <div class="card premium-glass w-full max-w-sm text-center space-y-8 animate-fade-up">
             <h1 class="text-xl font-black italic">VALIDACIÓN INSTITUCIONAL</h1>
-            <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Acceso Restringido Dashboard SIRDE</p>
+            <p class="text-sm font-bold text-slate-400 uppercase tracking-widest">Acceso Restringido Dashboard SIRDE</p>
             <div class="relative">
                 <input type="password" id="entry-pin" placeholder="CLAVE DE ACCESO" class="w-full text-center tracking-widest font-black pr-12">
                 <button type="button" onclick="togglePinVisibility('entry-pin')" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white transition-colors p-1">
@@ -67,17 +55,17 @@
                 <img src="logo_secundaria_310.svg" alt="Logo" class="h-16 w-auto" style="mix-blend-mode: color-burn; opacity: 0.9;">
                 <div class="space-y-1">
                     <h1 class="text-2xl font-black text-gradient-animate tracking-tighter m-0 uppercase title-font">TABLERO ANALÍTICO SIRDE-310</h1>
-                    <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Respaldo Docente • Secundaria 310</p>
+                    <p class="text-sm font-bold text-slate-400 uppercase tracking-widest">Respaldo Docente • Secundaria 310</p>
                     <div class="no-print mt-1 flex gap-4">
-                        <a href="index.html" class="text-[9px] font-bold text-blue-800 hover:underline uppercase">← Regresar al Formulario</a>
-                        <a href="invitacion.html" class="text-[9px] font-bold text-primary-green hover:underline uppercase tracking-widest">★ Monitorear Activaciones</a>
+                        <a href="index.html" class="text-xs font-bold text-blue-800 hover:underline uppercase">← Regresar al Formulario</a>
+                        <a href="invitacion.html" class="text-xs font-bold text-primary-green hover:underline uppercase tracking-widest">★ Monitorear Activaciones</a>
                     </div>
                 </div>
             </div>
             <div class="flex flex-col items-end gap-3 no-print">
                 <div class="flex flex-col md:flex-row gap-2">
                     <div style="min-width: 150px;">
-                        <label class="text-[9px] font-bold text-slate-400 uppercase">Periodo</label>
+                        <label class="text-xs font-bold text-slate-400 uppercase">Periodo</label>
                         <select id="filter-periodo" onchange="runAnalysis()" class="w-full p-2 border border-slate-200 rounded text-xs font-bold">
                             <option value="T1-2026">T1-2026</option>
                             <option value="T2-2026">T2-2026</option>
@@ -86,7 +74,7 @@
                         </select>
                     </div>
                     <div style="min-width: 150px;">
-                        <label class="text-[9px] font-bold text-slate-400 uppercase">Filtrar Grupo</label>
+                        <label class="text-xs font-bold text-slate-400 uppercase">Filtrar Grupo</label>
                         <select id="filter-grupo" onchange="runAnalysis()" class="w-full p-2 border border-slate-200 rounded text-xs font-bold">
                             <option value="Todos">Todos (12)</option>
                             <option value="1º A">1º A</option><option value="1º B">1º B</option><option value="1º C">1º C</option><option value="1º D">1º D</option>
@@ -95,38 +83,38 @@
                         </select>
                     </div>
                     <div class="flex items-end">
-                        <button onclick="window.print()" class="px-4 py-2 bg-slate-900 text-white font-bold text-[10px] rounded hover:bg-slate-800 transition-all uppercase">
+                        <button onclick="window.print()" class="px-4 py-2 bg-transparent text-white font-bold text-sm rounded hover:bg-slate-800 transition-all uppercase">
                             Generar Reporte Formal
                         </button>
                     </div>
                 </div>
-                <button onclick="logoutSIRDE()" class="text-[10px] font-bold text-red-600 hover:text-red-800 uppercase">Cerrar Sesión</button>
+                <button onclick="logoutSIRDE()" class="text-sm font-bold text-red-600 hover:text-red-800 uppercase">Cerrar Sesión</button>
             </div>
         </header>
 
         <!-- PRINT SECTION -->
         <div class="hidden print:block text-center border-b-2 border-black pb-4 mb-8">
             <h1 class="text-xl font-bold uppercase">Informe Institucional de Seguimiento Grupal</h1>
-            <p class="text-[10px] font-bold">Escuela Secundaria Diurna No. 310 "Presidentes de México"</p>
+            <p class="text-sm font-bold">Escuela Secundaria Diurna No. 310 "Presidentes de México"</p>
             <p id="print-label" class="text-lg mt-1 font-bold"></p>
         </div>
 
         <!-- RESUMEN NUMÉRICO -->
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4 no-print">
             <div class="card p-4 text-center">
-                <p class="text-[9px] font-bold text-slate-500 uppercase mb-1">Diagnósticos</p>
+                <p class="text-xs font-bold text-slate-400 uppercase mb-1">Diagnósticos</p>
                 <h3 id="stat-total" class="text-2xl font-black">0</h3>
             </div>
             <div class="card p-4 text-center">
-                <p class="text-[9px] font-bold text-slate-500 uppercase mb-1">Docentes</p>
+                <p class="text-xs font-bold text-slate-400 uppercase mb-1">Docentes</p>
                 <h3 id="stat-teachers" class="text-2xl font-black">0</h3>
             </div>
             <div class="card p-4 text-center">
-                <p class="text-[9px] font-bold text-slate-500 uppercase mb-1">Impacto</p>
+                <p class="text-xs font-bold text-slate-400 uppercase mb-1">Impacto</p>
                 <h3 id="stat-impact" class="text-lg font-black">-</h3>
             </div>
             <div class="card p-4 text-center">
-                <p class="text-[9px] font-bold text-slate-500 uppercase mb-1">Alumnos Reportados</p>
+                <p class="text-xs font-bold text-slate-400 uppercase mb-1">Alumnos Reportados</p>
                 <h3 id="stat-students" class="text-2xl font-black">0</h3>
             </div>
         </div>
@@ -145,7 +133,7 @@
                     </svg>
                     Hallazgos Clave para el Consejo Técnico Escolar (CTE)
                 </h3>
-                <ul id="cte-list" class="text-sm space-y-2 list-disc pl-5 text-orange-900 font-medium">
+                <ul id="cte-list" class="text-sm space-y-2 list-disc pl-5 text-orange-300 font-medium">
                     <!-- Se llena con JS -->
                 </ul>
 
@@ -154,7 +142,7 @@
                 <!-- CEREBRO SIRDE: RECOMENDACIONES AUTOMÁTICAS -->
                 <div id="ai-recommendations" class="p-6 rounded-xl border-l-4">
                     <div class="flex items-center gap-2 mb-4">
-                        <span class="p-1 px-2 text-[8px] font-black bg-white rounded shadow-sm uppercase tracking-widest text-slate-900">IA SIRDE-310</span>
+                        <span class="p-1 px-2 text-xs font-black bg-white rounded shadow-sm uppercase tracking-widest text-cyan-400">IA SIRDE-310</span>
                         <h3 class="text-xs font-black uppercase tracking-tight">Acciones Sugeridas (Respaldo Institucional)</h3>
                     </div>
                     <div id="ai-actions-list" class="space-y-4">
@@ -164,40 +152,40 @@
             </div>
         </section>
         <!-- LA JOYA: ÍNDICE DE PRESIÓN DOCENTE -->
-        <section class="card bg-slate-900 text-white mb-8 border-none overflow-hidden relative">
+        <section class="card bg-transparent text-white mb-8 border-none overflow-hidden relative">
             <div class="absolute top-0 right-0 p-4">
                 <div id="sem-dot" class="w-4 h-4 rounded-full animate-pulse shadow-[0_0_15px_rgba(255,255,255,0.5)]"></div>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-3 items-center gap-6">
                 <div class="text-center md:text-left">
-                    <p class="text-[10px] font-black uppercase text-slate-400 tracking-widest mb-1">Indicador Estratégico CTE</p>
+                    <p class="text-sm font-black uppercase text-slate-400 tracking-widest mb-1">Indicador Estratégico CTE</p>
                     <h2 class="text-2xl font-black italic text-white mb-0">ÍNDICE DE PRESIÓN DOCENTE</h2>
                 </div>
                 <div class="text-center">
                     <h4 id="presion-label" class="text-5xl font-black mb-1">-</h4>
-                    <p id="presion-desc" class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">Cargando...</p>
+                    <p id="presion-desc" class="text-sm font-bold text-slate-400 uppercase tracking-tighter">Cargando...</p>
                 </div>
                 <div class="bg-white/10 p-4 rounded-lg backdrop-blur-sm">
                     <div id="presion-meter" class="h-2 bg-slate-700 rounded-full overflow-hidden mb-2">
                         <div id="presion-bar" class="h-full bg-blue-500 transition-all duration-1000" style="width: 0%"></div>
                     </div>
-                    <p class="text-[9px] text-slate-300 italic">Métrica ponderada de Tiempo Perdido, Impacto Curricular y Recurrencia estudiantil.</p>
+                    <p class="text-xs text-slate-300 italic">Métrica ponderada de Tiempo Perdido, Impacto Curricular y Recurrencia estudiantil.</p>
                 </div>
             </div>
         </section>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
             <section class="card text-center p-6">
-                <p class="text-[10px] font-bold text-slate-500 uppercase mb-2">Reportes Totales</p>
-                <h4 id="stat-total" class="text-4xl font-black text-slate-900 italic">0</h4>
+                <p class="text-sm font-bold text-slate-400 uppercase mb-2">Reportes Totales</p>
+                <h4 id="stat-total" class="text-4xl font-black text-cyan-400 italic">0</h4>
             </section>
             <section class="card text-center p-6">
-                <p class="text-[10px] font-bold text-slate-500 uppercase mb-2">Docentes Participantes</p>
-                <h4 id="stat-teachers" class="text-4xl font-black text-slate-900 italic">0</h4>
+                <p class="text-sm font-bold text-slate-400 uppercase mb-2">Docentes Participantes</p>
+                <h4 id="stat-teachers" class="text-4xl font-black text-cyan-400 italic">0</h4>
             </section>
             <section class="card text-center p-6">
-                <p class="text-[10px] font-bold text-slate-500 uppercase mb-2">Alumnos en Incidencia</p>
-                <h4 id="stat-students" class="text-4xl font-black text-slate-900 italic">0</h4>
+                <p class="text-sm font-bold text-slate-400 uppercase mb-2">Alumnos en Incidencia</p>
+                <h4 id="stat-students" class="text-4xl font-black text-cyan-400 italic">0</h4>
             </section>
         </div>
 
@@ -223,20 +211,20 @@
                 <h2 class="section-title">Indicadores de Tiempo e Impacto</h2>
                 <div class="space-y-4">
                     <div class="flex justify-between items-center py-2 border-b">
-                        <span class="text-xs font-bold uppercase text-slate-500">Tiempo de Clase p/ Gestión Conducta:</span>
-                        <span id="avg-time" class="text-sm font-black text-blue-900">0%</span>
+                        <span class="text-xs font-bold uppercase text-slate-400">Tiempo de Clase p/ Gestión Conducta:</span>
+                        <span id="avg-time" class="text-sm font-black text-white">0%</span>
                     </div>
                     <div class="flex justify-between items-center py-2 border-b">
-                        <span class="text-xs font-bold uppercase text-slate-500">Impacto en los Aprendizajes:</span>
-                        <span id="avg-impact" class="text-sm font-black text-blue-900">-</span>
+                        <span class="text-xs font-bold uppercase text-slate-400">Impacto en los Aprendizajes:</span>
+                        <span id="avg-impact" class="text-sm font-black text-white">-</span>
                     </div>
                     <div class="flex justify-between items-center py-2 border-b">
-                        <span class="text-xs font-bold uppercase text-slate-500">Promedio Clima de Aula:</span>
-                        <span id="avg-climate" class="text-sm font-black text-blue-900">-</span>
+                        <span class="text-xs font-bold uppercase text-slate-400">Promedio Clima de Aula:</span>
+                        <span id="avg-climate" class="text-sm font-black text-white">-</span>
                     </div>
                     <div class="flex justify-between items-center py-2">
-                        <span class="text-xs font-bold uppercase text-slate-500">Asistencia Efectiva Padres:</span>
-                        <span id="avg-parental" class="text-sm font-black text-blue-900">0%</span>
+                        <span class="text-xs font-bold uppercase text-slate-400">Asistencia Efectiva Padres:</span>
+                        <span id="avg-parental" class="text-sm font-black text-white">0%</span>
                     </div>
                 </div>
             </section>
@@ -256,15 +244,15 @@
             <h2 class="section-title">Estrategias y Efectividad Institucional</h2>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <div>
-                    <p class="text-[10px] font-bold text-slate-400 uppercase mb-4">Estrategias más utilizadas</p>
+                    <p class="text-sm font-bold text-slate-400 uppercase mb-4">Estrategias más utilizadas</p>
                     <div id="strat-freq" class="space-y-2"></div>
                 </div>
                 <div>
-                    <p class="text-[10px] font-bold text-green-600 uppercase mb-4">Asociadas a MEJORA (ÉXITO)</p>
+                    <p class="text-sm font-bold text-green-600 uppercase mb-4">Asociadas a MEJORA (ÉXITO)</p>
                     <div id="strat-plus" class="space-y-2"></div>
                 </div>
                 <div>
-                    <p class="text-[10px] font-bold text-red-600 uppercase mb-4">Asociadas a NULO IMPACTO / RIESGO</p>
+                    <p class="text-sm font-bold text-red-600 uppercase mb-4">Asociadas a NULO IMPACTO / RIESGO</p>
                     <div id="strat-minus" class="space-y-2"></div>
                 </div>
             </div>
@@ -406,16 +394,16 @@
             const draw = (data, containerId, colorClass) => {
                 const container = document.getElementById(containerId);
                 const sorted = Object.entries(data).sort((a,b) => b[1] - a[1]).slice(0, 5);
-                container.innerHTML = sorted.length ? '' : '<p class="text-[10px] italic text-slate-300">Pendiente de datos...</p>';
+                container.innerHTML = sorted.length ? '' : '<p class="text-sm italic text-slate-300">Pendiente de datos...</p>';
                 sorted.forEach(([name, count]) => {
                     container.innerHTML += `<div class="flex justify-between items-center py-1 border-b border-slate-50">
-                        <span class="text-[10px] font-bold text-slate-700 leading-tight pr-2">${name}</span>
-                        <span class="px-2 py-0.5 rounded ${colorClass} text-[9px] font-black">${count}</span>
+                        <span class="text-sm font-bold text-slate-700 leading-tight pr-2">${name}</span>
+                        <span class="px-2 py-0.5 rounded ${colorClass} text-xs font-black">${count}</span>
                     </div>`;
                 });
             };
 
-            draw(freq, 'strat-freq', 'bg-slate-100 text-slate-500');
+            draw(freq, 'strat-freq', 'bg-slate-100 text-slate-400');
             draw(success, 'strat-plus', 'bg-green-100 text-green-700');
             draw(fail, 'strat-minus', 'bg-red-100 text-red-700');
         }
@@ -503,7 +491,7 @@
 
             box.className = `p-6 rounded-xl border-l-4 ${color} backdrop-blur-sm`;
             paragraphs.forEach(p => {
-                list.innerHTML += `<p class="text-[11px] font-medium leading-relaxed mb-3">${p}</p>`;
+                list.innerHTML += `<p class="text-sm font-medium leading-relaxed mb-3">${p}</p>`;
             });
         }
 
@@ -549,7 +537,7 @@
 
         function renderRecurrentStudents(students) {
             const list = document.getElementById('recurrence-list');
-            list.innerHTML = `<div class="text-[9px] font-bold text-slate-400 mb-2 grid grid-cols-6 gap-2 border-b pb-1">
+            list.innerHTML = `<div class="text-xs font-bold text-slate-400 mb-2 grid grid-cols-6 gap-2 border-b pb-1">
                 <div class="col-span-2">ALUMNO (TOP)</div><div>DOCS</div><div class="col-span-2">MATERIAS</div><div>ESTATUS REC.</div>
             </div>`;
             
@@ -559,7 +547,7 @@
                 .forEach((s, idx) => {
                     const teachersCount = s.teachers.size;
                     const seg = s.seguimiento || { t_social: 'No', tutor: 'No', direccion: 'No' };
-                    let color = "bg-slate-100 text-slate-500";
+                    let color = "bg-slate-100 text-slate-400";
                     let level = "Bajo";
                     
                     if (teachersCount > 3) { color = "bg-red-500 text-white"; level = "CRÍTICO"; }
@@ -572,21 +560,21 @@
                         <span title="Dirección" class="p-1 rounded ${seg.direccion === 'Sí' ? 'bg-red-100 text-red-600' : 'bg-slate-50 text-slate-300 opacity-20'}">🏢</span>
                     `;
 
-                    list.innerHTML += `<div class="grid grid-cols-6 gap-2 text-[10px] items-center py-2 border-b hover:bg-slate-50 transition-all">
+                    list.innerHTML += `<div class="grid grid-cols-6 gap-2 text-sm items-center py-2 border-b hover:bg-slate-50 transition-all">
                         <div class="col-span-2 font-black">
                             ${idx < 5 ? '⭐' : ''} ${s.name}
                             <div class="flex gap-1 mt-1">${icons}</div>
                         </div>
                         <div class="font-bold text-center">${teachersCount}</div>
-                        <div class="col-span-2 text-[9px] text-slate-300 italic leading-tight">${Array.from(s.subjects).join(', ')}</div>
+                        <div class="col-span-2 text-xs text-slate-300 italic leading-tight">${Array.from(s.subjects).join(', ')}</div>
                         <div class="text-center">
-                            <span class="px-2 py-0.5 rounded-full text-[8px] font-black ${color}">${level}</span>
+                            <span class="px-2 py-0.5 rounded-full text-xs font-black ${color}">${level}</span>
                         </div>
                     </div>`;
                 });
             
             // Terminology Legend
-            list.innerHTML += `<div class="mt-4 p-3 bg-slate-50 rounded-lg flex flex-wrap gap-4 text-[9px] border border-slate-100">
+            list.innerHTML += `<div class="mt-4 p-3 bg-slate-50 rounded-lg flex flex-wrap gap-4 text-xs border border-slate-100">
                 <span class="text-slate-400 font-bold uppercase">Glosario de Niveles:</span>
                 <span class="text-slate-600 font-medium"><b>Nulo:</b> Sin incidencia o conducta estable.</span>
                 <span class="text-red-600 font-medium"><b>Alto:</b> Incidencia crítica o recurrente.</span>
