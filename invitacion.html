@@ -4,6 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Convocatoria SIRDE-310 | Acceso Único</title>
+    <!-- Pre-loader SSO: Oculta el login inmediatamente si viene de SASE -->
+    <script>
+        (function() {
+            const params = new URLSearchParams(window.location.search);
+            if (params.has('pin') || params.has('token') || sessionStorage.getItem('sirde_session_pin')) {
+                const style = document.createElement('style');
+                style.id = 'sso-hide-wall';
+                style.innerHTML = '#auth-wall { display: none !important; visibility: hidden !important; opacity: 0 !important; }';
+                document.head.appendChild(style);
+            }
+        })();
+    </script>
     <link rel="icon" href="logo_secundaria_310.svg" type="image/svg+xml">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Manrope:wght@400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
@@ -47,7 +59,7 @@
     <div id="auth-wall" class="fixed inset-0 z-[100] bg-background flex items-center justify-center p-4">
         <div class="card premium-glass w-full max-w-sm text-center space-y-8 animate-fade-up">
             <div class="flex flex-col items-center gap-4">
-                <img src="logo_secundaria_310.svg" alt="Logo" class="h-20 w-auto opacity-90" style="filter: drop-shadow(0 0 10px rgba(var(--primary-rgb), 0.3));">
+                <img src="logo_secundaria_310.svg" alt="Logo" class="h-20 w-auto opacity-90 logo-glow-large">
                 <h1 class="text-xl font-black italic text-primary-green">GESTIÓN DE ACCESOS</h1>
             </div>
             <div class="space-y-2">
@@ -57,7 +69,7 @@
             <div class="space-y-6">
                 <div class="pin-container">
                     <input type="password" id="entry-pin" placeholder="Ingresa tu clave de acceso" class="w-full pr-12">
-                    <button onclick="togglePinVisibility('entry-pin')" type="button">
+                    <button onclick="togglePinVisibility('entry-pin')" type="button" title="Mostrar/Ocultar contraseña">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
                     </button>
                 </div>

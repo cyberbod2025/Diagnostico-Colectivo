@@ -67,8 +67,8 @@ h1, h2, h3, .title-font, .section-title {
 #auth-wall .card,
 .premium-glass {
     background: var(--glass-bg) !important;
-    backdrop-filter: blur(var(--refraction-blur)) !important;
     -webkit-backdrop-filter: blur(var(--refraction-blur)) !important;
+    backdrop-filter: blur(var(--refraction-blur)) !important;
     border-radius: 1.5rem !important;
     border: var(--ghost-border) solid var(--glass-border) !important;
     box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4), 0 0 20px rgba(var(--primary-rgb), 0.15) !important;
@@ -358,4 +358,12 @@ button:not(.btn-link):not(.btn-outline):disabled, .btn-primary:disabled, .btn-gl
     body { background: white !important; }
     .no-print { display: none !important; }
     .card { border: 1px solid #ddd !important; box-shadow: none !important; page-break-inside: avoid; }
+}
+
+.logo-glow-large {
+    filter: drop-shadow(0 0 10px rgba(var(--primary-rgb), 0.3));
+}
+
+.logo-glow-small {
+    filter: drop-shadow(0 0 8px rgba(var(--primary-rgb), 0.2));
 }

@@ -612,27 +612,42 @@ function togglePinVisibility(id = 'entry-pin') {
 function logoutSIRDE() { sessionStorage.clear(); location.reload(); }
 
 window.addEventListener('DOMContentLoaded', async () => {
-    // SOPORTE PARA INTEGRACIÓN (IFRAME/URL PARAMS)
+    // 1. SOPORTE PARA INTEGRACIÓN SASE (URL PARAMS: PIN o TOKEN)
     const urlParams = new URLSearchParams(window.location.search);
-    const pinFromUrl = urlParams.get('pin');
+    const pinFromUrl = urlParams.get('pin') || urlParams.get('token');
     
     if (pinFromUrl) {
-        console.log("LOG: PIN recibido vía URL. Configurando sesión de módulo...");
-        sessionStorage.setItem('sirde_session_pin', pinFromUrl.trim());
-        // Limpiamos la URL por seguridad para no dejar el PIN expuesto en el historial
+        console.log("LOG: Credencial recibida vía URL. Iniciando auto-login...");
+        const sanitizedPin = pinFromUrl.trim();
+        sessionStorage.setItem('sirde_session_pin', sanitizedPin);
+        
+        // Ocultamos el muro de autenticación inmediatamente para evitar el "flash"
+        const authWall = document.getElementById('auth-wall');
+        if (authWall) {
+            authWall.style.display = 'none';
+            authWall.classList.add('hidden');
+        }
+
+        // Limpiamos la URL por seguridad
         const newUrl = window.location.pathname + window.location.hash;
         window.history.replaceState({}, document.title, newUrl);
+        
+        // Ejecutamos validación inmediata
+        if (isAdminPage()) {
+            const hasAccess = await validateAdminSession();
+            if (!hasAccess) showAuthWall(); // Si falla, mostramos el login de nuevo
+        } else if (isIndexPage()) {
+            await checkAccess(sanitizedPin);
+        }
+        return;
     }
 
+    // 2. FLUJO NORMAL (SESIÓN EXISTENTE)
     if (isAdminPage()) {
         const hasAccess = await validateAdminSession();
         if (hasAccess) {
-            if (isDashboardPage() && typeof runAnalysis === 'function') {
-                await runAnalysis();
-            }
-            if (isInvitationPage() && typeof initInvitationPage === 'function') {
-                await initInvitationPage();
-            }
+            if (isDashboardPage() && typeof runAnalysis === 'function') await runAnalysis();
+            if (isInvitationPage() && typeof initInvitationPage === 'function') await initInvitationPage();
         } else {
             showAuthWall();
         }
@@ -641,7 +656,11 @@ window.addEventListener('DOMContentLoaded', async () => {
 
     if (isIndexPage()) {
         const pin = sessionStorage.getItem('sirde_session_pin');
-        if (pin) checkAccess(pin);
+        if (pin) {
+            await checkAccess(pin);
+        } else {
+            showAuthWall();
+        }
         if (document.querySelector('.impact-factor')) calculateImpact();
     }
 });
