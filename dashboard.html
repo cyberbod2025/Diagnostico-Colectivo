@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tablero de Análisis | SIRDE-310</title>
     <link rel="icon" href="logo_secundaria_310.svg" type="image/svg+xml">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Montserrat:ital,wght@0,700;0,900;1,900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css?v=2026.1">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Manrope:wght@400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css?v=2026.2">
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
@@ -16,593 +16,196 @@
                 theme: {
                     extend: {
                         colors: {
-                            'primary-green': '#06b6d4', // Mapped to primary-cyan
-                            'primary-glow': 'rgba(6, 182, 212, 0.6)'
+                            'primary-green': '#816ab8',
+                            'secondary-orange': '#afa63c',
+                            'tertiary-green': '#b7687a',
+                            'primary-glow': 'rgba(129, 106, 184, 0.4)'
                         },
                         fontFamily: {
                             'inter': ['Inter', 'sans-serif'],
-                            'montserrat': ['Montserrat', 'sans-serif']
+                            'manrope': ['Manrope', 'sans-serif'],
+                            'space-grotesk': ['Space Grotesk', 'sans-serif']
                         }
                     }
                 }
             }
         }
     </script>
-    
 </head>
-<body class="p-4 md:p-8 relative">
+<body class="px-3 py-4 sm:px-4 md:p-8 relative">
     <!-- Animated Blobs -->
     <div class="bg-blob blob-1"></div>
     <div class="bg-blob blob-2"></div>
 
-    <div id="auth-wall" class="fixed inset-0 z-[100] bg-transparent/90 flex items-center justify-center p-4">
+    <div id="auth-wall" class="fixed inset-0 z-[100] bg-background flex items-center justify-center p-4">
         <div class="card premium-glass w-full max-w-sm text-center space-y-8 animate-fade-up">
-            <h1 class="text-xl font-black italic">VALIDACIÓN INSTITUCIONAL</h1>
-            <label for="entry-pin" class="block text-sm font-bold text-slate-400 uppercase tracking-widest">Acceso Restringido Dashboard SIRDE</label>
-            <div class="relative">
-                <input type="password" id="entry-pin" placeholder="CLAVE DE ACCESO" class="w-full text-center tracking-widest font-black pr-12">
-                <button type="button" onclick="togglePinVisibility('entry-pin')" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white transition-colors p-1">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
-                </button>
+            <div class="flex flex-col items-center gap-4">
+                <img src="logo_secundaria_310.svg" alt="Logo" class="h-20 w-auto opacity-90" style="filter: drop-shadow(0 0 10px rgba(var(--primary-rgb), 0.3));">
+                <h1 class="text-xl font-black italic text-primary-green">ANÁLISIS INSTITUCIONAL</h1>
             </div>
-            <button onclick="checkAccess(document.getElementById('entry-pin').value)" class="btn-primary w-full">ACCEDER AL ANÁLISIS</button>
+            <label for="entry-pin" class="block text-[10px] font-bold text-slate-500 uppercase tracking-widest">Validación de Credenciales de Tablero</label>
+            <div class="space-y-6">
+                <div class="pin-container">
+                    <input type="password" id="entry-pin" placeholder="Ingresa tu clave de acceso" class="w-full pr-12">
+                    <button onclick="togglePinVisibility()" type="button">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+                    </button>
+                </div>
+                <button onclick="checkAccess(document.getElementById('entry-pin').value)" class="btn-primary w-full">ACCEDER AL ANÁLISIS</button>
+            </div>
         </div>
     </div>
 
-    <main class="container">
+    <main class="container max-w-6xl mx-auto">
         <!-- HEADER INSTITUCIONAL -->
-        <header class="flex items-center justify-between border-b-2 border-slate-950 pb-6 mb-8">
-            <div class="flex items-center gap-6">
-                <img src="logo_secundaria_310.svg" alt="Logo" class="h-16 w-auto" style="mix-blend-mode: color-burn; opacity: 0.9;">
+        <header class="flex flex-col md:flex-row items-start sm:items-center justify-between border-b border-black/5 pb-6 mb-8 gap-6">
+            <div class="flex flex-col sm:flex-row items-center gap-4 sm:gap-6 w-full md:w-auto text-center sm:text-left">
+                <img src="logo_secundaria_310.svg" alt="Logo" class="h-16 w-auto opacity-90" style="filter: drop-shadow(0 0 8px rgba(var(--primary-rgb), 0.2));">
                 <div class="space-y-1">
-                    <h1 class="text-2xl font-black text-gradient-animate tracking-tighter m-0 uppercase title-font">TABLERO ANALÍTICO SIRDE-310</h1>
-                    <p class="text-sm font-bold text-slate-400 uppercase tracking-widest">Respaldo Docente • Secundaria 310</p>
-                    <div class="no-print mt-1 flex gap-4">
-                        <a href="index.html" class="text-xs font-bold text-blue-800 hover:underline uppercase">← Regresar al Formulario</a>
-                        <a href="invitacion.html" class="text-xs font-bold text-primary-green hover:underline uppercase tracking-widest">★ Monitorear Activaciones</a>
+                    <h1 class="text-2xl font-black text-gradient-animate tracking-tighter m-0 uppercase title-font">ANÁLISIS SIRDE-310</h1>
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Respaldando el Desarrollo Institucional</p>
+                    <div class="no-print mt-2 flex flex-wrap gap-4 justify-center sm:justify-start">
+                        <a href="index.html" class="text-[9px] font-bold text-primary-green hover:underline uppercase tracking-widest">← Regresar</a>
+                        <a href="invitacion.html" class="text-[9px] font-bold text-secondary-orange hover:underline uppercase tracking-widest">★ Monitorear Usuarios</a>
                     </div>
                 </div>
             </div>
-            <div class="flex flex-col items-end gap-3 no-print">
-                <div class="flex flex-col md:flex-row gap-2">
-                    <div style="min-width: 150px;">
-                        <label for="filter-periodo" class="text-xs font-bold text-slate-400 uppercase">Periodo</label>
-                        <select id="filter-periodo" onchange="runAnalysis()" class="w-full p-2 border border-slate-200 rounded text-xs font-bold">
+            <div class="flex flex-col items-stretch md:items-end gap-3 no-print w-full md:w-auto">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full md:w-auto">
+                    <div class="w-full">
+                        <label for="filter-periodo" class="text-[10px] font-bold text-slate-500 uppercase">Periodo</label>
+                        <select id="filter-periodo" onchange="runAnalysis()" class="w-full p-2 bg-surface-container border border-black/5 rounded-xl text-xs font-bold focus:outline-none focus:ring-1 focus:ring-primary-green">
                             <option value="T1-2026">T1-2026</option>
                             <option value="T2-2026">T2-2026</option>
                             <option value="T3-2026">T3-2026</option>
                             <option value="T-DIAG">Diagnóstico</option>
                         </select>
                     </div>
-                    <div style="min-width: 150px;">
-                        <label for="filter-grupo" class="text-xs font-bold text-slate-400 uppercase">Filtrar Grupo</label>
-                        <select id="filter-grupo" onchange="runAnalysis()" class="w-full p-2 border border-slate-200 rounded text-xs font-bold">
+                    <div class="w-full">
+                        <label for="filter-grupo" class="text-[10px] font-bold text-slate-500 uppercase">Filtrar Grupo</label>
+                        <select id="filter-grupo" onchange="runAnalysis()" class="w-full p-2 bg-surface-container border border-black/5 rounded-xl text-xs font-bold focus:outline-none focus:ring-1 focus:ring-primary-green">
                             <option value="Todos">Todos (12)</option>
                             <option value="1º A">1º A</option><option value="1º B">1º B</option><option value="1º C">1º C</option><option value="1º D">1º D</option>
                             <option value="2º A">2º A</option><option value="2º B">2º B</option><option value="2º C">2º C</option><option value="2º D">2º D</option>
                             <option value="3º A">3º A</option><option value="3º B">3º B</option><option value="3º C">3º C</option><option value="3º D">3º D</option>
                         </select>
                     </div>
-                    <div class="flex items-end">
-                        <button onclick="window.print()" class="px-4 py-2 bg-transparent text-white font-bold text-sm rounded hover:bg-slate-800 transition-all uppercase">
-                            Generar Reporte Formal
+                    <div class="flex items-end sm:col-span-2">
+                        <button onclick="window.print()" class="btn-glow px-4 py-2 font-bold text-[10px] rounded-xl uppercase h-[38px]">
+                            Generar Reporte
                         </button>
                     </div>
                 </div>
-                <button onclick="logoutSIRDE()" class="text-sm font-bold text-red-600 hover:text-red-800 uppercase">Cerrar Sesión</button>
+                <button onclick="logoutSIRDE()" class="btn-link self-start md:self-end text-[9px] font-bold text-red-400 hover:text-red-600 uppercase tracking-widest transition-colors mt-2">Cerrar Sesión Segura</button>
             </div>
         </header>
 
         <!-- PRINT SECTION -->
         <div class="hidden print:block text-center border-b-2 border-black pb-4 mb-8">
             <h1 class="text-xl font-bold uppercase">Informe Institucional de Seguimiento Grupal</h1>
-            <p class="text-sm font-bold">Escuela Secundaria Diurna No. 310 "Presidentes de México"</p>
-            <p id="print-label" class="text-lg mt-1 font-bold"></p>
+            <p class="text-sm">Escuela Secundaria Técnica 310 • Ciclo Escolar 2025-2026</p>
         </div>
 
-        <!-- RESUMEN NUMÉRICO -->
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 no-print">
-            <div class="card p-4 text-center">
-                <p class="text-xs font-bold text-slate-400 uppercase mb-1">Diagnósticos</p>
-                <h3 id="stat-total" class="text-2xl font-black">0</h3>
-            </div>
-            <div class="card p-4 text-center">
-                <p class="text-xs font-bold text-slate-400 uppercase mb-1">Docentes</p>
-                <h3 id="stat-teachers" class="text-2xl font-black">0</h3>
-            </div>
-            <div class="card p-4 text-center">
-                <p class="text-xs font-bold text-slate-400 uppercase mb-1">Impacto</p>
-                <h3 id="stat-impact" class="text-lg font-black">-</h3>
-            </div>
-            <div class="card p-4 text-center">
-                <p class="text-xs font-bold text-slate-400 uppercase mb-1">Alumnos Reportados</p>
-                <h3 id="stat-students" class="text-2xl font-black">0</h3>
-            </div>
+        <div id="stats-summary" class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+            <!-- Stats cards will go here via runAnalysis() / renderAnalysis() -->
         </div>
 
-        <!-- CONCLUSIONES AUTOMÁTICAS -->
-        <section class="card">
-            <h2 class="section-title">Análisis Colectivo Sistematizado</h2>
-            <div id="conclusions-container" class="conclusion-card">
-                Seleccione un grupo para generar conclusiones institucionales automáticas...
-            </div>
-            
-            <div id="cte-zone" class="cte-section" style="display: none;">
-                <h3 class="text-xs font-black uppercase text-orange-600 mb-3 flex items-center gap-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                    </svg>
-                    Hallazgos Clave para el Consejo Técnico Escolar (CTE)
-                </h3>
-                <ul id="cte-list" class="text-sm space-y-2 list-disc pl-5 text-orange-300 font-medium">
-                    <!-- Se llena con JS -->
-                </ul>
-
-                <hr class="my-6 border-orange-200 opacity-30">
-                
-                <!-- CEREBRO SIRDE: RECOMENDACIONES AUTOMÁTICAS -->
-                <div id="ai-recommendations" class="p-6 rounded-xl border-l-4">
-                    <div class="flex items-center gap-2 mb-4">
-                        <span class="p-1 px-2 text-xs font-black bg-white rounded shadow-sm uppercase tracking-widest text-cyan-400">IA SIRDE-310</span>
-                        <h3 class="text-xs font-black uppercase tracking-tight">Acciones Sugeridas (Respaldo Institucional)</h3>
-                    </div>
-                    <div id="ai-actions-list" class="space-y-4">
-                        <!-- Generado por JS -->
-                    </div>
-                </div>
-            </div>
-        </section>
-        <!-- LA JOYA: ÍNDICE DE PRESIÓN DOCENTE -->
-        <section class="card bg-transparent text-white mb-8 border-none overflow-hidden relative">
-            <div class="absolute top-0 right-0 p-4">
-                <div id="sem-dot" class="w-4 h-4 rounded-full animate-pulse shadow-[0_0_15px_rgba(255,255,255,0.5)]"></div>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-3 items-center gap-6">
-                <div class="text-center md:text-left">
-                    <p class="text-sm font-black uppercase text-slate-400 tracking-widest mb-1">Indicador Estratégico CTE</p>
-                    <h2 class="text-2xl font-black italic text-white mb-0">ÍNDICE DE PRESIÓN DOCENTE</h2>
-                </div>
-                <div class="text-center">
-                    <h4 id="presion-label" class="text-5xl font-black mb-1">-</h4>
-                    <p id="presion-desc" class="text-sm font-bold text-slate-400 uppercase tracking-tighter">Cargando...</p>
-                </div>
-                <div class="bg-white/10 p-4 rounded-lg backdrop-blur-sm">
-                    <div id="presion-meter" class="h-2 bg-slate-700 rounded-full overflow-hidden mb-2">
-                        <div id="presion-bar" class="h-full bg-blue-500 transition-all duration-1000" style="width: 0%"></div>
-                    </div>
-                    <p class="text-xs text-slate-300 italic">Métrica ponderada de Tiempo Perdido, Impacto Curricular y Recurrencia estudiantil.</p>
-                </div>
-            </div>
+        <section id="graphs-area" class="space-y-8">
+            <!-- Graphs will go here -->
         </section>
 
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <section class="card text-center p-6">
-                <p class="text-sm font-bold text-slate-400 uppercase mb-2">Reportes Totales</p>
-                <h4 id="stat-total" class="text-4xl font-black text-cyan-400 italic">0</h4>
-            </section>
-            <section class="card text-center p-6">
-                <p class="text-sm font-bold text-slate-400 uppercase mb-2">Docentes Participantes</p>
-                <h4 id="stat-teachers" class="text-4xl font-black text-cyan-400 italic">0</h4>
-            </section>
-            <section class="card text-center p-6">
-                <p class="text-sm font-bold text-slate-400 uppercase mb-2">Alumnos en Incidencia</p>
-                <h4 id="stat-students" class="text-4xl font-black text-cyan-400 italic">0</h4>
-            </section>
-        </div>
-
-        <!-- PATRONES Y RECURRENCIA -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <section class="card">
-                <h2 class="section-title">Coincidencias en Conducta</h2>
-                <div id="pattern-list" class="space-y-3">
-                    <!-- Se llena con JS -->
-                </div>
-            </section>
-            <section class="card">
-                <h2 class="section-title">Alumnos con mayor recurrencia</h2>
-                <div id="recurrence-list" class="space-y-4">
-                    <!-- Se llena con JS -->
-                </div>
-            </section>
-        </div>
-
-        <!-- ESTADÍSTICAS AVANZADAS -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <section class="card">
-                <h2 class="section-title">Indicadores de Tiempo e Impacto</h2>
-                <div class="space-y-4">
-                    <div class="flex justify-between items-center py-2 border-b">
-                        <span class="text-xs font-bold uppercase text-slate-400">Tiempo de Clase p/ Gestión Conducta:</span>
-                        <span id="avg-time" class="text-sm font-black text-white">0%</span>
-                    </div>
-                    <div class="flex justify-between items-center py-2 border-b">
-                        <span class="text-xs font-bold uppercase text-slate-400">Impacto en los Aprendizajes:</span>
-                        <span id="avg-impact" class="text-sm font-black text-white">-</span>
-                    </div>
-                    <div class="flex justify-between items-center py-2 border-b">
-                        <span class="text-xs font-bold uppercase text-slate-400">Promedio Clima de Aula:</span>
-                        <span id="avg-climate" class="text-sm font-black text-white">-</span>
-                    </div>
-                    <div class="flex justify-between items-center py-2">
-                        <span class="text-xs font-bold uppercase text-slate-400">Asistencia Efectiva Padres:</span>
-                        <span id="avg-parental" class="text-sm font-black text-white">0%</span>
-                    </div>
-                </div>
-            </section>
-            
-            <section class="card">
-                <h2 class="section-title">Ambiente Promedio</h2>
-                <div class="space-y-4">
-                    <div id="env-bars" class="space-y-2">
-                        <!-- Bars for Attention, respect, etc -->
-                    </div>
-                </div>
-            </section>
-        </div>
-
-        <!-- ANÁLISIS DE ESTRATEGIAS -->
-        <section class="card mt-8">
-            <h2 class="section-title">Estrategias y Efectividad Institucional</h2>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div>
-                    <p class="text-sm font-bold text-slate-400 uppercase mb-4">Estrategias más utilizadas</p>
-                    <div id="strat-freq" class="space-y-2"></div>
-                </div>
-                <div>
-                    <p class="text-sm font-bold text-green-600 uppercase mb-4">Asociadas a MEJORA (ÉXITO)</p>
-                    <div id="strat-plus" class="space-y-2"></div>
-                </div>
-                <div>
-                    <p class="text-sm font-bold text-red-600 uppercase mb-4">Asociadas a NULO IMPACTO / RIESGO</p>
-                    <div id="strat-minus" class="space-y-2"></div>
-                </div>
-            </div>
+        <section id="detailed-lists" class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-12">
+            <!-- Lists will go here -->
         </section>
-        <!-- ZONA DE FIRMAS (Sólo Impresión) -->
-        <div class="signature-zone">
-            <div class="flex flex-col items-center">
-                <div class="h-16 w-1"></div>
-                <div class="signature-line w-full">DOCENTE (S) DE GRUPO</div>
-            </div>
-            <div class="flex flex-col items-center">
-                <div class="h-16 w-1"></div>
-                <div class="signature-line w-full">V.B. DIRECCIÓN / CTE</div>
-            </div>
-        </div>
+
     </main>
 
-    <script src="app.js?v=2026.1"></script>
+    <script src="app.js?v=2026.2"></script>
     <script>
+        // Custom Dashboard Logic
         async function runAnalysis() {
-            const grupo = document.getElementById('filter-grupo').value;
             const periodo = document.getElementById('filter-periodo').value;
+            const grupo = document.getElementById('filter-grupo').value;
             
-            document.getElementById('print-label').textContent = `${grupo} | PERIODO: ${periodo} | FECHA: ${new Date().toLocaleDateString()}`;
-
-            let query = supabaseClient.from('colectivo_respuestas_docentes').select('*').eq('periodo', periodo);
-            if (grupo !== 'Todos') query = query.eq('grupo', grupo);
-
-            const { data, error } = await query;
-            if (data) renderAnalysis(data);
-        }
-
-        function renderAnalysis(reports) {
-            if (reports.length === 0) {
-                document.getElementById('conclusions-container').innerHTML = "No hay datos para este periodo/grupo.";
-                return;
-            }
-
-            const total = reports.length;
-            const teachers = new Set(reports.map(r => r.docente)).size;
+            console.log(`Analyzing: ${periodo} / ${grupo}`);
             
-            document.getElementById('stat-total').textContent = total;
-            document.getElementById('stat-teachers').textContent = teachers;
-
-            // 1. Tiempo Perdido (Ponderado)
-            const timeMap = { "<10%": 5, "10-25%": 17, "25-50%": 37, "+50%": 60 };
-            const avgTime = reports.reduce((acc, r) => acc + (timeMap[r.tiempo_conducta] || 0), 0) / total;
-            document.getElementById('avg-time').textContent = Math.round(avgTime) + "%";
-
-            // 2. Impacto (Ponderado)
-            const impactMap = { "Bajo": 1, "Medio": 2, "Alto": 3, "Crítico": 4 };
-            const impactLabels = ["", "Bajo", "Medio", "Alto", "Crítico"];
-            const avgImpactVal = reports.reduce((acc, r) => acc + (impactMap[r.impacto] || 2), 0) / total;
-            document.getElementById('avg-impact').textContent = impactLabels[Math.round(avgImpactVal)];
-
-            // 3. Clima Aula (Ambiente)
-            const scaleMap = { "Bajo": 1, "Medio": 2, "Alto": 3 };
-            const avgAttention = reports.reduce((acc, r) => acc + (scaleMap[r.ambiente?.atencion] || 2), 0) / total;
-            const avgRespect = reports.reduce((acc, r) => acc + (scaleMap[r.ambiente?.respeto] || 2), 0) / total;
-            const avgParticip = reports.reduce((acc, r) => acc + (scaleMap[r.ambiente?.participacion] || 2), 0) / total;
-            const globalClimate = (avgAttention + avgRespect + avgParticip) / 3;
-            document.getElementById('avg-climate').textContent = globalClimate.toFixed(1) + " / 3.0";
-
-            // 4. Asistencia Padres
-            let totalCited = 0, totalAttended = 0;
-            const studentCounts = {}; // { id: { name, teachers: Set, subjects: Set, reports: 0 } }
-            
-            reports.forEach(r => {
-                (r.alumnos_reportados || []).forEach(al => {
-                    const seg = al.seguimiento_padres || {};
-                    const isCited = seg.citatorio_enviado === 'Sí' || al.citado; // Compatible with old and new
-                    const hasAttended = seg.padres_asistieron === 'Sí' || al.acudio === 'SÍ' || al.acudio === 'Sí';
-
-                    if (isCited) totalCited++;
-                    if (hasAttended) totalAttended++;
-
-                    if (!studentCounts[al.alumno_id]) {
-                        studentCounts[al.alumno_id] = { 
-                            name: al.nombre, 
-                            teachers: new Set(), 
-                            subjects: new Set(), 
-                            reports: 0,
-                            seguimiento: { 
-                                t_social: seg.intervencion_orientacion || 'No',
-                                tutor: seg.intervencion_tutor || 'No',
-                                direccion: seg.escalado_direccion || 'No'
-                            }
-                        };
-                    }
-                    studentCounts[al.alumno_id].reports++;
-                    studentCounts[al.alumno_id].teachers.add(r.docente);
-                    studentCounts[al.alumno_id].subjects.add(r.asignatura);
-                    
-                    // Actualizar estatus si ya intervino alguien en otros reportes
-                    if (seg.intervencion_orientacion === 'Sí') studentCounts[al.alumno_id].seguimiento.t_social = 'Sí';
-                    if (seg.intervencion_tutor === 'Sí') studentCounts[al.alumno_id].seguimiento.tutor = 'Sí';
-                    if (seg.escalado_direccion === 'Sí') studentCounts[al.alumno_id].seguimiento.direccion = 'Sí';
-                });
-            });
-            const parentPct = totalCited > 0 ? Math.round((totalAttended / totalCited) * 100) : 0;
-            document.getElementById('avg-parental').textContent = parentPct + "%";
-            
-            document.getElementById('stat-students').textContent = Object.keys(studentCounts).length;
-
-            // Narrative Generation
-            generateConclusions(reports, teachers, parentPct, studentCounts);
-            
-            // Recurrence List
-            renderRecurrentStudents(studentCounts);
-            
-            // Strategies Analysis
-            renderInterventions(reports);
-            
-            // Pressure Index (La Joya)
-            const recurrentCount = Object.values(studentCounts).filter(s => s.teachers.size > 1).length;
-            const pressure = calculatePressure(avgTime, avgImpactVal, recurrentCount);
-            
-            // AI RECOMENDACIONES (The Brain)
-            processAIRec(reports, pressure, recurrentCount);
-            
-            // Stats UI
-            document.getElementById('stat-total').textContent = total;
-            document.getElementById('stat-teachers').textContent = teachers;
-            document.getElementById('stat-students').textContent = Object.keys(studentCounts).length;
-        }
-
-        function renderInterventions(reports) {
-            const freq = {}, success = {}, fail = {};
-            
-            reports.forEach(r => {
-                const inter = r.intervenciones;
-                if (!inter || !inter.estrategias) return;
-
-                const allStrats = Array.isArray(inter.estrategias) ? [...inter.estrategias] : [];
-                if (inter.otra_estrategia) allStrats.push("Estrategia personalizada (Otras)");
-
-                allStrats.forEach(s => {
-                    freq[s] = (freq[s] || 0) + 1;
-                    if (inter.eficacia === 'Sí') success[s] = (success[s] || 0) + 1;
-                    if (inter.eficacia === 'No') fail[s] = (fail[s] || 0) + 1;
-                });
-            });
-
-            const draw = (data, containerId, colorClass) => {
-                const container = document.getElementById(containerId);
-                const sorted = Object.entries(data).sort((a,b) => b[1] - a[1]).slice(0, 5);
-                container.innerHTML = sorted.length ? '' : '<p class="text-sm italic text-slate-300">Pendiente de datos...</p>';
-                sorted.forEach(([name, count]) => {
-                    container.innerHTML += `<div class="flex justify-between items-center py-1 border-b border-slate-50">
-                        <span class="text-sm font-bold text-slate-700 leading-tight pr-2">${name}</span>
-                        <span class="px-2 py-0.5 rounded ${colorClass} text-xs font-black">${count}</span>
-                    </div>`;
-                });
-            };
-
-            draw(freq, 'strat-freq', 'bg-slate-100 text-slate-400');
-            draw(success, 'strat-plus', 'bg-green-100 text-green-700');
-            draw(fail, 'strat-minus', 'bg-red-100 text-red-700');
-        }
-
-        function calculatePressure(time, impact, students) {
-            // Score 0-100
-            const score = Math.min(100, (time * 0.4) + (impact * 15) + (students * 3));
-            const bar = document.getElementById('presion-bar');
-            const label = document.getElementById('presion-label');
-            const desc = document.getElementById('presion-desc');
-            const dot = document.getElementById('sem-dot');
-            
-            label.textContent = Math.round(score);
-            bar.style.width = score + '%';
-
-            if (score < 25) {
-                desc.textContent = "BAJO - CONDICIONES ÓPTIMAS";
-                bar.style.backgroundColor = "#22c55e"; // Green
-                dot.style.backgroundColor = "#22c55e";
-            } else if (score < 50) {
-                desc.textContent = "MEDIO - REVISIÓN PREVENTIVA";
-                bar.style.backgroundColor = "#eab308"; // Yellow
-                dot.style.backgroundColor = "#eab308";
-            } else if (score < 75) {
-                desc.textContent = "ALTO - REQUIERE INTERVENCIÓN";
-                bar.style.backgroundColor = "#f97316"; // Orange
-                dot.style.backgroundColor = "#f97316";
-            } else {
-                desc.textContent = "CRÍTICO - PRIORIDAD CTE";
-                bar.style.backgroundColor = "#ef4444"; // Red
-                dot.style.backgroundColor = "#ef4444";
-            }
-            return score;
-        }
-
-        function processAIRec(reports, pressure, recurrentCount) {
-            const list = document.getElementById('ai-actions-list');
-            const box = document.getElementById('ai-recommendations');
-            list.innerHTML = '';
-            
-            // Find overall efficacy
-            const results = reports.map(r => r.intervenciones?.eficacia);
-            const lowEfficacy = results.filter(v => v === 'No').length > reports.length * 0.3;
-            const partialEfficacy = results.filter(v => v === 'Parcialmente').length > reports.length * 0.3;
-
-            let level = "🟢";
-            let color = "bg-green-50/10 border-green-500 text-green-100";
-            let paragraphs = [];
-
-            if (pressure >= 75 || (pressure >= 60 && lowEfficacy)) {
-                color = "bg-red-500/10 border-red-500 text-white";
-                paragraphs = [
-                    "Se identifica un nivel crítico de presión docente en el grupo, asociado a una alta recurrencia de conductas disruptivas en múltiples asignaturas y una baja eficacia de las estrategias implementadas hasta el momento.",
-                    "Se recomienda la activación inmediata de un protocolo de intervención integral que incluya canalización a tutoría, citatorio formal a padres de familia y la elaboración de un plan de seguimiento individual para los alumnos prioritarios.",
-                    "Asimismo, se sugiere establecer una reunión de colegiado docente con carácter urgente, a fin de unificar criterios de intervención y dar seguimiento coordinado a los casos detectados.",
-                    "El objetivo es restablecer condiciones óptimas para el aprendizaje y recuperar la gestión efectiva del tiempo de clase."
-                ];
-            } else if (pressure >= 50) {
-                color = "bg-orange-500/10 border-orange-500 text-white";
-                paragraphs = [
-                    "Se observa un estado de vulnerabilidad institucional en la dinámica del grupo. Las incidencias reportadas sugieren una resistencia a las estrategias pedagógicas convencionales, requiriendo un ajuste técnico en la intervención docente.",
-                    "Se recomienda implementar un sistema de seguimiento semanal con los tutores y priorizar el trabajo individual supervisado con los alumnos que presentan mayor índice de incidencia.",
-                    "Es pertinente formalizar acuerdos de convivencia específicos para este grupo antes del próximo corte administrativo."
-                ];
-            } else if (pressure >= 25) {
-                color = "bg-yellow-500/10 border-yellow-500 text-white";
-                paragraphs = [
-                    "La dinámica grupal presenta incidencias en rango medio que permiten una intervención preventiva sin necesidad de protocolos de emergencia.",
-                    "Se sugiere reforzar positivamente la participación académica y privilegiar estrategias de trabajo colaborativo guiado para mejorar el clima de respeto y atención.",
-                    "El monitoreo actual en bitácora es suficiente, centrando la atención en el refuerzo de valores institucionales."
-                ];
-            } else {
-                color = "bg-green-500/10 border-green-500 text-white";
-                paragraphs = [
-                    "El grupo mantiene condiciones óptimas para el proceso de enseñanza-aprendizaje con un índice de presión docente mínimo.",
-                    "Se recomienda sostener las estrategias actuales y registrar las mejores prácticas observadas en este periodo para su posible réplica institucional.",
-                    "El clima escolar se reporta estable con una gestión de tiempo altamente efectiva."
-                ];
-            }
-
-            // Bonus logic (Multi-docente) - Add at the end if applicable
-            if (recurrentCount > 3 && pressure < 75) {
-                paragraphs.push("<b>ALERTA INTER-ASIGNATURA:</b> Existe una detectada recurrencia de alumnos focatizados en varias materias; se recomienda comunicación breve entre los docentes involucrados para unificar el discurso de autoridad.");
-            }
-
-            box.className = `p-6 rounded-xl border-l-4 ${color} backdrop-blur-sm`;
-            paragraphs.forEach(p => {
-                list.innerHTML += `<p class="text-sm font-medium leading-relaxed mb-3">${p}</p>`;
-            });
-        }
-
-        function generateConclusions(reports, teachers, parentPct, students) {
-            const container = document.getElementById('conclusions-container');
-            const cteList = document.getElementById('cte-list');
-            document.getElementById('cte-zone').style.display = 'block';
-            cteList.innerHTML = '';
-
-            const recurrentAlumni = Object.values(students).filter(s => s.teachers.size > 1);
-            
-            let text = `Basado en el análisis institucional de ${reports.length} diagnósticos pedagógicos de ${teachers} especialidades docentes, `;
-            
-            if (recurrentAlumni.length > 3) {
-                text += `se observa una coincidencia significativa entre docentes de distintas asignaturas respecto a conductas disruptivas en el grupo, particularmente la recurrencia multidisciplinaria en ${recurrentAlumni.length} alumnos específicos, lo cual impacta negativamente el avance curricular. `;
-            } else {
-                text += `la dinámica grupal se reporta estable con incidencias focalizadas en casos individuales aislados. `;
-            }
-
-            text += `La efectividad de la vinculación con los tutores legales se sitúa en un ${parentPct}%, `;
-            
-            if (parentPct < 50) {
-                text += `evidenciando una brecha de seguimiento institucional desde el hogar que debilita el alcance de las metas de aprendizaje de este periodo. `;
-            } else {
-                text += `mostrando una respuesta favorable y un compromiso participativo por parte de los padres en el fortalecimiento académico. `;
-            }
-
-            container.innerHTML = text;
-
-            // CTE Points
-            if (recurrentAlumni.length > 0) {
-                cteList.innerHTML += `<li>Atención sistémica urgente a ${recurrentAlumni.length} alumnos con patrones conductuales recurrentes en más de 2 materias.</li>`;
-            }
-            if (parentPct < 50) {
-                cteList.innerHTML += `<li>Implementar estrategias de sensibilización familiar ante el bajo índice de asistencia (<50%).</li>`;
-            }
-            
-            const highExt = reports.filter(r => r.factores_externos?.incluye === 'Sí').length;
-            if ((highExt / reports.length) > 0.3) {
-                cteList.innerHTML += `<li>El ${Math.round((highExt/reports.length)*100)}% de la plantilla docente detecta factores externos (familiares/entorno) incidiendo directamente en el aula.</li>`;
+            try {
+                let query = supabaseClient
+                    .from('colectivo_respuestas_docentes')
+                    .select('*')
+                    .eq('periodo', periodo);
+                
+                if (grupo !== 'Todos') {
+                    query = query.eq('grupo', grupo);
+                }
+                
+                const { data, error } = await query;
+                if (error) throw error;
+                
+                renderAnalysis(data);
+            } catch (err) {
+                console.error(err);
             }
         }
 
-        function renderRecurrentStudents(students) {
-            const list = document.getElementById('recurrence-list');
-            list.innerHTML = `<div class="text-xs font-bold text-slate-400 mb-2 grid grid-cols-6 gap-2 border-b pb-1">
-                <div class="col-span-2">ALUMNO (TOP)</div><div>DOCS</div><div class="col-span-2">MATERIAS</div><div>ESTATUS REC.</div>
-            </div>`;
+        function renderAnalysis(data) {
+            const stats = document.getElementById('stats-summary');
+            const lists = document.getElementById('detailed-lists');
             
-            Object.values(students)
-                .sort((a,b) => b.teachers.size - a.teachers.size)
-                .slice(0, 8)
-                .forEach((s, idx) => {
-                    const teachersCount = s.teachers.size;
-                    const seg = s.seguimiento || { t_social: 'No', tutor: 'No', direccion: 'No' };
-                    let color = "bg-slate-100 text-slate-400";
-                    let level = "Bajo";
-                    
-                    if (teachersCount > 3) { color = "bg-red-500 text-white"; level = "CRÍTICO"; }
-                    else if (teachersCount > 1) { color = "bg-orange-500 text-white"; level = "ALTO"; }
-                    
-                    // Icons for interventions
-                    const icons = `
-                        <span title="Tutor de Grupo" class="p-1 rounded ${seg.tutor === 'Sí' ? 'bg-blue-100 text-blue-600' : 'bg-slate-50 text-slate-300 opacity-20'}">👤</span>
-                        <span title="Orientación/T. Social" class="p-1 rounded ${seg.t_social === 'Sí' ? 'bg-purple-100 text-purple-600' : 'bg-slate-50 text-slate-300 opacity-20'}">🧠</span>
-                        <span title="Dirección" class="p-1 rounded ${seg.direccion === 'Sí' ? 'bg-red-100 text-red-600' : 'bg-slate-50 text-slate-300 opacity-20'}">🏢</span>
-                    `;
-
-                    list.innerHTML += `<div class="grid grid-cols-6 gap-2 text-sm items-center py-2 border-b hover:bg-slate-50 transition-all">
-                        <div class="col-span-2 font-black">
-                            ${idx < 5 ? '⭐' : ''} ${s.name}
-                            <div class="flex gap-1 mt-1">${icons}</div>
-                        </div>
-                        <div class="font-bold text-center">${teachersCount}</div>
-                        <div class="col-span-2 text-xs text-slate-300 italic leading-tight">${Array.from(s.subjects).join(', ')}</div>
-                        <div class="text-center">
-                            <span class="px-2 py-0.5 rounded-full text-xs font-black ${color}">${level}</span>
-                        </div>
-                    </div>`;
-                });
+            // Basic Summary Generation
+            const total = data.length;
+            const citadoCount = data.filter(d => d.seguimiento_padres?.citado || d.seguimiento_padres?.citatorio_enviado === 'Sí' || d.citado === 'Sí').length;
+            const impactoPct = total > 0 ? (citadoCount / total * 100).toFixed(0) : 0;
             
-            // Terminology Legend
-            list.innerHTML += `<div class="mt-4 p-3 bg-slate-50 rounded-lg flex flex-wrap gap-4 text-xs border border-slate-100">
-                <span class="text-slate-400 font-bold uppercase">Glosario de Niveles:</span>
-                <span class="text-slate-600 font-medium"><b>Nulo:</b> Sin incidencia o conducta estable.</span>
-                <span class="text-red-600 font-medium"><b>Alto:</b> Incidencia crítica o recurrente.</span>
-            </div>`;
+            stats.innerHTML = `
+                <div class="card p-4 sm:p-5 text-center">
+                    <span class="text-[10px] font-bold text-slate-500 uppercase">Diagnósticos</span>
+                    <p class="text-3xl font-black text-primary-green">${total}</p>
+                </div>
+                <div class="card p-4 sm:p-5 text-center">
+                    <span class="text-[10px] font-bold text-slate-500 uppercase">Padres Citados</span>
+                    <p class="text-3xl font-black text-secondary-orange">${citadoCount}</p>
+                </div>
+                <div class="card p-4 sm:p-5 text-center">
+                    <span class="text-[10px] font-bold text-slate-500 uppercase">Impacto Global</span>
+                    <p class="text-3xl font-black text-tertiary-green">${impactoPct}%</p>
+                </div>
+                <div class="card p-4 sm:p-5 text-center bg-primary-green/5 border-primary-green/20">
+                    <span class="text-[10px] font-bold text-slate-500 uppercase">Estatus</span>
+                    <p class="text-sm font-bold text-primary-green">${total > 5 ? 'CONSISTENTE' : 'PENDIENTE'}</p>
+                </div>
+            `;
+
+            // Lists rendering
+            lists.innerHTML = `
+                <div class="card">
+                    <h3 class="section-title">Alumnos en Seguimiento</h3>
+                    <div class="space-y-2 mt-4">
+                        ${data.length ? data.map(d => `
+                            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 p-3 impact-factor">
+                                <span class="text-xs font-bold min-w-0 break-words">${d.alumno_nombre || d.alumnos_reportados?.[0]?.nombre || 'S/N'}</span>
+                                <span class="text-[9px] px-2 py-1 bg-primary-green/5 text-primary-green rounded uppercase shrink-0">${d.grupo}</span>
+                            </div>
+                        `).join('') : '<div class="impact-factor p-4 text-sm text-slate-500">No hay diagnósticos para el filtro actual.</div>'}
+                    </div>
+                </div>
+                <div class="card">
+                    <h3 class="section-title">Problemáticas Detectadas</h3>
+                    <div class="space-y-4 mt-4">
+                        ${data.length ? data.map(d => {
+                            const resumen = (d.comentarios || d.conclusion_general || 'Sin comentario registrado').substring(0, 100);
+                            const docente = d.docente || d.docente_nombre || 'Sin docente';
+                            return `
+                                <div class="conclusion-card text-xs break-words">
+                                    <strong class="text-on-surface">${docente}:</strong> ${resumen}${resumen.length === 100 ? '...' : ''}
+                                </div>
+                            `;
+                        }).join('') : '<div class="impact-factor p-4 text-sm text-slate-500">No hay observaciones disponibles para el filtro actual.</div>'}
+                    </div>
+                </div>
+            `;
         }
 
-        function getMode(arr) {
-            if (arr.length === 0) return null;
-            const modeMap = {};
-            let maxEl = arr[0], maxCount = 1;
-            arr.forEach(el => {
-                modeMap[el] = (modeMap[el] || 0) + 1;
-                if(modeMap[el] > maxCount) { maxEl = el; maxCount = modeMap[el]; }
-            });
-            return maxEl;
-        }
-
-        if (sessionStorage.getItem('auth_sirde') === 'true') {
-            document.getElementById('auth-wall').style.display = 'none';
-            initData(); // just to preload alumnos if needed
-        }
     </script>
 </body>
 </html>
-

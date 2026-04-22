@@ -9,11 +9,86 @@ let currentStep = 1;
 let lastGroupSelected = "";
 let studentSelections = {}; // Almacena selecciones por ID: { checked, behaviors: { tipo: nivel } }
 
+const DASHBOARD_ALLOWED_ROLES = new Set(['directivo', 'subdireccion']);
+
+function isDashboardPage() {
+    return window.location.pathname.toLowerCase().endsWith('/dashboard.html') || window.location.pathname.toLowerCase().endsWith('dashboard.html');
+}
+
+function isInvitationPage() {
+    return window.location.pathname.toLowerCase().endsWith('/invitacion.html') || window.location.pathname.toLowerCase().endsWith('invitacion.html');
+}
+
+function isAdminPage() {
+    return isDashboardPage() || isInvitationPage();
+}
+
+function isIndexPage() {
+    const path = window.location.pathname.toLowerCase();
+    return path === '/' || path.endsWith('/index.html') || path.endsWith('index.html');
+}
+
+function hideAuthWall() {
+    const authWall = document.getElementById('auth-wall');
+    if (!authWall) return;
+    authWall.classList.add('hidden');
+    authWall.style.display = 'none';
+}
+
+function showAuthWall() {
+    const authWall = document.getElementById('auth-wall');
+    if (!authWall) return;
+    authWall.classList.remove('hidden');
+    authWall.style.display = '';
+}
+
+function clearDashboardSession() {
+    sessionStorage.removeItem('auth_sirde');
+    sessionStorage.removeItem('sirde_user_name');
+    sessionStorage.removeItem('sirde_session_pin');
+}
+
+function isDashboardAdmin(user) {
+    if (!user?.nombre || !user?.rol) return false;
+    const normalizedName = user.nombre.toUpperCase();
+    return DASHBOARD_ALLOWED_ROLES.has(user.rol) && normalizedName.includes('SANCHEZ') && normalizedName.includes('HUGO');
+}
+
+async function fetchUserByPin(pin) {
+    if (!pin) return { data: null, error: new Error('PIN requerido') };
+
+    return supabaseClient
+        .from('colectivo_personal')
+        .select('nombre, departamento, rol')
+        .ilike('acceso_pin', pin.trim())
+        .single();
+}
+
+async function validateAdminSession() {
+    const pin = sessionStorage.getItem('sirde_session_pin');
+    if (!pin) {
+        clearDashboardSession();
+        return false;
+    }
+
+    const { data: user, error } = await fetchUserByPin(pin);
+    if (error || !isDashboardAdmin(user)) {
+        clearDashboardSession();
+        return false;
+    }
+
+    sessionStorage.setItem('auth_sirde', 'true');
+    sessionStorage.setItem('sirde_user_name', user.nombre);
+    hideAuthWall();
+    return true;
+}
+
 async function checkAccess(pin) {
     if (!pin) return;
     try {
         console.log("LOG: Verificando PIN institucional...");
-        const { data: user, error } = await supabaseClient.from('colectivo_personal').select('*').ilike('acceso_pin', pin.trim()).single();
+        const sanitizedPin = pin.trim();
+        const { data: user, error } = await fetchUserByPin(sanitizedPin);
         if (error || !user) { 
             alert("PIN NO VÁLIDO. Verifique sus credenciales institucionales o contacte a la Dirección."); 
             console.warn("LOG: Intento de acceso fallido.");
@@ -25,24 +100,39 @@ async function checkAccess(pin) {
             return;
         }
 
-        // CONTROL DE ACCESO AL DASHBOARD: EXCLUSIVO PARA HUGO SANCHEZ
-        const isHugo = user.nombre.includes("SANCHEZ") && user.nombre.includes("HUGO");
-
-        if (user.rol === 'directivo' || user.rol === 'subdireccion') {
-            if (isHugo) {
-                console.log("LOG: Acceso concedido al Administrador. Redirigiendo a Dashboard...");
-                sessionStorage.setItem('auth_sirde', 'true');
-                sessionStorage.setItem('sirde_user_name', user.nombre);
-                window.location.href = 'dashboard.html';
-                return;
-            } else {
-                alert("ACCESO RESTRINGIDO: Actualmente el acceso a resultados está limitado al administrador del sistema por razones de privacidad.");
+        if (DASHBOARD_ALLOWED_ROLES.has(user.rol)) {
+            if (!isDashboardAdmin(user)) {
+                alert("ACCESO RESTRINGIDO: Actualmente el acceso administrativo está limitado a la cuenta autorizada del sistema por razones de privacidad.");
                 return;
             }
+
+            console.log("LOG: Acceso concedido al Administrador.");
+            sessionStorage.setItem('auth_sirde', 'true');
+            sessionStorage.setItem('sirde_user_name', user.nombre);
+            sessionStorage.setItem('sirde_session_pin', sanitizedPin);
+
+            if (isDashboardPage()) {
+                hideAuthWall();
+                if (typeof runAnalysis === 'function') await runAnalysis();
+            } else if (isInvitationPage()) {
+                hideAuthWall();
+                if (typeof initInvitationPage === 'function') await initInvitationPage();
+            } else {
+                window.location.href = 'dashboard.html';
+            }
+            return;
+        }
+
+        if (isAdminPage()) {
+            clearDashboardSession();
+            alert("ACCESO RESTRINGIDO: Esta pantalla solo está disponible para la cuenta administradora autorizada.");
+            return;
         }
         
         console.log("LOG: Acceso concedido a:", user.nombre);
-        sessionStorage.setItem('sirde_session_pin', pin);
+        sessionStorage.removeItem('auth_sirde');
+        sessionStorage.removeItem('sirde_user_name');
+        sessionStorage.setItem('sirde_session_pin', sanitizedPin);
         await initData();
 
         const docInput = document.getElementById('docente');
@@ -51,7 +141,7 @@ async function checkAccess(pin) {
             docInput.disabled = true;
             onTeacherChange();
         }
-        document.getElementById('auth-wall').classList.add('hidden');
+        hideAuthWall();
         if (typeof updateProgress === 'function') updateProgress(1);
     } catch (e) { console.error("Critical error in checkAccess:", e); }
 }
@@ -89,20 +179,16 @@ function updateProgress(step) {
         if (!dot || !lbl) continue; // SEGURIDAD: evitar crash si no existen
 
         if (i < step) {
-            dot.classList.add('bg-primary-green', 'text-[#02140f]', 'border-primary-green');
-            dot.classList.remove('bg-slate-800', 'border-white/10', 'text-slate-500');
-            lbl.classList.add('text-primary-green');
-            lbl.classList.remove('text-slate-500');
+            dot.className = 'stepper-dot rounded-full bg-primary-green border-2 border-primary-green flex items-center justify-center text-[10px] font-black text-slate-900 transition-all';
+            lbl.className = 'stepper-label font-bold text-primary-green uppercase tracking-tighter';
         } else if (i === step) {
-            dot.classList.add('border-primary-green', 'scale-110', 'shadow-[0_0_15px_rgba(0,255,166,0.4)]');
-            dot.classList.remove('bg-slate-800', 'text-[#02140f]');
-            dot.style.backgroundColor = 'white';
-            lbl.classList.add('text-white');
-            lbl.classList.remove('text-slate-500');
-        } else {
-            dot.className = 'w-8 h-8 rounded-full bg-slate-800 border-2 border-white/10 flex items-center justify-center text-[10px] font-black transition-all';
+            dot.className = 'stepper-dot rounded-full bg-white border-2 border-primary-green flex items-center justify-center text-[10px] font-black text-primary-green transition-all scale-110 shadow-[0_0_0_4px_rgba(14,165,233,0.18)]';
             dot.style.backgroundColor = '';
-            lbl.className = 'text-[8px] font-bold text-slate-500 uppercase tracking-tighter';
+            lbl.className = 'stepper-label font-bold text-primary-green uppercase tracking-tighter';
+        } else {
+            dot.className = 'stepper-dot rounded-full bg-slate-100 border-2 border-slate-200 flex items-center justify-center text-[10px] font-black text-slate-500 transition-all';
+            dot.style.backgroundColor = '';
+            lbl.className = 'stepper-label font-bold text-slate-500 uppercase tracking-tighter';
         }
     }
 }
@@ -237,12 +323,12 @@ function renderStudents() {
             if (!studentSelections[al.id]) studentSelections[al.id] = data;
 
             const div = document.createElement('div');
-            div.className = 'p-4 bg-white/5 border border-white/10 rounded-2xl flex flex-col gap-3 transition-all hover:border-primary-green/30 mb-3';
+            div.className = 'p-4 bg-surface-container-low border border-white/10 rounded-2xl flex flex-col gap-3 transition-all hover:border-primary-green/30 mb-3';
             div.innerHTML = `
-                <div class="flex items-center justify-between">
-                    <label class="flex items-center gap-3 cursor-pointer w-full">
-                        <input type="checkbox" onchange="toggleStudentSub('${al.id}', this.checked)" data-id="${al.id}" class="chk-student w-6 h-6 rounded-lg accent-primary-green" ${data.checked ? 'checked' : ''}>
-                        <span class="font-bold text-[13px] text-white tracking-tight leading-tight">${al.nombre_completo}</span>
+                <div class="flex items-start justify-between gap-3">
+                    <label class="flex items-start gap-3 cursor-pointer w-full min-w-0">
+                        <input type="checkbox" onchange="toggleStudentSub('${al.id}', this.checked)" data-id="${al.id}" class="chk-student mt-0.5 w-6 h-6 rounded-lg accent-primary-green shrink-0" ${data.checked ? 'checked' : ''}>
+                        <span class="font-bold text-[13px] text-on-surface tracking-tight leading-tight break-words">${al.nombre_completo}</span>
                     </label>
                 </div>
                 <div id="sub-${al.id}" class="${data.checked ? '' : 'hidden'} space-y-4 pt-2 border-t border-white/5 mt-1">
@@ -252,7 +338,7 @@ function renderStudents() {
                         return `
                             <div class="flex flex-col gap-2">
                                 <label for="${uniqueId}" class="text-[10px] font-black text-slate-400 uppercase tracking-tighter">${b}</label>
-                                <select id="${uniqueId}" name="${uniqueId}" onchange="saveBehavior('${al.id}', '${b}', this.value)" class="behav-sel w-full text-xs p-3 bg-slate-900 rounded-xl text-white border-white/10" data-name="${b}">
+                                <select id="${uniqueId}" name="${uniqueId}" onchange="saveBehavior('${al.id}', '${b}', this.value)" class="behav-sel w-full text-xs p-3 bg-surface-container-low rounded-xl text-on-surface border border-white/10" data-name="${b}">
                                     <option value="Nula" ${currentLevel === 'Nula' ? 'selected' : ''}>NIVEL: NULO</option>
                                     <option value="Baja" ${currentLevel === 'Baja' ? 'selected' : ''}>BAJO</option>
                                     <option value="Media" ${currentLevel === 'Media' ? 'selected' : ''}>MEDIO</option>
@@ -265,24 +351,24 @@ function renderStudents() {
                     <!-- Seguimiento de Citatorios y Padres -->
                     <div class="space-y-4 pt-4 border-t border-white/10 mt-2">
                         <div class="flex flex-col gap-2">
-                            <label for="cit-${al.id}" class="text-[10px] font-black text-blue-400 uppercase italic tracking-tighter">¿Se han enviado citatorios?</label>
-                            <select onchange="saveExtraField('${al.id}', 'citatorio', this.value); syncConditionalFields('${al.id}')" id="cit-${al.id}" class="w-full text-xs p-3 bg-slate-900 rounded-xl text-white border-white/10">
+                            <label for="cit-${al.id}" class="text-[10px] font-black text-primary-green uppercase italic tracking-tighter">¿Se han enviado citatorios?</label>
+                            <select onchange="saveExtraField('${al.id}', 'citatorio', this.value); syncConditionalFields('${al.id}')" id="cit-${al.id}" class="w-full text-xs p-3 bg-surface-container-low rounded-xl text-on-surface border border-white/10">
                                 <option value="No" ${data.citatorio === 'No' ? 'selected' : ''}>No, ninguno</option>
                                 <option value="Sí" ${data.citatorio === 'Sí' ? 'selected' : ''}>Sí, formalmente</option>
                             </select>
                         </div>
                         
                         <div id="cond-acudierom-${al.id}" class="${data.citatorio === 'Sí' ? '' : 'hidden'} animate-fade-in flex flex-col gap-2">
-                            <label for="acu-${al.id}" class="text-[10px] font-black text-blue-400 uppercase italic tracking-tighter">¿Han acudido sus papás?</label>
-                            <select onchange="saveExtraField('${al.id}', 'acudio', this.value); syncConditionalFields('${al.id}')" id="acu-${al.id}" class="w-full text-xs p-3 bg-slate-900 rounded-xl text-white border-white/10">
+                            <label for="acu-${al.id}" class="text-[10px] font-black text-primary-green uppercase italic tracking-tighter">¿Han acudido sus papás?</label>
+                            <select onchange="saveExtraField('${al.id}', 'acudio', this.value); syncConditionalFields('${al.id}')" id="acu-${al.id}" class="w-full text-xs p-3 bg-surface-container-low rounded-xl text-on-surface border border-white/10">
                                 <option value="No" ${data.acudio === 'No' ? 'selected' : ''}>No han asistido</option>
                                 <option value="Sí" ${data.acudio === 'Sí' ? 'selected' : ''}>Sí, asistieron</option>
                             </select>
                         </div>
 
                         <div id="cond-cumplio-${al.id}" class="${data.acudio === 'Sí' ? '' : 'hidden'} animate-fade-in flex flex-col gap-2">
-                            <label for="cum-${al.id}" class="text-[10px] font-black text-blue-400 uppercase italic tracking-tighter">¿Han cumplido acuerdos?</label>
-                            <select onchange="saveExtraField('${al.id}', 'cumplio', this.value)" id="cum-${al.id}" class="w-full text-xs p-3 bg-slate-900 rounded-xl text-white border-white/10">
+                            <label for="cum-${al.id}" class="text-[10px] font-black text-primary-green uppercase italic tracking-tighter">¿Han cumplido acuerdos?</label>
+                            <select onchange="saveExtraField('${al.id}', 'cumplio', this.value)" id="cum-${al.id}" class="w-full text-xs p-3 bg-surface-container-low rounded-xl text-on-surface border border-white/10">
                                 <option value="No" ${data.cumplio === 'No' ? 'selected' : ''}>Incumplimiento</option>
                                 <option value="Sí" ${data.cumplio === 'Sí' ? 'selected' : ''}>Cumplimiento parcial/total</option>
                             </select>
@@ -292,25 +378,25 @@ function renderStudents() {
                         <div class="pt-4 border-t border-white/10 mt-2 space-y-3">
                             <p class="text-[9px] font-black text-slate-500 uppercase tracking-widest">Estatus de Intervención Institucional</p>
                             
-                            <div class="flex items-center justify-between gap-4 p-2 bg-white/5 rounded-lg">
-                                <label for="tut-${al.id}" class="text-[10px] font-bold text-white uppercase">¿Intervención Tutor de Grupo?</label>
-                                <select id="tut-${al.id}" onchange="saveExtraField('${al.id}', 'intervencion_tutor', this.value)" class="text-[10px] p-1 bg-slate-800 rounded border-none text-white">
+                            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 p-3 bg-white/5 rounded-xl">
+                                <label for="tut-${al.id}" class="text-[10px] font-bold text-on-surface uppercase sm:flex-1">¿Intervención Tutor de Grupo?</label>
+                                <select id="tut-${al.id}" onchange="saveExtraField('${al.id}', 'intervencion_tutor', this.value)" class="w-full sm:w-auto sm:min-w-[118px] text-[10px] p-2 bg-surface-container-high rounded border border-white/10 text-on-surface">
                                     <option value="No" ${data.intervencion_tutor === 'No' ? 'selected' : ''}>No</option>
                                     <option value="Sí" ${data.intervencion_tutor === 'Sí' ? 'selected' : ''}>Sí</option>
                                 </select>
                             </div>
 
-                            <div class="flex items-center justify-between gap-4 p-2 bg-white/5 rounded-lg">
-                                <label for="ori-${al.id}" class="text-[10px] font-bold text-white uppercase">¿Orientación / T. Social?</label>
-                                <select id="ori-${al.id}" onchange="saveExtraField('${al.id}', 'intervencion_orientacion', this.value)" class="text-[10px] p-1 bg-slate-800 rounded border-none text-white">
+                            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 p-3 bg-white/5 rounded-xl">
+                                <label for="ori-${al.id}" class="text-[10px] font-bold text-on-surface uppercase sm:flex-1">¿Orientación / T. Social?</label>
+                                <select id="ori-${al.id}" onchange="saveExtraField('${al.id}', 'intervencion_orientacion', this.value)" class="w-full sm:w-auto sm:min-w-[118px] text-[10px] p-2 bg-surface-container-high rounded border border-white/10 text-on-surface">
                                     <option value="No" ${data.intervencion_orientacion === 'No' ? 'selected' : ''}>No</option>
                                     <option value="Sí" ${data.intervencion_orientacion === 'Sí' ? 'selected' : ''}>Sí</option>
                                 </select>
                             </div>
 
-                            <div class="flex items-center justify-between gap-4 p-2 bg-white/5 rounded-lg border border-red-500/20">
-                                <label for="dir-${al.id}" class="text-[10px] font-bold text-red-400 uppercase">¿Escaló a Dirección?</label>
-                                <select id="dir-${al.id}" onchange="saveExtraField('${al.id}', 'escalado_direccion', this.value)" class="text-[10px] p-1 bg-slate-900 rounded border-none text-red-400 font-black">
+                            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 p-3 bg-red-50 rounded-xl border border-red-500/20">
+                                <label for="dir-${al.id}" class="text-[10px] font-bold text-red-500 uppercase sm:flex-1">¿Escaló a Dirección?</label>
+                                <select id="dir-${al.id}" onchange="saveExtraField('${al.id}', 'escalado_direccion', this.value)" class="w-full sm:w-auto sm:min-w-[118px] text-[10px] p-2 bg-white rounded border border-red-500/20 text-red-500 font-black">
                                     <option value="No" ${data.escalado_direccion === 'No' ? 'selected' : ''}>No</option>
                                     <option value="Sí" ${data.escalado_direccion === 'Sí' ? 'selected' : ''}>SÍ (URGENTE)</option>
                                 </select>
@@ -427,7 +513,11 @@ async function handleFormSubmit(e) {
         }
     });
 
-    if (reported.length === 0 && !confirm("No ha seleccionado ningún alumno focalizado. ¿Desea enviar el reporte general de grupo solamente?")) return;
+    if (reported.length === 0 && !confirm("No ha seleccionado ningún alumno focalizado. ¿Desea enviar el reporte general de grupo solamente?")) {
+        btn.disabled = false;
+        btn.textContent = "REGISTRAR DIAGNÓSTICO FINAL";
+        return;
+    }
 
     const estrategias = Array.from(document.querySelectorAll('.estrategia-chk:checked')).map(c => c.value);
     if (document.getElementById('chk-otra-est')?.checked) {
@@ -469,28 +559,28 @@ async function handleFormSubmit(e) {
         if (error) throw error;
         
         document.body.innerHTML = `
-            <div class="min-h-screen flex flex-col items-center justify-center p-6 bg-[#02140f] text-white text-center">
-                <div id="success-card" class="card max-w-lg w-full border-2 border-primary-green animate-fade-in p-10">
+            <div class="min-h-screen flex flex-col items-center justify-center p-4 sm:p-6 text-center">
+                <div id="success-card" class="card max-w-lg w-full border-2 border-primary-green/20 animate-fade-in">
                     <div class="mb-8">
-                        <div class="w-20 h-20 bg-primary-green text-[#02140f] rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg shadow-primary-green/20">
+                        <div class="w-20 h-20 bg-primary-green text-slate-900 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg shadow-primary-green/20">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" /></svg>
                         </div>
                         <h1 class="text-3xl font-black mb-2 tracking-tighter text-primary-green">DIAGNÓSTICO REGISTRADO</h1>
                         <p class="text-[10px] text-slate-400 uppercase tracking-widest">Respaldo Institucional para ${payload.grupo} - ${payload.asignatura}</p>
                     </div>
 
-                    <div class="grid grid-cols-1 gap-4 mb-10">
-                        <button onclick="window.print()" class="btn-primary py-4 rounded-2xl flex items-center justify-center gap-3">
-                            <span>🖨️ IMPRIMIR REPORTE</span>
+                    <div class="grid grid-cols-1 gap-3 sm:gap-4 mb-2">
+                        <button onclick="window.print()" class="btn-primary w-full py-4 rounded-2xl flex items-center justify-center gap-3">
+                            <span>Imprimir reporte</span>
                         </button>
-                        <button onclick="exportResultPDF()" class="px-6 py-4 bg-white/10 font-bold rounded-2xl border border-white/20 hover:bg-white/20 transition-all flex items-center justify-center gap-3">
-                            <span>📥 GUARDAR PDF (DISPOSITIVO)</span>
+                        <button onclick="exportResultPDF()" class="w-full px-6 py-4 bg-surface-container-high text-on-surface font-bold rounded-2xl border border-white/10 hover:bg-white/20 transition-all flex items-center justify-center gap-3">
+                            <span>Guardar PDF</span>
                         </button>
-                        <a href="dashboard.html" class="px-6 py-4 bg-blue-600 font-bold rounded-2xl hover:bg-blue-700 transition-all flex items-center justify-center gap-3 text-xs">
-                            <span class="text-xs">📊 VER ANÁLISIS DEL GRUPO</span>
+                        <a href="dashboard.html" class="block w-full px-6 py-4 bg-secondary-orange font-bold rounded-2xl hover:opacity-90 transition-all text-xs text-center">
+                            Ver análisis del grupo
                         </a>
-                        <button onclick="location.reload()" class="px-6 py-4 bg-slate-800 font-bold rounded-2xl hover:bg-black transition-all flex items-center justify-center gap-3 text-xs">
-                            <span class="text-xs">➕ ENVIAR OTRO REPORTE</span>
+                        <button onclick="location.reload()" class="w-full px-6 py-4 bg-white/10 text-on-surface font-bold rounded-2xl border border-white/10 hover:bg-white/20 transition-all flex items-center justify-center gap-3 text-xs">
+                            <span class="text-xs">Capturar otro reporte</span>
                         </button>
                     </div>
                 </div>
@@ -514,13 +604,45 @@ function exportResultPDF() {
     html2pdf().set(opt).from(element).save();
 }
 
-function togglePinVisibility(id) { const i = document.getElementById(id); i.type = (i.type === 'password' ? 'text' : 'password'); }
+function togglePinVisibility(id = 'entry-pin') {
+    const i = document.getElementById(id);
+    if (!i) return;
+    i.type = (i.type === 'password' ? 'text' : 'password');
+}
 function logoutSIRDE() { sessionStorage.clear(); location.reload(); }
 
-window.addEventListener('DOMContentLoaded', () => {
-    const pin = sessionStorage.getItem('sirde_session_pin');
-    if (pin) checkAccess(pin);
-    // Inicializar impacto si los elementos existen
-    if(document.querySelector('.impact-factor')) calculateImpact();
+window.addEventListener('DOMContentLoaded', async () => {
+    // SOPORTE PARA INTEGRACIÓN (IFRAME/URL PARAMS)
+    const urlParams = new URLSearchParams(window.location.search);
+    const pinFromUrl = urlParams.get('pin');
+    
+    if (pinFromUrl) {
+        console.log("LOG: PIN recibido vía URL. Configurando sesión de módulo...");
+        sessionStorage.setItem('sirde_session_pin', pinFromUrl.trim());
+        // Limpiamos la URL por seguridad para no dejar el PIN expuesto en el historial
+        const newUrl = window.location.pathname + window.location.hash;
+        window.history.replaceState({}, document.title, newUrl);
+    }
+
+    if (isAdminPage()) {
+        const hasAccess = await validateAdminSession();
+        if (hasAccess) {
+            if (isDashboardPage() && typeof runAnalysis === 'function') {
+                await runAnalysis();
+            }
+            if (isInvitationPage() && typeof initInvitationPage === 'function') {
+                await initInvitationPage();
+            }
+        } else {
+            showAuthWall();
+        }
+        return;
+    }
+
+    if (isIndexPage()) {
+        const pin = sessionStorage.getItem('sirde_session_pin');
+        if (pin) checkAccess(pin);
+        if (document.querySelector('.impact-factor')) calculateImpact();
+    }
 });
 

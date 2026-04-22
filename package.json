@@ -4,7 +4,13 @@
   "description": "Sistema de Diagnóstico Docente integrado con Supabase",
   "main": "index.html",
   "scripts": {
-    "start": "serve -l 3001 ."
+    "start": "node scripts/static-server.js",
+    "audit:secrets": "node scripts/check-secrets.js",
+    "supabase:check": "node scripts/check-supabase-access.js",
+    "supabase:pull": "node scripts/export-supabase-remote.js",
+    "verify:static": "node scripts/check-static-integrity.js",
+    "verify:smoke": "node scripts/smoke-test.js",
+    "verify": "npm run audit:secrets && npm run verify:static"
   },
   "devDependencies": {
     "tailwindcss": "^4.2.2"
